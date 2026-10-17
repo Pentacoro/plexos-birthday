@@ -34,7 +34,7 @@ export default function constructDesktopIcon(icon, { grid, layer }) {
     node.append(frame)
 
     const text = document.createElement("h3")
-    text.appendChild(document.createTextNode(icon.name))
+    text.appendChild(document.createTextNode(icon.label ?? icon.name))
     node.appendChild(text)
 
     layer.appendChild(node)

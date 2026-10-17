@@ -526,3 +526,41 @@ body.booting .contextSection > div.hover {
 	margin: 0;
 	text-align: right;
 }
+
+.landing-password {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.landing-password-input {
+	width: 180px;
+	padding: 12px 16px;
+	border: 1px solid rgba(255, 255, 255, 0.22);
+	background: rgba(255, 255, 255, 0.08);
+	color: white;
+	font: inherit;
+	font-size: 28px;
+	letter-spacing: 0.5em;
+	text-indent: 0.5em;
+	text-align: center;
+	outline: none;
+}
+
+.landing-password-input::placeholder {
+	color: rgba(255, 255, 255, 0.35);
+}
+
+.landing-password-input:focus {
+	border-color: rgba(255, 255, 255, 0.45);
+}
+
+.landing-password-input.wrong {
+	animation: landing-password-shake 0.35s;
+	border-color: rgba(255, 90, 110, 0.7);
+}
+
+@keyframes landing-password-shake {
+	20%, 60% { transform: translateX(-8px); }
+	40%, 80% { transform: translateX(8px); }
+}

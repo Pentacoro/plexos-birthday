@@ -24,6 +24,10 @@ windowManager.cmd("event.on", {eventName: "viewport-resize", callback: ()=>{
     windowManager.node.style.height = desktop.offsetHeight + "px"
     windowManager.node.style.top  = desktop.offsetTop + "px"
     windowManager.node.style.left = desktop.offsetLeft + "px"
+    // Maximized windows, whether launched that way or maximized later, follow the new size
+    for (const window of windowManager.mem.windows || []) {
+        if (window.drawParams?.maximized && window.node?.isConnected) window.poseNode()
+    }
 }})
 windowManager.cmd("event.on", {eventName: "window-stylized", callback: (window) => {
     if (window && window.appParams.sizeDrawMethod !== "fit-content") {

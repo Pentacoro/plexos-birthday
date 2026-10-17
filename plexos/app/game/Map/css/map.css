@@ -1,0 +1,91 @@
+.map {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1b1b20;
+    container-type: size;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* exactly the size the picture is drawn at, so the button sits on its corner */
+.map-frame {
+    position: relative;
+    width: min(100cqw, 100cqh * 816 / 1470);
+    aspect-ratio: 816 / 1470;
+    overflow: hidden;
+    touch-action: none;
+}
+
+/* what zooms and moves: both pictures, but not the button */
+.map-view {
+    position: absolute;
+    inset: 0;
+    transform-origin: 0 0;
+}
+.map-view.animate {
+    transition: transform 0.3s ease;
+}
+
+.map-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+    -webkit-user-drag: none;
+}
+.map[data-view="legend"] .map-image.legend,
+.map[data-view="picture"] .map-image.picture {
+    opacity: 1;
+}
+
+.map-switch {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    box-sizing: border-box;
+    width: 76px;
+    height: 76px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    border: 0;
+    border-radius: 16px;
+    background: #fff;
+    color: #1b1b20;
+    font-family: system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+.map-switch svg {
+    width: 32px;
+    height: 32px;
+}
+.map-switch:active {
+    background: rgba(255, 255, 255, 0.75);
+}
+
+/* on the picture the button turns dark, inverted */
+.map-switch {
+    transition: background 0.25s ease, color 0.25s ease;
+}
+.map[data-view="picture"] .map-switch {
+    background: #1b1b20;
+    color: #fff;
+}
+.map[data-view="picture"] .map-switch:active {
+    background: rgba(27, 27, 32, 0.75);
+}

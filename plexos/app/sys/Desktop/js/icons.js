@@ -31,6 +31,12 @@ mem.class.IconDesk = class IconDesk {
         this.drop = []
         this.main = function(){return File.at(this.file).cfg.icon}
     }
+    // What the desktop shows under the icon: the name without its extension. A folder
+    // keeps its whole name, since a dot in it is not an extension.
+    get label(){
+        if (this.class === "DirectoryFile") return this.name
+        return this.name.replace(/\.(?:.(?<!\.))+$/s, "") || this.name
+    }
     createNode(){
         //Icon HTML structure-----|
         if (mem.iconArr.includes(this)) return
@@ -182,8 +188,24 @@ mem.class.IconDesk = class IconDesk {
                 return
             }
         }
-        keys.text.innerText = this.name
+        keys.text.innerText = this.label
+        this.fitLabel()
         this.paintIcon()
+    }
+    // a word wider than its cell would wrap onto a line the clamp cuts off: the label shrinks
+    // until its longest word fits, down to two thirds of its size
+    fitLabel() {
+        const text = this.keyNodes?.text
+        if (!text?.clientWidth) return
+        const base = parseFloat(getComputedStyle(text).fontSize)
+        let size = base
+        const probe = document.createElement("span")
+        probe.style.cssText = "position:absolute;visibility:hidden;white-space:nowrap;font:inherit"
+        text.append(probe)
+        const widest = Math.max(...this.label.split(/\s+/).map(word => (probe.textContent = word, probe.offsetWidth)))
+        probe.remove()
+        if (widest > text.clientWidth) size = Math.max(base * 2 / 3, base * text.clientWidth / widest - 0.5)
+        if (size < base) text.style.fontSize = size + "px"
     }
     paintIcon() {
         const frame = this.keyNodes?.frame
@@ -196,7 +218,8 @@ mem.class.IconDesk = class IconDesk {
             const padY = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom)
             const room = Math.min(frame.clientWidth - padX, frame.clientHeight - padY)
             if (room <= 0) return false
-            const side = fitIconSize(room)
+            // fluid icons fill their cell; otherwise art snaps to its stored sizes
+            const side = cfg.grid.fluidIcons ? Math.floor(room) : fitIconSize(room)
             square.style.width = side + "px"
             square.style.height = side + "px"
             record.paint(this.keyNodes, side)
@@ -216,14 +239,26 @@ mem.class.IconDesk = class IconDesk {
         this.exte = this.main().exte
 
         this.paintIcon()
-        this.keyNodes.text.textContent = this.name
+        this.keyNodes.text.textContent = this.label
 
         mem.writeIconConfig()
     }
     clic(){
         this.node.onmousedown = e => this.drag(e)
         this.node.ondblclick = e => File.open(this.file)
+        // A finger drags through pointer events, since a phone only sends mouse events
+        // once the touch is over. Phones never send a double click either, so a tap opens,
+        // unless that touch was a drag.
+        this.node.style.touchAction = "none"
+        this.node.onpointerdown = e => {
+            this.tapped = e.pointerType === "touch"
+            this.wasDragged = false
+            if (this.tapped) this.drag(e)
+        }
+        this.node.onclick = e => { if (this.tapped && !this.wasDragged) File.open(this.file) }
         this.node.oncontextmenu = e => {
+            // a long press is how a finger drags; it never opens the menu
+            if (this.tapped) return e.preventDefault()
             let menu = mem.iconContextMenu(e,this)
             ContextMenu.open(e,this,menu)
         }
@@ -285,8 +320,10 @@ mem.class.IconDesk = class IconDesk {
                 plexos.Sound[0].play()
             }
             
-            document.onmouseup = closeDragIcon
-            if(e.button == 0 && !coreReadOnly()) document.onmousemove = iconDrag
+            // preventDefault on a touch's pointerdown also stops its late mouse events, so only one drag runs
+            const kind = e.pointerType === "touch" ? "pointer" : "mouse"
+            document["on" + kind + "up"] = closeDragIcon
+            if(e.button == 0 && !coreReadOnly()) document["on" + kind + "move"] = iconDrag
             iframeAntiHover(true)
         }								 
     
@@ -356,9 +393,12 @@ mem.class.IconDesk = class IconDesk {
             //stop moving when mouse button is released:
             document.onmouseup = null
             document.onmousemove = null
+            document.onpointerup = null
+            document.onpointermove = null
             iframeAntiHover(false)
             const paths = task.pocket.map(icon => icon.file)
             const dragged = System.mem.var.dragging
+            _this.wasDragged = !!dragged
             const dest = dragged ? destinationAt(e.clientX, e.clientY, paths) : null
             endDragVisual()
             for (let icon of task.pocket) if (icon.node) icon.node.style.pointerEvents = ""
@@ -435,6 +475,8 @@ mem.class.IconDesk = class IconDesk {
         let editFile = File.at(this.file)
         let editFrom = editFile.parent()
         let thisIcon = this
+        // renaming edits the whole name, extension included
+        iconText.textContent = this.name
         //make h3 editable --------------------|
         iconText.setAttribute("contenteditable", "true")
         iconText.setAttribute("spellcheck", "false")
@@ -460,7 +502,7 @@ mem.class.IconDesk = class IconDesk {
             
             thisIcon.statNode()
     
-            iconText.textContent = thisIcon.name
+            iconText.textContent = thisIcon.label
             iconText.setAttribute("contenteditable", "false");
             iconText.style.backgroundColor = ""
             iconText.style.textShadow = ""
@@ -495,7 +537,7 @@ mem.class.IconDesk = class IconDesk {
                 if (iconText.textContent != editFile.name) { //if the name changed
                     //a held file keeps its name
                     task.cmd("file.rename", {path: editFile.cfg.path, rename: iconText.textContent})
-                        .then(renamed => { if (!renamed) iconText.textContent = editFile.name })
+                        .then(renamed => { if (!renamed) iconText.textContent = thisIcon.label })
                 }
     
                 thisIcon.statNode(1)
@@ -630,8 +672,11 @@ mem.repositionIcons = function(icons, mustSet = false){
         if(mustSet && icon.coords && !oldGrid.used){
             oldGrid.used = true
             oldGrid.icon = icon
-            icon.coords.tx = icon.coords.px
-            icon.coords.ty = icon.coords.py
+            // sit on the cell itself: a new icon's placeholder (-1, -1) rounds to the first cell
+            icon.coords.px = oldGrid.posX
+            icon.coords.py = oldGrid.posY
+            icon.coords.tx = oldGrid.posX
+            icon.coords.ty = oldGrid.posY
             icon.coords.ax = px
             icon.coords.ay = py
 

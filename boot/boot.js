@@ -1,17 +1,17 @@
 // No core yet. Config in IndexedDB names the landing face; Theme Manager and
 // Window Manager start on that face, and the stage below draws on #windowLayer.
-// User squares sit in a centered row. Picking one slides it to the left of the
-// screen's midline and opens that user's cores on the right. Mounting a core
+// The landing is a single password bar. Each player's 3 digit password picks their
+// profile, which boots its own writable local clone of the core. Mounting it
 // closes this stage, swaps in the core's session face from settings.json, and
-// only then opens the desktop. Boot opens a writable local clone of the Plexos core.
+// only then opens the desktop. The profile and core landing (users.js, cores.js) stays unused.
 import "../plexos/lib/functions/prototype.js"
 import "./system.js"
 import "../plexos/ini/events.js"
 import plexos from "./plexos.js"
 import Task from "../plexos/lib/classes/system/task.js"
 import { runLauncher } from "../plexos/lib/functions/dll.js"
-import { showUsers } from "./users.js"
 import { bootLocalPlexos } from "./cores.js"
+import { showPasswordBar } from "./password.js"
 
 // For development: true skips the landing and opens the local Plexos clone.
 const bootLocalClone = false
@@ -65,7 +65,7 @@ async function boot() {
         await bootLocalPlexos()
         return
     }
-    await showUsers()
+    showPasswordBar()
 }
 
 boot().catch(error => console.error(error))

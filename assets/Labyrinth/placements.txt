@@ -1,0 +1,28 @@
+JUXTAPOSITION LABYRINTH - card placements for Photoshop
+
+Card images are 400x560 px: a 4x6-cell maze (80 px per cell). Hearts has its guide line on three
+sides, spades and clubs on two; sides without one are transparent, so cards sit flush. Snap
+layers to a 40 px grid. Each position is where the card image top-left corner goes AFTER
+turning it (clockwise), in px from the maze top-left corner dot. Stacking is bottom first.
+At each plug, the male end (pointed, round or flat) meets the matching female end; flat is the
+same on both cards, with a small gap.
+
+MAZE 1 (7x6 cells; 1 entrance, 2 exits)
+  1. hearts  turn 180deg   top-left at x   200, y   -40
+  2. clubs   turn   0deg   top-left at x   -40, y   -40
+  3. spades  turn 270deg   top-left at x   -40, y   120
+  plugs: cross between clubs and hearts, round between hearts and spades, square between spades and clubs
+
+MAZE 2 (8x6 cells; 2 entrances, 1 exit (turned a quarter anticlockwise))
+  1. hearts  turn 180deg   top-left at x   280, y   -40
+  2. spades  turn   0deg   top-left at x   -40, y   -40
+  3. clubs   turn 270deg   top-left at x   -40, y   120
+  plugs: cross between clubs and spades, square between spades and hearts, round between hearts and clubs
+
+MAZE 3 (7x6 cells; 1 entrance, 1 exit (mirror images of each other))
+  1. spades  turn   0deg   top-left at x   -40, y   -40
+  2. hearts  turn 180deg   top-left at x   200, y   -40
+  3. clubs   turn 270deg   top-left at x   -40, y   120
+  plugs: square between spades and hearts, round between hearts and clubs, cross between clubs and spades
+
+DIAMONDS (artifact, 5x5): diamonds-maze.png is the drawing for the artifact; diamonds-answer.png marks the way in (right) and out (top).

@@ -16,7 +16,6 @@ mem.define = function () {
         grid: JSON.parse(File.at(`@/plexos/cfg/desks/${mem.var.dirname}/grid.json`).data),
         back: JSON.parse(File.at(`@/plexos/cfg/desks/${mem.var.dirname}/background.json`).data),
         icon: JSON.parse(File.at(`@/plexos/cfg/desks/${mem.var.dirname}/icon.json`).data),
-        task: JSON.parse(File.at(`@/plexos/cfg/desks/${mem.var.dirname}/taskbar.json`).data),
     }
 }
 

@@ -1,0 +1,150 @@
+.category-badge {
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    max-width: 100%;
+    /* smaller on short screens, full size on a tall phone */
+    height: clamp(40px, 6.2vh, 52px);
+    padding: 0 6px;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    background: transparent;
+    color: #fff;
+    font: inherit;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+.category-badge svg {
+    flex: none;
+    width: clamp(28px, 4.5vh, 38px);
+    height: clamp(28px, 4.5vh, 38px);
+}
+/* an artifact's cube, with the room it is hidden in showing instead while open */
+.category-icon {
+    flex: none;
+    display: grid;
+}
+.category-icon > span {
+    grid-area: 1 / 1;
+    display: flex;
+    transition: opacity 0.3s ease;
+}
+.category-place,
+.category-badge.open .category-cube {
+    opacity: 0;
+}
+.category-badge.open .category-place {
+    opacity: 1;
+}
+.category-label {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: clamp(13px, 1.8vh, 15px);
+    opacity: 0;
+    transition: max-width 0.3s ease, opacity 0.2s ease, padding 0.3s ease;
+}
+.category-badge.open .category-label {
+    /* only a cap for the opening; the badge itself stops at the row's edge */
+    max-width: 640px;
+    padding: 0 8px 0 6px;
+    opacity: 1;
+}
+.category-text {
+    display: inline-flex;
+}
+.category-label.scrolling {
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8px, #000 calc(100% - 14px), transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8px, #000 calc(100% - 14px), transparent);
+}
+.category-label.scrolling .category-text {
+    animation: category-scroll var(--duration) linear infinite;
+}
+.category-label.scrolling .category-text span {
+    padding-right: 48px;
+}
+@keyframes category-scroll {
+    to { transform: translateX(calc(-1 * var(--distance))); }
+}
+
+/* the artifact's photo button shows only while the badge is open */
+.category-photos {
+    flex: none;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: clamp(28px, 4.5vh, 38px);
+    height: clamp(28px, 4.5vh, 38px);
+    margin-left: 2px;
+    border-radius: 8px;
+    background: #fff;
+    color: #1b1b20;
+    touch-action: manipulation;
+}
+.category-badge.open .category-photos {
+    display: inline-flex;
+}
+.category-photos svg {
+    width: clamp(18px, 2.9vh, 24px);
+    height: clamp(18px, 2.9vh, 24px);
+}
+
+/* The hint button mirrors the badge from the top right corner, growing leftward */
+.badge-row {
+    position: relative;
+}
+.hint-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    /* smaller on short screens, full size on a tall phone */
+    height: clamp(40px, 6.2vh, 52px);
+    padding: 0 6px;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    background: #1b1b20;
+    color: #fff;
+    font: inherit;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+.hint-button svg {
+    flex: none;
+    width: clamp(28px, 4.5vh, 38px);
+    height: clamp(28px, 4.5vh, 38px);
+}
+.hint-label {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: clamp(13px, 1.8vh, 15px);
+    opacity: 0;
+    transition: max-width 0.3s ease, opacity 0.2s ease, padding 0.3s ease;
+}
+.hint-button.open .hint-label {
+    max-width: 640px;
+    padding: 0 6px 0 8px;
+    opacity: 1;
+}
+
+/* only one of the two is open at a time: opening one hides the other */
+.category-badge,
+.hint-button {
+    transition: opacity 0.2s ease;
+}
+.badge-row:has(.category-badge.open) .hint-button,
+.badge-row:has(.hint-button.open) .category-badge {
+    opacity: 0;
+    pointer-events: none;
+}
+.hint-button[hidden] {
+    display: none;
+}

@@ -1,0 +1,441 @@
+.puzzle {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 16px 16px 0;
+    display: flex;
+    flex-direction: column;
+    background: #1b1b20;
+    color: #fff;
+    font-family: system-ui, sans-serif;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.badge-row {
+    position: relative;
+    z-index: 6;
+}
+
+/* Everything moves inside the stage. Sizes follow the screen, so the envelope and the
+   letter are as big as fits. */
+.stage {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    margin: 8px -16px 0;
+    overflow: hidden;
+    perspective: 1100px;
+    /* vertical scrolling stays with the browser; sideways swipes go through the letters */
+    touch-action: pan-y;
+    --w: min(78vw, 42vh, 340px);
+    --eh: calc(var(--w) * 0.62);
+    --lw: calc(var(--w) - 24px);
+    --lh: min(calc(var(--w) * 1.18), 64vh);
+}
+
+/* ENVELOPE: back, then the letter, then the front pocket, then the flap over them */
+.env-back,
+.env-front,
+.env-flap {
+    position: absolute;
+    left: calc(50% - var(--w) / 2);
+    top: calc(50% - var(--eh) / 2);
+    width: var(--w);
+}
+.env-back,
+.env-front {
+    height: var(--eh);
+    border-radius: 8px;
+}
+.env-back {
+    z-index: 1;
+    background: #c4ae83;
+}
+.env-front {
+    z-index: 3;
+    background: #e6d5ae;
+    clip-path: polygon(0 0, 50% 52%, 100% 0, 100% 100%, 0 100%);
+}
+.env-flap {
+    z-index: 4;
+    height: calc(var(--eh) * 0.58);
+    background: #d8c296;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top center;
+}
+/* past upright, the flap folds behind the letter */
+.stage.flap-open .env-flap {
+    z-index: 1;
+}
+.env-seal {
+    position: absolute;
+    left: calc(50% - 10px);
+    bottom: 16%;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #b8322a;
+    box-shadow: inset 0 0 0 3px #9a261f;
+}
+.stage.mail-gone .env-back,
+.stage.mail-gone .env-front,
+.stage.mail-gone .env-flap {
+    visibility: hidden;
+}
+
+/* LETTER: one sheet, flat with its live content, or two halves while folding */
+.letter {
+    position: absolute;
+    z-index: 2;
+    left: calc(50% - var(--lw) / 2);
+    top: calc(50% - var(--eh) / 2 + 8px);
+    width: var(--lw);
+    height: var(--lh);
+    perspective: 900px;
+    color: #26262b;
+}
+.letter-full,
+.half {
+    background: #fbfaf6;
+}
+.letter-full {
+    position: absolute;
+    inset: 0;
+    display: none;
+    border-radius: 4px;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.45);
+}
+.letter.flat .letter-full {
+    display: block;
+}
+.letter.flat .half,
+.letter.flat .half-fold {
+    display: none;
+}
+.half {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 50%;
+    overflow: hidden;
+}
+.half-top {
+    top: 0;
+    border-radius: 4px 4px 0 0;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+.half-fold {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 50%;
+    transform-origin: top center;
+    transform-style: preserve-3d;
+}
+.half-bottom,
+.half-back {
+    top: 0;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+.half-bottom {
+    border-radius: 0 0 4px 4px;
+}
+/* the outside of the folded sheet */
+.half-back {
+    transform: rotateX(180deg);
+    background: #efece3;
+    border-radius: 4px 4px 0 0;
+}
+/* each half shows its own part of a full-height copy of the content */
+.half-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: var(--lh);
+}
+.half-bottom .half-content {
+    top: calc(var(--lh) / -2);
+}
+
+.letter-text {
+    box-sizing: border-box;
+    height: 100%;
+    padding: 22px 20px;
+    overflow-y: auto;
+    font: 15px/1.55 Georgia, "Times New Roman", serif;
+    white-space: pre-line;
+    user-select: text;
+    -webkit-user-select: text;
+}
+.answer {
+    display: none;
+    padding-top: 28px;
+    overflow: hidden;
+}
+.letter.mode-answer .answer {
+    display: block;
+}
+.letter.mode-answer .letter-text {
+    display: none;
+}
+/* the line stays centred on the page and the typebars travel along it. A long password
+   gets narrower dashes, so the line always fits inside the page. */
+.answer-slots {
+    display: flex;
+    justify-content: center;
+    column-gap: var(--slot-gap);
+    /* the gaps tighten too as the line gets longer, so 12 characters fit a small phone */
+    --slot-gap: clamp(3px, calc(var(--lw) / var(--n, 6) * 0.18), 8px);
+    --slot: min(22px, calc((var(--lw) - 24px) / var(--n, 6) - var(--slot-gap)));
+}
+.answer-slots span {
+    flex: none;
+    width: var(--slot);
+    height: 34px;
+    border-bottom: 3px solid #1b1b20;
+    color: #1b1b20;
+    font: bold min(26px, calc(var(--slot) * 1.25))/34px "Courier New", Courier, monospace;
+    text-align: center;
+}
+.answer.wrong {
+    animation: detective-shake 0.35s;
+}
+.answer.wrong span {
+    border-color: #d8343f;
+}
+
+.investigate {
+    position: absolute;
+    z-index: 5;
+    left: 50%;
+    top: calc(50% + var(--lh) / 2 - 22px);
+    transform: translateX(-50%);
+    padding: 12px 26px;
+    border: 0;
+    border-radius: 12px;
+    background: #fff;
+    color: #1b1b20;
+    font: 600 17px system-ui, sans-serif;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+.stage.reading .investigate {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* TYPEBARS: hung from the strike point, fanned down into the machine */
+.typebars {
+    position: absolute;
+    z-index: 4;
+    left: 50%;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    transition: opacity 0.2s ease, left 0.12s ease-out;
+    pointer-events: none;
+}
+.stage.typing .typebars {
+    opacity: 1;
+}
+.bar {
+    position: absolute;
+    left: -1.5px;
+    top: 0;
+    width: 3px;
+    transform: rotate(var(--angle));
+    transform-origin: top center;
+}
+.bar-arm {
+    position: relative;
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(#55555f, #a3a3ad);
+    transform: scaleY(0.25);
+    transform-origin: bottom center;
+}
+/* the type slug at the tip */
+.bar-arm::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -3px;
+    width: 9px;
+    height: 10px;
+    border-radius: 2px;
+    background: #2c2c33;
+}
+
+/* MACHINE: round keys on a dark body */
+.machine {
+    position: absolute;
+    z-index: 5;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 14px 10px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--gap);
+    border-top: 2px solid #4b4b55;
+    border-radius: 22px 22px 0 0;
+    background: linear-gradient(#35353d, #222227);
+    box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.4);
+    --gap: 6px;
+    --key: min(calc((100vw - 20px - 9 * var(--gap)) / 10.6), 42px, 5.8vh);
+}
+.keys {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+}
+.key-row {
+    display: flex;
+    justify-content: center;
+    gap: var(--gap);
+}
+/* rows sit staggered, as on a typewriter */
+.key-row:nth-child(even) {
+    padding-left: calc(var(--key) / 2);
+}
+.key {
+    flex: none;
+    width: var(--key);
+    height: var(--key);
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #cfcfd6;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #3b3b43, #121215 70%);
+    color: #f2f2f2;
+    /* half the key on a roomy screen; on small keys the letter keeps at least 14px, but
+       never grows past two thirds of its circle */
+    font: bold min(calc(var(--key) * 0.66), max(calc(var(--key) * 0.5), 14px)) / 1 "Courier New", Courier, monospace;
+    box-shadow: 0 3px 0 #0b0b0e;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+.key.pressed {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #0b0b0e;
+}
+.key.erase svg {
+    width: 62%;
+    height: 62%;
+}
+.send {
+    margin-top: 4px;
+    padding: clamp(8px, 1.4vh, 11px) 34px;
+    border: 0;
+    border-radius: 12px;
+    background: #fff;
+    color: #1b1b20;
+    font: 600 clamp(15px, 2.1vh, 17px) system-ui, sans-serif;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.done-note {
+    display: none;
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    height: max-content;
+    padding: 0 32px;
+    text-align: center;
+    font-size: 17px;
+    line-height: 1.5;
+    opacity: 0.8;
+}
+.stage.done .done-note {
+    display: block;
+}
+
+@keyframes detective-shake {
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+}
+
+/* the verdict on a wrong answer, above the letter it answered */
+.letter-heading {
+    display: block;
+    margin-bottom: 14px;
+    color: #c0303b;
+    font: bold 22px/1.2 "Courier New", Courier, monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* the team's stamp, on the front pocket so it travels with the envelope. The white paper
+   around it is punched with holes at the edge, like a perforated stamp. */
+.env-stamp {
+    position: absolute;
+    right: 7%;
+    bottom: 11%;
+    box-sizing: border-box;
+    width: 19%;
+    aspect-ratio: 0.82;
+    padding: 4px;
+    background: #fbfaf6;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        radial-gradient(circle, transparent 0 2px, #000 2.4px) -3px -3px / 6px 6px;
+    -webkit-mask-composite: source-over;
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        radial-gradient(circle, transparent 0 2px, #000 2.4px) -3px -3px / 6px 6px;
+    mask-composite: add;
+}
+.env-stamp-face {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 14%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--team);
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.55);
+}
+.env-stamp-face svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Replies leave sealed with the team's wax: their color, their suit pressed in. Until the
+   flap closes there is no seal at all. */
+.env-seal svg {
+    display: none;
+}
+.stage.unsealed .env-seal {
+    opacity: 0;
+}
+.stage.sealed .env-seal {
+    left: calc(50% - 15px);
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle at 40% 35%, color-mix(in srgb, var(--team) 80%, #fff), var(--team) 55%, color-mix(in srgb, var(--team) 70%, #000));
+    box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--team) 75%, #000), 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+.stage.sealed .env-seal svg {
+    display: block;
+    width: 62%;
+    height: 62%;
+    margin: 19%;
+    fill: color-mix(in srgb, var(--team) 55%, #000);
+    opacity: 0.75;
+}

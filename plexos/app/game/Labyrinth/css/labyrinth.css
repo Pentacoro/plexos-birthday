@@ -1,0 +1,142 @@
+.puzzle {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 16px 16px max(24px, 4vh);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #1b1b20;
+    color: #fff;
+    font-family: system-ui, sans-serif;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.badge-row {
+    position: relative;
+    align-self: stretch;
+}
+
+/* the matrix takes the room the pad leaves */
+.board {
+    flex: 1;
+    min-height: 0;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 0;
+}
+.matrix {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+.matrix .band-line {
+    fill: none;
+    stroke: #4a4a54;
+    stroke-width: 0.2;
+    stroke-linejoin: miter;
+}
+.matrix .band {
+    fill: #4a4a54;
+}
+/* a female notch is cut out of the band in the background's color */
+.matrix .notch {
+    fill: #1b1b20;
+}
+.matrix .arrow path {
+    fill: #b4b4c0;
+}
+.matrix .dots circle {
+    fill: #e6e6e6;
+    transition: fill 0.25s ease;
+}
+.matrix.bump {
+    animation: labyrinth-shake 0.35s;
+}
+.matrix.bump .dots circle {
+    fill: #ff4a5a;
+    transition: none;
+    animation: labyrinth-back 0.6s forwards;
+}
+.matrix.flash .dots circle {
+    animation: labyrinth-flash 0.9s;
+}
+.matrix.leaving {
+    opacity: 0;
+    transform: scale(0.94);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* the pad: four keys in a diamond */
+.pad {
+    flex: none;
+    display: grid;
+    grid-template-columns: repeat(3, var(--key));
+    grid-template-rows: repeat(3, var(--key));
+    gap: 6px;
+    --key: clamp(54px, 9vh, 76px);
+}
+.move {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: 14px;
+    background: #fff;
+    color: #1b1b20;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+.move svg {
+    width: 52%;
+    height: 52%;
+}
+.move.pressed {
+    background: rgba(255, 255, 255, 0.6);
+}
+.move.up { grid-area: 1 / 2; }
+.move.left { grid-area: 2 / 1; transform: rotate(-90deg); }
+.move.right { grid-area: 2 / 3; transform: rotate(90deg); }
+.move.down { grid-area: 3 / 2; transform: rotate(180deg); }
+
+/* once finished, the walls and the player show, with a note above the pad */
+.matrix .walls line {
+    stroke: #b4b4c0;
+    stroke-width: 0.13;
+    stroke-linecap: round;
+}
+.matrix .player {
+    transition: cx 0.12s ease, cy 0.12s ease;
+}
+.done-note {
+    display: none;
+    margin: 4px 24px 14px;
+    font-size: 16px;
+    text-align: center;
+    opacity: 0.85;
+}
+.done .done-note {
+    display: block;
+    order: 2;
+}
+.done .pad {
+    order: 3;
+}
+
+@keyframes labyrinth-shake {
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+}
+@keyframes labyrinth-back {
+    0%, 55% { fill: #ff4a5a; }
+    100% { fill: #e6e6e6; }
+}
+@keyframes labyrinth-flash {
+    0%, 60% { fill: var(--flash); }
+    100% { fill: #e6e6e6; }
+}

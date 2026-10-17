@@ -1,0 +1,30 @@
+:root {
+    --color-accent: #A96067;
+    --color-accent-light: #D3A6AB;
+    --color-accent-dark: #744449;
+    --color-accent-press: #894D53;
+    --color-chrome-blur: #AB878B;
+    --color-chrome-blur-light: #CBAEB1;
+    --color-chrome-blur-dark: #8E676B;
+    --color-window-outline: #513D3F;
+
+    --color-toolbar: #D0BEC0;
+    --color-toolbar-text: #724F52;
+    --color-toolbar-hover: #DCD0D1;
+    --color-toolbar-active: #8E676B;
+    --color-toolbar-edge-light: #D8CBCC;
+    --color-toolbar-edge-dark: #AE8F92;
+    --color-toolbar-flat: #BFA6A8;
+    --color-toolbar-field-border: #A58386;
+
+    --color-menu-hover: #CBAEB1;
+
+    --color-select-fill: #6A393E66;
+    --color-select-border: #513D3FE6;
+    --color-icon-active: #764247B3;
+    --color-ship: #6F3E43CC;
+    --color-ship-badge: #5E3135;
+
+    --color-explorer-select: #B2767C9F;
+    --color-explorer-select-ghost: #B2767C38;
+}

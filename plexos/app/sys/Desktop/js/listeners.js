@@ -27,7 +27,7 @@ task.cmd("event.on", {eventName: "viewport-resize", callback: ()=> {
 }, priority: 0})
 task.cmd("event.on", {eventName: "viewport-resize", callback: ()=> {
     task.node.style.width = document.body.offsetWidth + "px"
-    task.node.style.height = document.body.offsetHeight - cfg.task.height + "px"
+    task.node.style.height = document.body.offsetHeight + "px"
 }, priority: 1})
 task.cmd("event.on", {eventName: "transfer-finished", callback: ({ to, moved })=> {
     task.mem.selectArrivals(to, moved)

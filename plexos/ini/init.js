@@ -59,6 +59,42 @@ const monacoEntry = {
     systemProhibitions: [],
 }
 
+const partyEntry = {
+    installationDirectory: "@/plexos/app/game/Party",
+    launcherScriptFilePath: "/plexos/app/game/Party/party.ls",
+    launcherDependents: ["/plexos/app/game/Party/open.ls"],
+    instantiable: false,
+    systemPermissions: ["file", "task", "event"],
+    systemProhibitions: [],
+}
+
+const fibonacciEntry = {
+    windowDrawParameters: { default: { minimizeable: false, maximizeable: false, resizeable: false, initialDrawSize: "maximized", sizeDrawMethod: "window", saveDrawParameters: "disabled" } },
+    installationDirectory: "@/plexos/app/game/Fibonacci",
+    launcherScriptFilePath: "/plexos/app/game/Fibonacci/fibonacci.ls",
+    instantiable: false,
+    systemPermissions: ["task", "event"],
+    systemProhibitions: [],
+}
+
+const mapEntry = {
+    ...fibonacciEntry,
+    installationDirectory: "@/plexos/app/game/Map",
+    launcherScriptFilePath: "/plexos/app/game/Map/map.ls",
+}
+
+const webDetectiveEntry = {
+    ...fibonacciEntry,
+    installationDirectory: "@/plexos/app/game/WebDetective",
+    launcherScriptFilePath: "/plexos/app/game/WebDetective/webDetective.ls",
+}
+
+const labyrinthEntry = {
+    ...fibonacciEntry,
+    installationDirectory: "@/plexos/app/game/Labyrinth",
+    launcherScriptFilePath: "/plexos/app/game/Labyrinth/labyrinth.ls",
+}
+
 // A saved core keeps the app catalog it was made with. This brings an older one up to date before the session
 // ids are issued. Each step leaves a core that already has it untouched.
 function upgradeRegistry(registry) {
@@ -66,6 +102,11 @@ function upgradeRegistry(registry) {
     if (!data) return
     ensureSystemEntry(data)
     if (!("Monaco" in data.STANDALONE)) data.STANDALONE.Monaco = monacoEntry
+    if (!("Party" in data.SYSTEM)) data.SYSTEM.Party = partyEntry
+    if (!("Fibonacci" in data.STANDALONE)) data.STANDALONE.Fibonacci = fibonacciEntry
+    if (!("Map" in data.STANDALONE)) data.STANDALONE.Map = mapEntry
+    if (!("WebDetective" in data.STANDALONE)) data.STANDALONE.WebDetective = webDetectiveEntry
+    if (!("Labyrinth" in data.STANDALONE)) data.STANDALONE.Labyrinth = labyrinthEntry
 }
 
 export default async function initialize() {

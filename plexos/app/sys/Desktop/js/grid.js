@@ -29,6 +29,16 @@ mem.grid.evaluateIconGrid = function (
     let windowW = desktop.node.offsetWidth
     let windowH = desktop.node.offsetHeight
 
+    // A set column count sizes the cells to fill the width with exactly that many,
+    // keeping the cells' proportions (the responsive icon styles grow the labels with them)
+    if (cfg.grid.columns) {
+        const columns = cfg.grid.columns
+        w = Math.floor((windowW - wm * (columns + 1)) / columns)
+        h = Math.round(w * (cfg.grid.cellRatio || 5 / 6))
+        cfg.grid.width = w
+        cfg.grid.height = h
+    }
+
     //check open instance of grid settings
     let gridSettings = Task.get("Desktop Grid Settings")
     if (!gridSettings) cfg.grid.visibleNodes = false

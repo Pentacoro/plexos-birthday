@@ -1,0 +1,105 @@
+.dialogue {
+    flex: 1;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding-top: 12px;
+}
+.dialogue[hidden] {
+    display: none;
+}
+
+/* the box at the top, drawn over the portrait's head so the portrait never covers the text */
+.dialogue-box {
+    position: relative;
+    z-index: 2;
+    box-sizing: border-box;
+    min-height: 8.5em;
+    padding: 12px 16px 24px;
+    border: 2px solid #fff;
+    border-radius: 12px;
+    background: #1b1b20;
+    font-size: 18px;
+    line-height: 1.4;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+.dialogue-name {
+    margin-bottom: 6px;
+    font-size: 17px;
+    font-weight: 600;
+}
+.dialogue-name[hidden] {
+    display: none;
+}
+/* the next-line marker shows once a line has finished typing */
+.dialogue.waiting .dialogue-box::after {
+    content: "";
+    position: absolute;
+    right: 14px;
+    bottom: 10px;
+    border: 7px solid transparent;
+    border-top: 9px solid #fff;
+    border-bottom: 0;
+    animation: dialogue-blink 0.8s steps(2) infinite;
+}
+
+/* the portrait stands at the right, under the box, with its head tucked beneath it */
+.dialogue-stage {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    min-height: 0;
+}
+.dialogue-sprite {
+    position: absolute;
+    top: -22px;
+    right: -16px;
+    height: min(calc(100% + 22px), 52vh);
+    max-width: 90%;
+    object-fit: contain;
+    object-position: right top;
+    pointer-events: none;
+}
+.dialogue-sprite.entering {
+    animation: dialogue-enter 0.45s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+.dialogue.speaking .dialogue-sprite:not(.entering) {
+    animation: dialogue-bob 0.24s ease-in-out infinite alternate;
+}
+
+/* choices take the bottom of the screen */
+.dialogue-choices {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+.dialogue-choices:empty {
+    display: none;
+}
+.dialogue-choices button {
+    padding: 12px 16px;
+    border: 2px solid #fff;
+    border-radius: 12px;
+    background: #1b1b20;
+    color: #fff;
+    font: inherit;
+    font-size: 17px;
+    text-align: left;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes dialogue-enter {
+    from { transform: translateX(110%); }
+}
+@keyframes dialogue-bob {
+    to { transform: translateY(-4px); }
+}
+@keyframes dialogue-blink {
+    50% { opacity: 0; }
+}

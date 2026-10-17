@@ -1,0 +1,323 @@
+.puzzle {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 16px 16px max(28px, 6vh);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #1b1b20;
+    color: #fff;
+    font-family: system-ui, sans-serif;
+    /* hidden, so the contacts menu waiting below the edge never makes the puzzle scroll */
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.badge-row {
+    align-self: stretch;
+}
+
+/* a quiet nudge under the badge; it floats, so the screen below doesn't shift for it */
+.sequence-hint {
+    position: absolute;
+    /* just under the badge, which shrinks on short screens */
+    top: calc(26px + clamp(40px, 6.2vh, 52px));
+    left: 20px;
+    color: #4b4b56;
+    font-size: var(--hint-size);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    pointer-events: none;
+}
+.mode-code .sequence-hint,
+.puzzle.ringing .sequence-hint,
+.puzzle.talking .sequence-hint {
+    display: none;
+}
+
+/* the entry sits a little below the badge, the dial at the bottom */
+/* The number and the hints scale with the screen's height, like the dial below them,
+   and stop growing at their full size on a tall phone */
+.puzzle {
+    --hint-size: clamp(10px, 1.6vh, 12px);
+}
+.entry {
+    /* never closer than the bottom of the hint's four lines, which float under the badge */
+    margin-top: max(clamp(20px, 9vh, 96px), calc(18px + 4.4 * var(--hint-size)));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(14px, 4vh, 36px);
+}
+
+.slots {
+    display: flex;
+    gap: clamp(14px, 2.6vh, 22px);
+}
+.slot-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(14px, 4vh, 36px);
+}
+.slot-digits {
+    display: flex;
+    gap: clamp(6px, 1.1vh, 9px);
+}
+.slot-digits span {
+    width: clamp(24px, 4.1vh, 34px);
+    height: clamp(36px, 6vh, 50px);
+    border-bottom: clamp(3px, 0.5vh, 4px) solid #fff;
+    font-size: clamp(26px, 4.3vh, 36px);
+    line-height: clamp(36px, 6vh, 50px);
+    text-align: center;
+}
+/* nine digits in three groups need narrower slots to fit a phone */
+.mode-code .slot-digits {
+    gap: clamp(4px, 0.7vh, 6px);
+}
+.mode-code .slot-digits span {
+    width: clamp(21px, 3.4vh, 28px);
+    font-size: clamp(23px, 3.9vh, 32px);
+}
+
+.ring-label {
+    display: none;
+    margin: auto 0;
+    font-size: 24px;
+}
+.puzzle.ringing .ring-label {
+    display: block;
+}
+.ring-label span {
+    animation: fibonacci-dots 1.2s infinite;
+}
+.ring-label span:nth-child(2) { animation-delay: 0.2s; }
+.ring-label span:nth-child(3) { animation-delay: 0.4s; }
+.puzzle.ringing .entry,
+.puzzle.ringing .dial,
+.puzzle.talking .entry,
+.puzzle.ringing .contacts-button,
+.puzzle.talking .contacts-button,
+.mode-code .contacts-button,
+.puzzle.talking .dial,
+.puzzle.ringing .keypad,
+.puzzle.talking .keypad,
+.mode-dial .keypad,
+.mode-code .dial {
+    display: none;
+}
+.slots.wrong {
+    animation: fibonacci-shake 0.35s;
+}
+.slots.wrong .slot-digits span {
+    border-color: #ff4a5a;
+}
+.solved .slot-digits span {
+    color: #3ddc6a;
+    border-color: #3ddc6a;
+}
+
+.teams {
+    display: flex;
+    gap: clamp(22px, 4.1vh, 34px);
+}
+.team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(3px, 0.7vh, 6px);
+    font-size: clamp(14px, 2.3vh, 19px);
+}
+.team-icon {
+    width: clamp(22px, 3.8vh, 32px);
+    height: clamp(22px, 3.8vh, 32px);
+}
+
+/* numbers that picked up before, in a menu that slides up from the bottom */
+.puzzle {
+    position: relative;
+}
+.contacts-button {
+    flex: none;
+    margin-top: clamp(10px, 1.9vh, 16px);
+    padding: clamp(8px, 1.4vh, 12px) clamp(16px, 2.6vh, 22px);
+    border: 0;
+    border-radius: 12px;
+    background: #fff;
+    color: #1b1b20;
+    font: inherit;
+    font-size: clamp(14px, 2vh, 17px);
+    font-weight: 600;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+.contact-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    background: rgba(0, 0, 0, 0.55);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+.contact-sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 5;
+    box-sizing: border-box;
+    max-height: 65%;
+    padding: 18px 16px max(24px, 4vh);
+    display: flex;
+    flex-direction: column;
+    border-top: 2px solid #fff;
+    border-radius: 18px 18px 0 0;
+    background: #1b1b20;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+.contacts-open .contact-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+}
+.contacts-open .contact-sheet {
+    transform: none;
+}
+.contact-sheet-title {
+    margin-bottom: 12px;
+    font-size: 19px;
+    font-weight: 600;
+}
+.contacts {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+}
+.contacts-empty {
+    margin: 4px 0 8px;
+    opacity: 0.7;
+    font-size: 16px;
+}
+.contact {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border: 2px solid #fff;
+    border-radius: 12px;
+    background: transparent;
+    color: #fff;
+    font: inherit;
+    text-align: left;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+.contact .team-icon {
+    width: 28px;
+    height: 28px;
+}
+.contact span {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+}
+.contact b {
+    font-size: 17px;
+}
+.contact small {
+    font-size: 14px;
+    opacity: 0.75;
+    letter-spacing: 0.05em;
+}
+
+/* the dial takes whatever height is left between the hints and the contacts button,
+   so on a short screen it shrinks instead of pushing the button off the bottom */
+.dial {
+    flex: 1 1 0;
+    min-height: 0;
+    align-self: stretch;
+    margin-top: 16px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+.dial-svg {
+    display: block;
+    height: 100%;
+    width: auto;
+    max-width: min(86vw, 360px);
+    max-height: 100%;
+    aspect-ratio: 1;
+    overflow: visible;
+    touch-action: none;
+}
+.dial-plate circle {
+    fill: #1b1b20;
+    stroke: #fff;
+    stroke-width: 2;
+}
+.dial-digit {
+    fill: #fff;
+    font-size: 17px;
+    font-weight: 600;
+    text-anchor: middle;
+    dominant-baseline: central;
+}
+.dial-face {
+    fill: #fff;
+}
+.dial-center {
+    fill: #1b1b20;
+}
+.dial-stop {
+    stroke: #9a9aa5;
+    stroke-width: 7;
+    stroke-linecap: round;
+}
+.keypad {
+    margin-top: auto;
+    padding-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 10px;
+}
+.keypad button {
+    width: clamp(64px, 22vw, 84px);
+    height: clamp(56px, 9vh, 72px);
+    border: 0;
+    border-radius: 12px;
+    background: #fff;
+    color: #1b1b20;
+    font: inherit;
+    font-size: 28px;
+    font-weight: 600;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+.keypad button.pressed {
+    background: rgba(255, 255, 255, 0.6);
+}
+/* the 0 hangs below the grid, under the 8 */
+.keypad button:last-child {
+    grid-column: 2;
+}
+.solved .keypad,
+.solved .dial {
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+@keyframes fibonacci-shake {
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+}
+
+@keyframes fibonacci-dots {
+    0%, 20% { opacity: 0; }
+    50%, 100% { opacity: 1; }
+}

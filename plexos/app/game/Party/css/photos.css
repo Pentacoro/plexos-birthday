@@ -1,0 +1,94 @@
+.photo-viewer {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    overflow: hidden;
+    background: rgba(12, 12, 15, 0.96);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.photo-strip {
+    display: flex;
+    height: 100%;
+}
+.photo-strip.animate {
+    transition: transform 0.3s ease;
+}
+.photo-slide {
+    flex: none;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 64px 16px 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.photo-slide img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 10px;
+    pointer-events: none;
+}
+
+.photo-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 12px;
+    background: #fff;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+/* an X drawn with two bars, so it never depends on a font */
+.photo-close::before,
+.photo-close::after {
+    content: "";
+    position: absolute;
+    left: 11px;
+    top: 20px;
+    width: 22px;
+    height: 4px;
+    border-radius: 2px;
+    background: #1b1b20;
+    transform: rotate(45deg);
+}
+.photo-close::after {
+    transform: rotate(-45deg);
+}
+
+.photo-dots {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 18px;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+}
+.photo-dots button {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+.photo-dots button::before {
+    content: "";
+    display: block;
+    width: 10px;
+    height: 10px;
+    margin: auto;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+}
+.photo-dots button.on::before {
+    background: #fff;
+}

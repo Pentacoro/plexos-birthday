@@ -3,13 +3,14 @@ import ContextMenu from "../plexos/lib/classes/interface/contextmenu.js"
 import DirectoryFile from "../plexos/lib/classes/filesystem/directory.js"
 import File from "../plexos/lib/classes/filesystem/file.js"
 import initialize, { openDesktop } from "../plexos/ini/init.js"
+import { runLauncher } from "../plexos/lib/functions/dll.js"
 import { applyThemeFace } from "../plexos/lib/functions/theme.js"
 import { installReadOnly } from "../plexos/lib/functions/readOnly.js"
 import { el, landing, uniqueName } from "./state.js"
 import { closePopup, fitCoreMenu, resetLogonPlace } from "./stage.js"
 import { bindManagerAppIDs, closeLanding, releaseWindowLayer } from "./window.js"
 
-const keptDesktopFiles = new Set(["background.json", "grid.json", "icon.json", "taskbar.json"])
+const keptDesktopFiles = new Set(["background.json", "grid.json", "icon.json"])
 
 function remotesOf(user) {
     const stored = user?.remoteCores
@@ -37,23 +38,24 @@ function nodeAt(tree, parts) {
     return node
 }
 
-export async function bootLocalPlexos() {
+// Without a name, the last user (or the first one) boots. A name with no profile yet gets one.
+export async function bootLocalPlexos(name = null) {
     const users = await plexos.db.listUsers()
-    const preferred = plexos.Config?.lastUserLog || plexos.Config?.defaultUser
-    let user = users.find(item => item.name === preferred) || users[0] || null
+    const preferred = name || plexos.Config?.lastUserLog || plexos.Config?.defaultUser
+    let user = users.find(item => item.name === preferred) || (name ? null : users[0]) || null
     if (!user) {
         user = {
-            name: "User",
+            name: name || "User",
             created: Date.now(),
             localCores: [],
             remoteCores: { Plexos: "/core.json" },
             config: { lastOpenedCore: null, profileImage: null, password: null },
         }
         await plexos.db.saveUser(user)
-        plexos.Config.lastUserLog = user.name
-        if (!plexos.Config.defaultUser) plexos.Config.defaultUser = user.name
-        await plexos.db.setConfig(plexos.Config)
     }
+    plexos.Config.lastUserLog = user.name
+    if (!plexos.Config.defaultUser) plexos.Config.defaultUser = user.name
+    await plexos.db.setConfig(plexos.Config)
     user.localCores = user.localCores || []
     user.config = user.config || { lastOpenedCore: null, profileImage: null, password: null }
     plexos.System.user = user
@@ -117,6 +119,8 @@ export async function mountTree(tree, { readOnly, name }) {
             await plexos.db.saveUser(user)
         }
         await initialize()
+        // a scheme chosen at login (the player's team) wins over the core's saved one
+        if (plexos.Boot.colorScheme && plexos.Settings?.system) plexos.Settings.system.colorScheme = plexos.Boot.colorScheme
         bindManagerAppIDs()
         closeLanding()
         await applyThemeFace("session")
@@ -124,6 +128,7 @@ export async function mountTree(tree, { readOnly, name }) {
         document.body.classList.remove("booting")
         plexos.Core.mem.booting = false
         await openDesktop("@/home/desks/desktop")
+        await runLauncher("./plexos/app/game/Party/party.ls")
         if (readOnly) installReadOnly()
     } catch (error) {
         landing.mounting = false

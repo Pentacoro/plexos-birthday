@@ -59,20 +59,10 @@ export default class Window {
 			this.minH = p?.minH || 100
 		}
 	}
+	// Window Manager re-fits maximized windows when the viewport changes
 	static maximize(window) {
-		if (window.drawParams.maximized) {
-			window.drawParams.maximized = false
-			window.poseNode()
-			System.bus.off("viewport-resize", () => {
-				window.poseNode()
-			})
-		} else {
-			window.drawParams.maximized = true
-			window.poseNode()
-			System.bus.on("viewport-resize", () => {
-				window.poseNode()
-			})
-		}
+		window.drawParams.maximized = !window.drawParams.maximized
+		window.poseNode()
 	}
 
 	// Task that owns a modal stack blocking this window (parent chrome, or a lower dialog).

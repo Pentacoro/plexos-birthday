@@ -65,6 +65,22 @@ desktop.node.addEventListener("mousedown", e => {
 	}
 })
 
+// A finger on bare desktop does what a mouse press does: clears the selection and draws the
+// select box, which then gathers icons to move together. Phones only send mouse events once
+// the touch is over, so this listens for the touch itself.
+desktop.node.style.touchAction = "none"
+desktop.node.addEventListener("pointerdown", e => {
+	if (e.pointerType !== "touch") return
+	if (!(e.target.id == "desktopLayer" || e.target.id == "selectBox" || e.target.classList.contains("gap"))) return
+	if (System.mem.var.dragging) return
+	task.focus()
+	for (let icon of desktop.pocket){
+		desktop.pocket = desktop.pocket.remove(icon)
+		icon.statNode(0)
+	}
+	desktop.mem.selectBox(e)
+})
+
 task.onfocus = e => {
 	for (let icon of mem.iconArr) {
 		icon.focus()
@@ -112,8 +128,10 @@ desktop.mem.selectBox = function(e={ctrlKey:false}) {
 		selectBox.style.left = posxIn + "px"
 
 		iframeAntiHover(true)
-		document.onmouseup = selectBoxRelease
-		document.onmousemove = selectBoxSizing
+		// a touch's late mouse events are cancelled by its pointerdown, so it follows pointer events
+		const kind = e.pointerType === "touch" ? "pointer" : "mouse"
+		document["on" + kind + "up"] = selectBoxRelease
+		document["on" + kind + "move"] = selectBoxSizing
 	}
 	
 	//resizing-----------------------------|
@@ -150,6 +168,8 @@ desktop.mem.selectBox = function(e={ctrlKey:false}) {
 		iframeAntiHover(false)
 		document.onmouseup = null
 		document.onmousemove = null
+		document.onpointerup = null
+		document.onpointermove = null
 
 		//iconReaction--------------------------------------------------|
 		for (let icon of desktop.mem.iconArr){

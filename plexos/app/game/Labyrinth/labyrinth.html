@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/plexos/app/game/Party/css/badge.css">
+    <link rel="stylesheet" href="/plexos/app/game/Party/css/photos.css">
+    <link rel="stylesheet" href="./css/labyrinth.css">
+    <title>Laberinto Yuxtapuesto</title>
+</head>
+<body>
+
+    <div class="puzzle">
+        <div class="badge-row"></div>
+        <div class="board"><svg class="matrix"></svg></div>
+        <div class="pad">
+            <button type="button" class="move up" data-move="up" aria-label="Arriba"></button>
+            <button type="button" class="move left" data-move="left" aria-label="Izquierda"></button>
+            <button type="button" class="move right" data-move="right" aria-label="Derecha"></button>
+            <button type="button" class="move down" data-move="down" aria-label="Abajo"></button>
+        </div>
+        <p class="done-note">Lorem ipsum: llegaste al final del laberinto.</p>
+    </div>
+
+    <script type="module" src="./js/def.js"></script>
+    <script type="module" src="./js/ui.js"></script>
+    <script type="module" src="./js/matrix.js"></script>
+    <script type="module" src="./js/walk.js"></script>
+    <script type="module" src="./js/events.js"></script>
+    <script type="module" src="./js/run.js"></script>
+
+</body>
+</html>
