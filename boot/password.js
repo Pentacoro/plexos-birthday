@@ -6,6 +6,7 @@ import { playerByPassword, playerByName } from "../plexos/app/game/Party/players
 import { teams } from "../plexos/app/game/Party/teams.js"
 import { showWelcome, loadWelcomeStyle } from "./welcome.js"
 import { wrong } from "../plexos/app/game/Party/sound.js"
+import { lang } from "../plexos/app/game/Party/lang.js"
 
 // Typed in place of a password, this brings back whoever the secret number wiped (Party's
 // void.js kept their core aside). PLACEHOLDER: set it to the real code; no player may have it.
@@ -52,6 +53,7 @@ export function showPasswordBar() {
             return
         }
         input.disabled = true
+        lang.current = player.lang || "es"
         // the system takes the player's team color from the first frame of the desktop
         plexos.Boot.colorScheme = teams[player.team]?.scheme || null
         // the welcome stays up while the desktop loads behind it, and at least long enough to read

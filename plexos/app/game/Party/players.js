@@ -1,5 +1,5 @@
 // Everyone at the party, with their team, the playing card that stands for them, and how
-// the welcome greets them (Bienvenido or Bienvenida). Boot reads this before any core exists, so it stays a plain module.
+// the welcome greets them (Bienvenido or Bienvenida). lang: "en" plays the game in English (lang.js). Boot reads this before any core exists, so it stays a plain module.
 export const players = [
     { name: "Catalina", password: "EN9", team: "clubs", card: "7", greeting: "Bienvenida" },
     { name: "Fer", password: "3WX", team: "hearts", card: "8", greeting: "Bienvenida" },
@@ -25,10 +25,10 @@ export const players = [
     { name: "Daniela", password: "36U", team: "spades", card: "Q", greeting: "Bienvenida" },
     { name: "Marce", password: "73M", team: "diamonds", card: "J", greeting: "Bienvenido" },
     // test users, one per team, with the Entrenador app: remove before the party
-    { name: "Prueba Picas", password: "PK1", team: "spades", card: "A", greeting: "Bienvenido", tester: true },
-    { name: "Prueba Corazones", password: "CR2", team: "hearts", card: "A", greeting: "Bienvenido", tester: true },
-    { name: "Prueba Tréboles", password: "TR3", team: "clubs", card: "A", greeting: "Bienvenido", tester: true },
-    { name: "Prueba Diamantes", password: "DM4", team: "diamonds", card: "A", greeting: "Bienvenido", tester: true },
+    { name: "Prueba Picas", password: "PK1", team: "spades", card: "A", greeting: "Bienvenido", tester: true, lang: "en" },
+    { name: "Prueba Corazones", password: "CR2", team: "hearts", card: "A", greeting: "Bienvenido", tester: true, lang: "en" },
+    { name: "Prueba Tréboles", password: "TR3", team: "clubs", card: "A", greeting: "Bienvenido", tester: true, lang: "en" },
+    { name: "Prueba Diamantes", password: "DM4", team: "diamonds", card: "A", greeting: "Bienvenido", tester: true, lang: "en" },
     // starts with the whole game done (Party's everything.js), and counts as Mariana and Pentacoro
     { name: "Prueba Todo", password: "TD5", team: "hearts", card: "A", greeting: "Bienvenido", everything: true, tester: true },
 ]

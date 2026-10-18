@@ -1,4 +1,5 @@
 import {blip} from "./sound.js"
+import {t} from "./lang.js"
 
 // Character dialogue, after the stage system in Male. A conversation is a list of lines.
 // Each line types out letter by letter, pausing longer after "." and ",". A tap shows the
@@ -104,6 +105,8 @@ export class Dialogue {
     say(line) {
         this.setFace(line.sprite || this.face)
         if (this.frames) this.sprite.src = this.frames.talking
+        // in the player's language, typed out as it will read
+        const text = t(line.text)
         this.text.textContent = ""
         this.choices.replaceChildren()
         this.node.classList.remove("waiting")
@@ -115,8 +118,8 @@ export class Dialogue {
 
             const finish = () => {
                 clearTimeout(timer)
-                shown = line.text.length
-                this.text.textContent = line.text
+                shown = text.length
+                this.text.textContent = text
                 if (this.frames) this.sprite.src = this.frames.rest
                 this.node.classList.remove("speaking")
                 if (line.choices) return offer()
@@ -143,7 +146,7 @@ export class Dialogue {
                 for (const option of line.choices) {
                     const button = document.createElement("button")
                     button.type = "button"
-                    button.textContent = option.label
+                    button.textContent = t(option.label)
                     button.addEventListener("pointerdown", e => {
                         e.preventDefault()
                         leave(option.value ?? option)
@@ -152,8 +155,8 @@ export class Dialogue {
                 }
             }
             const type = () => {
-                if (shown >= line.text.length) return finish()
-                const letter = line.text.charAt(shown++)
+                if (shown >= text.length) return finish()
+                const letter = text.charAt(shown++)
                 this.text.textContent += letter
                 // each letter in the speaker's voice, the spaces and marks silent
                 if (/[\p{L}\p{N}]/u.test(letter)) blip(this.voice)

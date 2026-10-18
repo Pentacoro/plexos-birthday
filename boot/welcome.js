@@ -1,4 +1,5 @@
 import { el } from "./state.js"
+import { t } from "../plexos/app/game/Party/lang.js"
 import { teams } from "../plexos/app/game/Party/teams.js"
 
 // Between the password and the desktop: the player's suit in their team color, their card
@@ -29,7 +30,7 @@ export async function showWelcome(player) {
         card.innerHTML = `<svg viewBox="0 0 24 24"><path d="${team.path}" fill="none" stroke="${team.color}" stroke-width="1.6" stroke-linejoin="round"/></svg>`
         card.append(el("span", "welcome-number", player.card))
     }
-    screen.append(card, el("p", "welcome-name", `${player.greeting || "Bienvenido"}, ${player.name}`))
+    screen.append(card, el("p", "welcome-name", `${t(player.greeting || "Bienvenido")}, ${player.name}`))
     document.body.append(screen)
 
     return {

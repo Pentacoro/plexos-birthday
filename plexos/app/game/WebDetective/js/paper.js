@@ -1,4 +1,5 @@
 import {getTask} from "/plexos/lib/functions/dll.js"
+import {t} from "/plexos/app/game/Party/lang.js"
 
 let task = getTask(/TASKID/)
 let mem  = task.mem
@@ -22,10 +23,10 @@ mem.showLetterText = (text, heading = mem.letterHeading) => {
     if (heading) {
         const title = document.createElement("strong")
         title.className = "letter-heading"
-        title.textContent = heading
+        title.textContent = t(heading)
         mem.letterText.append(title)
     }
-    mem.letterText.append(text)
+    mem.letterText.append(t(text))
     mem.letterText.scrollTop = 0
     mem.letter.classList.remove("mode-answer")
     mem.letter.classList.add("mode-text")

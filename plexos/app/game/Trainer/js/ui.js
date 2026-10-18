@@ -1,12 +1,15 @@
 import {getTask} from "/plexos/lib/functions/dll.js"
+import {lang} from "/plexos/app/game/Party/lang.js"
 import {puzzles, firstUnlock, unlockTime, isUnlocked, clock, clockOffset, allUnlocked} from "/plexos/app/game/Party/puzzles.js"
 
 let task = getTask(/TASKID/)
 let mem  = task.mem
 
 const zone = "America/Argentina/Buenos_Aires"
-const time = new Intl.DateTimeFormat("es-AR", { weekday: "short", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23", timeZone: zone })
-const hour = new Intl.DateTimeFormat("es-AR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: zone })
+// dates in the player's language, always at the party's own time
+const locale = lang.current === "en" ? "en-US" : "es-AR"
+const time = new Intl.DateTimeFormat(locale, { weekday: "short", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23", timeZone: zone })
+const hour = new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: zone })
 const stored = (key) => { try { return localStorage.getItem(key) } catch { return null } }
 mem.store = (key, value) => { try { value === null ? localStorage.removeItem(key) : localStorage.setItem(key, value) } catch { /* nothing kept */ } }
 

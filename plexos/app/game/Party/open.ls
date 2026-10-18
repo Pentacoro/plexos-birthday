@@ -4,6 +4,7 @@ import Task from "/plexos/lib/classes/system/task.js"
 import {runLauncher} from "/plexos/lib/functions/dll.js"
 import {shortcutById} from "/plexos/app/game/Party/puzzles.js"
 import {reopen} from "/plexos/app/game/Party/puzzleWindow.js"
+import {t} from "/plexos/app/game/Party/lang.js"
 
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -35,7 +36,7 @@ export default {
         if (exte === "contact" && file.data === "0000000") {
             await Task.get("Party").cmd("file.delete", { path: args.path })
             File.open(args.path)
-            if (!File.at(args.path)) plexos.System.popup(null, [["OK"]], { name: "Error", type: false, title: "Archivo no encontrado", description: "El archivo ya no existe.", icon: "" })
+            if (!File.at(args.path)) plexos.System.popup(null, [["OK"]], { name: "Error", type: false, title: t("Archivo no encontrado"), description: t("El archivo ya no existe."), icon: "" })
         } else if (exte === "contact") {
             const mem = await openApp("fibonacci", mem => mem.dialContact && mem.mode)
             if (!mem) return

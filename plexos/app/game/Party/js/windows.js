@@ -5,6 +5,7 @@ import Task from "/plexos/lib/classes/system/task.js"
 import Window from "/plexos/lib/classes/interface/window.js"
 import {reopen} from "/plexos/app/game/Party/puzzleWindow.js"
 import {pushBack, leave} from "/plexos/app/game/Party/backStack.js"
+import {t} from "/plexos/app/game/Party/lang.js"
 
 let task = getTask(/TASKID/)
 let mem  = task.mem
@@ -71,8 +72,8 @@ mem.phoneWindow = (win) => {
         const second = twoColumns[path]
         win.node.classList.toggle("party-two-columns", !!second)
         if (!second) return
-        win.node.querySelector(".detailsColumn.name").firstChild.textContent = "Nombre"
-        win.node.querySelector(".detailsColumn.type").firstChild.textContent = second
+        win.node.querySelector(".detailsColumn.name").firstChild.textContent = t("Nombre")
+        win.node.querySelector(".detailsColumn.type").firstChild.textContent = t(second)
     }
     // where it was opened, if that is anywhere else
     if (!inside(owner.mem.address ?? owner.mem.arg?.address ?? inventory)) owner.mem.navigate(inventory)

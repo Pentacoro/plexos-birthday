@@ -3,6 +3,7 @@ import plexos from "/boot/plexos.js"
 import {players, playerByName} from "./players.js"
 import {teams} from "./teams.js"
 import {access} from "./puzzles.js"
+import {lang} from "./lang.js"
 
 let task = getTask(/TASKID/)
 let mem  = task.mem
@@ -13,3 +14,5 @@ mem.teams   = teams
 mem.player  = playerByName(plexos.User)
 // the test users play with everything open, whatever the time
 access.tester = !!mem.player?.tester
+// the language the game speaks to this player (lang.js)
+lang.current = mem.player?.lang || "es"
