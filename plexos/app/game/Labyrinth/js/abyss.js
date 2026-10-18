@@ -10,7 +10,9 @@ let mem  = task.mem
 // blocks, each a maze of its own joined to its neighbours, so it goes on forever and never closes.
 const block = 8
 const across = 9          // cells across the screen
-const grace = 2           // the dot wanders this far from the middle before the view follows
+// how far the dot wanders from the middle before the view follows: [across, up and down], a
+// box 3 cells wide and 5 tall, as the screen is taller than wide
+const grace = [1, 2]
 
 function hash(text) {
     let seed = 2166136261
@@ -161,7 +163,7 @@ mem.abyss = async () => {
         // the view only follows once the dot leaves the middle
         target = target.map((t, i) => {
             const offset = at[i] + 0.5 - t
-            return Math.abs(offset) > grace ? at[i] + 0.5 - Math.sign(offset) * grace : t
+            return Math.abs(offset) > grace[i] ? at[i] + 0.5 - Math.sign(offset) * grace[i] : t
         })
     }
 

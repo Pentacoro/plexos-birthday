@@ -107,10 +107,11 @@ mem.drawMatrix = () => {
     const pad = OFF + 0.9
     m.setAttribute("viewBox", `${-pad} ${-pad} ${maze.w + pad * 2} ${maze.h + pad * 2}`)
     m.append(drawBorder(maze))
-    // only the opening come in by, plus this team's way out of the first maze; every opening
-    // once the maze is passed
+    // only the opening come in by and the way on (this team's, out of the first maze); every
+    // opening once the maze is passed
+    const wayOn = leg.maze === "first" ? mem.firstExit : "exit"
     for (const o of maze.openings) {
-        const shown = mem.shows(leg.maze) || o.role === leg.enter || (leg.maze === "first" && o.role === mem.firstExit)
+        const shown = mem.shows(leg.maze) || o.role === leg.enter || o.role === wayOn
         if (shown) arrow(m, maze, o.edge, o.role.startsWith("entry"))
     }
     // once this maze is passed, its walls and the player show

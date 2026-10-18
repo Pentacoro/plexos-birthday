@@ -47,7 +47,8 @@ export default {
         } else if (exte === "item") {
             // an item is only proof of what was given: nothing opens
         } else if (exte === "maze") {
-            await openApp("labyrinth", () => true)
+            const mem = await openApp("labyrinth", mem => mem.showMaze && mem.leg && !mem.busy)
+            mem?.showMaze(file.data)
         } else {
             await openApp(file.data, () => true)
         }

@@ -112,6 +112,14 @@ mem.goBack = async (leg) => {
     mem.busy = false
 }
 
+// A maze kept in the Inventario, opened: the player stands at its way in (diamonds' own, in the
+// second), unless they are in it already
+mem.showMaze = async (name) => {
+    if (mem.busy || !mem.mazes[name] || mem.leg?.maze === name) return
+    const enter = name === "second" && mem.team === "diamonds" ? "entry-diamonds" : "entry"
+    await mem.goBack({ maze: name, enter })
+}
+
 mem.fadeTo = async (show) => {
     mem.matrix.classList.add("leaving")
     await new Promise(resolve => setTimeout(resolve, 450))
