@@ -48,7 +48,33 @@ function afterClear(stage) {
     another.type = "button"
     mem.pressKeys(another, () => !mem.busy && mem.showPairing())
     another.dataset.key = "another"
-    mem.screen.append(mem.el("p", "done-note", mem.doneText), another)
+    // the first tap only asks, so a stray one doesn't throw the pairing away
+    const reset = mem.el("button", "pair-confirm pair-reset", "Reiniciar emparejamiento")
+    reset.type = "button"
+    reset.dataset.key = "reset"
+    mem.pressKeys(reset, () => {
+        if (mem.busy) return
+        if (!reset.classList.contains("asking")) {
+            reset.classList.add("asking")
+            reset.textContent = "¿Seguro? Tocá otra vez"
+            return
+        }
+        mem.resetPair()
+    })
+    mem.screen.append(mem.el("p", "done-note", mem.doneText), another, reset)
+}
+
+// This pairing from the start: every stage, the code heard on the phone, and with the own team
+// the roles too. The codes already kept stay in the Inventario.
+mem.resetPair = async () => {
+    mem.busy = true
+    const pairs = { ...mem.party.flag(mem.id, "pairs") }
+    delete pairs[mem.partner]
+    await mem.party.setFlag(mem.id, "pairs", pairs)
+    mem.busy = false
+    if (mem.partner === mem.team) return mem.showRoles()
+    mem.pairWith(mem.partner)
+    mem.showStage(0)
 }
 
 mem.advance = async () => {

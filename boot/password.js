@@ -30,16 +30,16 @@ export function showPasswordBar() {
     landing.stage = el("div", "landing-stage landing-password")
     const input = el("input", "landing-password-input")
     input.type = "password"
-    input.inputMode = "numeric"
-    // iOS only opens the number pad for a password field with this pattern
-    input.pattern = "[0-9]*"
+    // letters and digits, typed in either case
+    input.autocapitalize = "characters"
+    input.spellcheck = false
     input.maxLength = 3
     input.autocomplete = "off"
     input.placeholder = "• • •"
     input.setAttribute("aria-label", "Password")
 
     input.oninput = async () => {
-        input.value = input.value.replace(/\D/g, "")
+        input.value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, "")
         input.classList.remove("wrong")
         if (input.value.length < 3) return
         const player = input.value === restoreCode ? await restoreVoided() : playerByPassword(input.value)

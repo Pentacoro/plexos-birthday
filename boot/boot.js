@@ -1,6 +1,6 @@
 // No core yet. Config in IndexedDB names the landing face; Theme Manager and
 // Window Manager start on that face, and the stage below draws on #windowLayer.
-// The landing is a single password bar. Each player's 3 digit password picks their
+// The landing is a single password bar. Each player's 3 character password, letters and digits, picks their
 // profile, which boots its own writable local clone of the core. Mounting it
 // closes this stage, swaps in the core's session face from settings.json, and
 // only then opens the desktop. The profile and core landing (users.js, cores.js) stays unused.
