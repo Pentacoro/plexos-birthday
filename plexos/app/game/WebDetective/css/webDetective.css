@@ -52,17 +52,17 @@
 }
 .env-back {
     z-index: 1;
-    background: #c4ae83;
+    background: color-mix(in srgb, var(--env, #e6d5ae) 78%, #000);
 }
 .env-front {
     z-index: 3;
-    background: #e6d5ae;
+    background: var(--env, #e6d5ae);
     clip-path: polygon(0 0, 50% 52%, 100% 0, 100% 100%, 0 100%);
 }
 .env-flap {
     z-index: 4;
     height: calc(var(--eh) * 0.58);
-    background: #d8c296;
+    background: color-mix(in srgb, var(--env, #e6d5ae) 92%, #000);
     clip-path: polygon(0 0, 100% 0, 50% 100%);
     transform-origin: top center;
 }
@@ -438,4 +438,225 @@
     margin: 19%;
     fill: color-mix(in srgb, var(--team) 55%, #000);
     opacity: 0.75;
+}
+
+.investigate[hidden] { display: none; }
+
+/* the final letter's paper is black and its writing white */
+.letter.noir .letter-full,
+.letter.noir .half {
+    background: #121216;
+    color: #f2f2f2;
+}
+.letter.noir .answer-slots span {
+    border-color: #f2f2f2;
+    color: #f2f2f2;
+}
+/* the passwords already sent on it, above the line being typed */
+.answer-history {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 10px;
+    font: 600 22px "Courier New", monospace;
+    letter-spacing: 0.3em;
+}
+.answer-history:empty {
+    display: none;
+}
+
+/* each letter's envelope is the color of its file's icon (--env, set per letter in dressLetter) */
+
+/* the final letter: black, a faint white glow so its edges show, a seal and a stamp of solid gold
+   with a soft shine passing through them */
+.stage.premium .env-back,
+.stage.premium .env-front,
+.stage.premium .env-flap {
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.14));
+}
+.stage.premium .env-seal,
+.stage.premium .env-stamp-face {
+    background:
+        linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, calc(0.6 * var(--tm, 0))) 33%, transparent 36%, transparent 42%, rgba(255, 255, 255, calc(0.4 * var(--tm, 0))) 44%, transparent 46%) calc(50% + var(--tx, 0) * 110%) 0 / 300% 100% no-repeat,
+        linear-gradient(135deg, #f7e08f, #d4a73e 45%, #a87b22 75%, #e9c86a);
+    box-shadow: inset 0 0 0 1.5px rgba(120, 86, 20, 0.6);
+}
+.stage.premium .env-stamp-face svg path {
+    fill: #8a6a24;
+}
+
+/* (every effect here sits still with the card and comes alive as it tilts: tilt.js sets --tx and
+   --ty, -1 to 1 each way, and --tm, how far it is turned, 0 to 1) */
+
+/* the secret letter: the team's color, vivid and plain; its own gem for a seal, faceted and set in
+   a white bezel (gems.js); a polychrome stamp framed in white, with the team's suit in white and
+   the player's own card on it */
+.stage.secret .env-back,
+.stage.secret .env-front,
+.stage.secret .env-flap {
+    filter: saturate(1.25);
+}
+.stage.secret .env-seal {
+    left: calc(50% - 23px);
+    bottom: 6%;
+    width: 46px;
+    height: 46px;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
+}
+.stage.secret .env-seal svg {
+    display: none;
+}
+.stage.secret .env-seal svg.gem {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 1;
+}
+.stage:not(.secret) .env-seal svg.gem {
+    display: none !important;
+}
+/* the glint follows the tilt, faint while still */
+.env-seal .gem-glint {
+    opacity: calc(0.25 + 0.75 * var(--tm, 0));
+    transform: translate(calc(var(--tx, 0) * 7px), calc(var(--ty, 0) * 5px));
+}
+.stage.secret .env-stamp-face {
+    position: relative;
+    background: linear-gradient(120deg, #ff5f8f, #ffd36b, #6bf0a0, #5fb8ff, #b07bff, #ff5f8f) calc(50% + var(--tx, 0) * 40%) calc(50% + var(--ty, 0) * 40%) / 400% 400%;
+    box-shadow: inset 0 0 0 2.5px #fff;
+}
+.stage.secret .env-stamp-face svg.suit path {
+    fill: #fff;
+}
+.stamp-card {
+    display: none;
+}
+.stage.secret .stamp-card {
+    display: block;
+    position: absolute;
+    top: 7%;
+    left: 12%;
+    color: #fff;
+    font: 800 9px/1 system-ui, sans-serif;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+}
+
+/* the envelope and its letter turn together when tilted (tilt.js) */
+.tilt {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+.tilt > * {
+    pointer-events: auto;
+}
+.tilt-glare {
+    position: absolute;
+    z-index: 5;
+    left: calc(50% - var(--w) / 2);
+    top: calc(50% - var(--eh) / 2);
+    width: var(--w);
+    height: var(--eh);
+    border-radius: 8px;
+    opacity: 0;
+    mix-blend-mode: soft-light;
+    pointer-events: none !important;
+}
+.stage.mail-gone .tilt-glare,
+.stage.reading .tilt-glare,
+.stage.typing .tilt-glare {
+    display: none;
+}
+
+/* answering with a heart (Mariana's secret letter): every key is one, and any sends it */
+.keys.hearts .key {
+    position: relative;
+    color: transparent;
+}
+.keys.hearts .key svg {
+    visibility: hidden;
+}
+.keys.hearts .key::after {
+    content: "";
+    position: absolute;
+    inset: 26%;
+    background: #e03a55;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 20.5s-8-5-8-11a4.5 4.5 0 0 1 8-2.8 4.5 4.5 0 0 1 8 2.8c0 6-8 11-8 11z'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 20.5s-8-5-8-11a4.5 4.5 0 0 1 8-2.8 4.5 4.5 0 0 1 8 2.8c0 6-8 11-8 11z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* writing freely (Mariana's answer to her letter): punctuation and a space bar, and a page that
+   takes the text as it comes */
+.keys:not(.free) .key-row.extra {
+    display: none;
+}
+.key.space {
+    width: auto;
+    padding: 0 26px;
+    border-radius: 999px;
+    font-size: 13px;
+}
+.free-text {
+    display: none;
+}
+.answer.free .answer-slots {
+    display: none;
+}
+.answer.free .free-text {
+    display: block;
+    box-sizing: border-box;
+    min-height: 1.5em;
+    max-height: 9em;
+    margin: 0 14px;
+    padding-bottom: 4px;
+    overflow-y: auto;
+    border-bottom: 2px solid currentColor;
+    font: 17px/1.5 "Courier New", monospace;
+    text-align: left;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* Mariana's letter: soft red paper, in velvet red with a pearl seal and the Queen of Hearts in foil */
+.letter.rose .letter-full,
+.letter.rose .half {
+    background: #f7dfe2;
+    color: #5a1a24;
+}
+.stage.velvet .env-back,
+.stage.velvet .env-front,
+.stage.velvet .env-flap {
+    /* soft grain, light specks over dark ones, under the velvet's sheen */
+    background-image: radial-gradient(ellipse at 30% 15%, rgba(255, 255, 255, 0.16), transparent 60%), radial-gradient(ellipse at 80% 90%, rgba(0, 0, 0, 0.25), transparent 55%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3CfeGaussianBlur stdDeviation='0.35'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.4 -0.45'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E"), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeGaussianBlur stdDeviation='0.5'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1.6 -0.55'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23s)'/%3E%3C/svg%3E");
+    background-size: auto, auto, 120px 120px, 90px 90px;
+    background-blend-mode: normal, normal, soft-light, multiply;
+}
+.stage.velvet .env-seal {
+    background: radial-gradient(circle at 40% 35%, #fff, #ece6ea 55%, #c9bfc5);
+    box-shadow: inset 0 0 0 2px #dcd3d8, 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.env-stamp-face .queen-art {
+    display: none;
+}
+.stage.velvet .env-stamp-face svg.suit {
+    display: none;
+}
+.stage.velvet .env-stamp-face .queen-art {
+    display: block;
+    color: #5a1a24;
+}
+.stage.velvet .env-stamp-face {
+    padding: 6%;
+    background: linear-gradient(120deg, #d9dde3, #f7f8fa 25%, #b9c2cf 45%, #f3e9f5 60%, #c9d8e8 80%, #eef1f4) calc(50% + var(--tx, 0) * 40%) calc(50% + var(--ty, 0) * 40%) / 400% 400%;
+}
+
+/* the second step's "Incorrecto": a plain white envelope, no stamp, no seal */
+.stage.plain .env-stamp,
+.stage.plain .env-seal {
+    visibility: hidden;
 }

@@ -11,6 +11,10 @@ mem.submitCode = async (entry) => {
     const live = () => call === mem.callId
     mem.mode = "call"
     await mem.party.solveStep(mem.id, 2)
+    // the team's item, and with it the phone is won
+    const item = mem.items[mem.codeTeam]
+    mem.party.record("items", item.name, mem.codeTeam, { detail: item.detail, image: "/plexos/app/game/Party/img/item-" + mem.codeTeam + ".svg" })
+    mem.party.setBadge("contacts", 1)
     mem.root.classList.add("solved")
     await new Promise(resolve => setTimeout(resolve, 700))
     if (!live()) return true

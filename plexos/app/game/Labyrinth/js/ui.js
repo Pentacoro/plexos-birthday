@@ -9,10 +9,12 @@ mem.badge = categoryBadge("teams")
 mem.hint = hintButton(mem.hintEntry)
 mem.root.querySelector(".badge-row").append(mem.badge, mem.hint)
 
-// Per maze: the artifact's photos only in diamonds' maze, the hint only in the first one
+// Per maze: diamonds' own maze is their artifact, with its photos and room; the hint only
+// shows in the first maze
 mem.setStageBadges = () => {
     const leg = mem.leg
-    setCategory(mem.badge, "teams", leg.maze === "artifact" ? { photos: mem.artifactPhotos } : {})
+    if (leg.maze === "artifact" && mem.team === "diamonds") setCategory(mem.badge, "artifact", { photos: mem.artifactPhotos, place: mem.artifactPlace })
+    else setCategory(mem.badge, "teams")
     mem.hint.classList.remove("open")
     mem.hint.hidden = leg.maze !== "first"
 }

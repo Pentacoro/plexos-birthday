@@ -23,6 +23,10 @@ mem.ways = {}
 for (const [a, b] of links) { mem.ways[a] = b; mem.ways[b] = a }
 mem.ways["third:exit"] = "end"
 mem.start = { maze: "first", enter: "entry" }
+// what each maze is called as a file once revealed
+mem.mazeNames = { first: "Laberinto 1", artifact: "Laberinto del Artefacto", second: "Laberinto 2", third: "Laberinto 3" }
+// the one way out of the first maze each team is shown: diamonds to the left, toward their maze
+mem.firstExit = mem.team === "diamonds" ? "exit-diamonds" : "exit"
 
 // The whole puzzle needs the teams together. Diamonds' own maze is on an artifact, whose
 // hint photos show while they are in it. The hint book only covers the first maze.

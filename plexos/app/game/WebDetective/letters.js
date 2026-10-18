@@ -34,6 +34,46 @@ Curabitur pretium tincidunt lacus. Vulputate vehicula. Donec lobortis risus a el
     },
 ]
 
+// The last letter, after the last step is answered: it comes in a black envelope with a gold
+// seal. DRAFT: write them here.
+export const final = {
+    spades: `Picas, carta final.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
+    hearts: `Corazones, carta final.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
+    clubs: `Tréboles, carta final.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
+    diamonds: `Diamantes, carta final.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
+}
+
+// The secret letter, for answering the final one with passwords of three other teams: it comes
+// in an envelope of the team's color with a rainbow stamp and a gem for a seal. DRAFT.
+export const secret = {
+    spades: `Picas, carta secreta.
+
+Lorem ipsum dolor sit amet.`,
+    hearts: `Corazones, carta secreta.
+
+Lorem ipsum dolor sit amet.`,
+    clubs: `Tréboles, carta secreta.
+
+Lorem ipsum dolor sit amet.`,
+    diamonds: `Diamantes, carta secreta.
+
+Lorem ipsum dolor sit amet.`,
+}
+
+// Only for Mariana: once she answers the secret letter (with a heart), this comes in velvet red,
+// from Pentacoro. Write it here.
+export const queen = `Mariana:
+
+Acá va el mensaje especial.`
+
 // Heads the letter that comes back after a wrong answer, above that same letter again
 export const wrong = `Incorrecto`
 

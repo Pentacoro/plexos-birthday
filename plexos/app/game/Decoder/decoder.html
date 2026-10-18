@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./css/decoder.css">
+    <title>Descifrador</title>
+</head>
+<body>
+
+    <div class="decoder">
+        <label class="decoder-label" for="/TASKID/_locked">Mensaje cifrado</label>
+        <textarea class="decoder-locked" id="/TASKID/_locked" spellcheck="false" placeholder="Pegá el mensaje acá"></textarea>
+        <label class="decoder-label" for="/TASKID/_password">Contraseña</label>
+        <input class="decoder-password" id="/TASKID/_password" type="password" autocomplete="off">
+        <button type="button" class="decoder-open">Descifrar</button>
+        <div class="decoder-result"></div>
+    </div>
+
+    <script type="module" src="./js/def.js"></script>
+    <script type="module" src="./js/events.js"></script>
+
+</body>
+</html>

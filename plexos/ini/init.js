@@ -13,6 +13,8 @@ async function ensureSettingsFile() {
     if (!file?.data) throw new Error("This core has no settings.json")
     plexos.Settings = JSON.parse(file.data)
     plexos.Settings.system.transfer ??= { pace: "slowest", override: "" }
+    // what the party game keeps opens back in its puzzle
+    for (const exte of ["game", "contact", "carta", "maze", "item"]) plexos.Settings.apps[exte] ??= "/plexos/app/game/Party/open.ls"
 }
 
 export async function saveSettings() {
@@ -95,6 +97,24 @@ const labyrinthEntry = {
     launcherScriptFilePath: "/plexos/app/game/Labyrinth/labyrinth.ls",
 }
 
+const syncEntry = {
+    ...fibonacciEntry,
+    installationDirectory: "@/plexos/app/game/Sync",
+    launcherScriptFilePath: "/plexos/app/game/Sync/sync.ls",
+}
+
+const decoderEntry = {
+    ...fibonacciEntry,
+    installationDirectory: "@/plexos/app/game/Decoder",
+    launcherScriptFilePath: "/plexos/app/game/Decoder/decoder.ls",
+}
+
+const trainerEntry = {
+    ...fibonacciEntry,
+    installationDirectory: "@/plexos/app/game/Trainer",
+    launcherScriptFilePath: "/plexos/app/game/Trainer/trainer.ls",
+}
+
 // A saved core keeps the app catalog it was made with. This brings an older one up to date before the session
 // ids are issued. Each step leaves a core that already has it untouched.
 function upgradeRegistry(registry) {
@@ -107,6 +127,9 @@ function upgradeRegistry(registry) {
     if (!("Map" in data.STANDALONE)) data.STANDALONE.Map = mapEntry
     if (!("WebDetective" in data.STANDALONE)) data.STANDALONE.WebDetective = webDetectiveEntry
     if (!("Labyrinth" in data.STANDALONE)) data.STANDALONE.Labyrinth = labyrinthEntry
+    if (!("Sync" in data.STANDALONE)) data.STANDALONE.Sync = syncEntry
+    if (!("Decoder" in data.STANDALONE)) data.STANDALONE.Decoder = decoderEntry
+    if (!("Trainer" in data.STANDALONE)) data.STANDALONE.Trainer = trainerEntry
 }
 
 export default async function initialize() {

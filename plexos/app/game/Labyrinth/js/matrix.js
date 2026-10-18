@@ -1,4 +1,5 @@
 import {getTask} from "/plexos/lib/functions/dll.js"
+import {wrong} from "/plexos/app/game/Party/sound.js"
 
 let task = getTask(/TASKID/)
 let mem  = task.mem
@@ -86,7 +87,7 @@ function cap(g, kind, gender, p, q) {
     g.append(group)
 }
 
-// An arrow beyond an opening: pointing in for the way in, out for the way out
+// An arrow beyond an opening: always pointing in for a way in, out for a way out
 function arrow(group, maze, edge, inward) {
     const t = edge[0], [x, y] = edge.slice(1).split(",").map(Number)
     const far = OFF + 0.5
@@ -106,13 +107,21 @@ mem.drawMatrix = () => {
     const pad = OFF + 0.9
     m.setAttribute("viewBox", `${-pad} ${-pad} ${maze.w + pad * 2} ${maze.h + pad * 2}`)
     m.append(drawBorder(maze))
-    const enter = maze.openings.find(o => o.role === leg.enter)
-    if (enter) arrow(m, maze, enter.edge, true)
-    for (const o of maze.openings) if (o !== enter && mem.wayOut(o.role)) arrow(m, maze, o.edge, false)
-    // once the labyrinth is finished, its walls and the player show
-    if (mem.revealed) {
+    // only the opening come in by, plus this team's way out of the first maze; every opening
+    // once the maze is passed
+    for (const o of maze.openings) {
+        const shown = mem.shows(leg.maze) || o.role === leg.enter || (leg.maze === "first" && o.role === mem.firstExit)
+        if (shown) arrow(m, maze, o.edge, o.role.startsWith("entry"))
+    }
+    // once this maze is passed, its walls and the player show
+    if (mem.shows(leg.maze)) {
         const walls = svg("g", { class: "walls" })
-        for (const k of maze.walls) {
+        // the maze's own edge too, open only at its openings
+        const edge = []
+        for (let x = 0; x < maze.w; x++) edge.push(`h${x},0`, `h${x},${maze.h}`)
+        for (let y = 0; y < maze.h; y++) edge.push(`v0,${y}`, `v${maze.w},${y}`)
+        const open = maze.openings.map(o => o.edge)
+        for (const k of [...maze.walls, ...edge.filter(k => !open.includes(k))]) {
             const [x, y] = k.slice(1).split(",").map(Number)
             const [x2, y2] = k[0] === "h" ? [x + 1, y] : [x, y + 1]
             walls.append(svg("line", { x1: x + (x2 - x) * 0.18, y1: y + (y2 - y) * 0.18, x2: x2 - (x2 - x) * 0.18, y2: y2 - (y2 - y) * 0.18 }))
@@ -122,7 +131,7 @@ mem.drawMatrix = () => {
     const dots = svg("g", { class: "dots" })
     for (let y = 0; y <= maze.h; y++) for (let x = 0; x <= maze.w; x++) dots.append(svg("circle", { cx: x, cy: y, r: 0.085 }))
     m.append(dots)
-    if (mem.revealed) {
+    if (mem.shows(leg.maze)) {
         mem.playerDot = svg("circle", { r: 0.26, class: "player", fill: mem.party.teams[mem.team]?.color || "#fff" })
         m.append(mem.playerDot)
         mem.drawPlayer()
@@ -137,6 +146,7 @@ mem.drawPlayer = () => {
 
 // A bump: the dots go red and the matrix shakes, then all is white again
 mem.bump = () => {
+    wrong()
     mem.matrix.classList.remove("bump", "flash")
     void mem.matrix.getBoundingClientRect()
     mem.matrix.classList.add("bump")

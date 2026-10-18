@@ -23,14 +23,15 @@ mem.cornerCoords = (corner) => {
 // a tool at the first login, a puzzle when its time comes.
 mem.spawnShortcut = async (entry) => {
     const name = entry.name + ".game"
-    const path = mem.desktopPath + "/" + name
+    const folder = entry.folder || mem.desktopPath
+    const path = folder + "/" + name
     if (!File.at(path)) {
         const icon = new Icon({ name, class: "StringFile", exte: "game", state: 0 })
         // The desktop places an icon by the coordinates it comes with. They have to be there
         // before the file exists, because creating it already draws the icon.
         const coords = entry.corner && mem.cornerCoords(entry.corner)
         if (coords) icon.coords = coords
-        await task.cmd("file.create", { path: mem.desktopPath, Type: "StringFile", name, icon, content: entry.id })
+        await task.cmd("file.create", { path: folder, Type: "StringFile", name, icon, content: entry.id })
         // a new file's configuration always starts without a picture, so it gets one after
         await task.cmd("file.modify", { path, cfg: { icon: { image: entry.icon } } })
         File.refreshViews()
@@ -41,8 +42,13 @@ mem.spawnShortcut = async (entry) => {
 
 mem.checkUnlocks = async () => {
     for (const entry of [...tools, ...puzzles]) {
+        // a tool that now lives in a folder leaves the desktop it was first put on
+        const stray = entry.folder && mem.desktopPath + "/" + entry.name + ".game"
+        if (stray && File.at(stray)) await task.cmd("file.move", { path: stray, to: entry.folder })
         if (mem.progress.spawned.includes(entry.id)) continue
         if (puzzles.includes(entry) && !isUnlocked(entry)) continue
+        if (entry.only && entry.only !== mem.player?.name && !mem.player?.everything) continue
+        if (entry.testers && !mem.player?.tester) continue
         await mem.spawnShortcut(entry)
     }
 }

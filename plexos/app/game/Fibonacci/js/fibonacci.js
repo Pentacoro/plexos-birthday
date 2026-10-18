@@ -23,6 +23,7 @@ mem.teamNumber = (team) => mem.sequence(mem.seeds[team].seed)
 // Who picks up a number: "intro", a team, or nobody
 mem.answererOf = (number) => {
     if (number === mem.introNumber) return "intro"
+    if (number === mem.voidNumber) return "void"
     return Object.keys(mem.seeds).find(team => mem.teamNumber(team) === number) || null
 }
 

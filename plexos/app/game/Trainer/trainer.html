@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./css/trainer.css">
+    <title>Entrenador</title>
+</head>
+<body>
+
+    <div class="trainer">
+        <section>
+            <h2>Reloj</h2>
+            <p class="trainer-now"></p>
+            <div class="trainer-row clock"></div>
+            <div class="trainer-row mode"></div>
+            <ul class="trainer-puzzles"></ul>
+        </section>
+        <section>
+            <h2>Equipo</h2>
+            <div class="trainer-row teams"></div>
+        </section>
+        <section>
+            <h2>Progreso</h2>
+            <ul class="trainer-progress"></ul>
+            <button type="button" class="trainer-danger" data-action="reset-all">Reiniciar todo</button>
+        </section>
+    </div>
+
+    <script type="module" src="./js/def.js"></script>
+    <script type="module" src="./js/ui.js"></script>
+    <script type="module" src="./js/events.js"></script>
+    <script type="module" src="./js/run.js"></script>
+
+</body>
+</html>

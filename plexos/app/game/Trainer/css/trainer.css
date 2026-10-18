@@ -1,0 +1,88 @@
+.trainer {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 14px 14px 24px;
+    overflow-y: auto;
+    background: #1b1b20;
+    color: #fff;
+    font: 14px/1.4 system-ui, sans-serif;
+}
+.trainer section {
+    margin-bottom: 18px;
+}
+.trainer h2 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    opacity: 0.8;
+}
+.trainer-now {
+    margin: 0 0 8px;
+    font: 600 15px ui-monospace, "Courier New", monospace;
+}
+.trainer-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+.trainer button {
+    padding: 8px 12px;
+    border: 2px solid #3a3a42;
+    border-radius: 10px;
+    background: #24242a;
+    color: #fff;
+    font: inherit;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+.trainer button.on {
+    border-color: #fff;
+    background: #34343c;
+}
+.trainer button.pressed {
+    background: #44444c;
+}
+.trainer .teams button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.trainer .teams svg {
+    width: 18px;
+    height: 18px;
+    color: var(--team);
+}
+.trainer .teams button.on {
+    border-color: var(--team);
+}
+.trainer ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.trainer-puzzles li {
+    display: flex;
+    gap: 8px;
+    padding: 4px 0;
+    opacity: 0.55;
+}
+.trainer-puzzles li.open {
+    opacity: 1;
+}
+.trainer-puzzles em {
+    margin-left: auto;
+    font-style: normal;
+    opacity: 0.8;
+}
+.trainer-progress li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0;
+}
+.trainer .trainer-danger {
+    margin-top: 8px;
+    border-color: #ff4a5a;
+    color: #ff8a95;
+}

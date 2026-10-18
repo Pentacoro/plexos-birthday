@@ -21,6 +21,8 @@ mem.seeds = {
 }
 // The plain Fibonacci sequence reaches a character who points at the hints
 mem.introNumber = "1123581"
+// A secret number nobody answers (void.js)
+mem.voidNumber = "0000000"
 
 // Step 2: the team's character asks for 9 digits, three ID card codes in this order.
 // "artifact" is the code clubs finds hidden in the house instead of on a card.
@@ -36,6 +38,15 @@ mem.codeParts = {
     hearts:   ["clubs", "diamonds", "spades"],
     clubs:    ["artifact", "spades", "diamonds"],
     diamonds: ["spades", "hearts", "clubs"],
+}
+
+// What each team's character gives once the 9 digits are right; the real ones wait where the
+// team's artifact is hidden, for the fifth puzzle. Spades' is still to be decided.
+mem.items = {
+    spades:   { name: "5 (por definir)", detail: "Objeto" },
+    hearts:   { name: "12 Bombones", detail: "Objeto" },
+    clubs:    { name: "7 Pesos", detail: "Objeto" },
+    diamonds: { name: "3 Piezas de Cubo Rubik", detail: "Objeto" },
 }
 
 mem.mode  = "dial"

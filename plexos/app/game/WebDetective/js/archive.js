@@ -8,9 +8,16 @@ let mem  = task.mem
 // from the left, swiping left the one after in from the right. Past the newest, the sheet turns
 // over onto the typewriter to answer it (or, all answered, the closing note shows). A letter
 // already answered has "Reenviar" instead of "Investigar", for a go that changes no progress.
-const keyOf = (step, wrong) => step + (wrong ? "w" : "")
-const parse = (key) => ({ step: parseInt(key), wrong: key.endsWith("w") })
-const order = (a, b) => parseInt(a) - parseInt(b) || a.length - b.length
+// The final letter, after the last step, is kept as "final" and always comes last
+const keyOf = (step, wrong) => mem.isQueen(step) ? "queen" : mem.isSecret(step) ? "secret" : mem.isFinal(step) ? "final" : step + (wrong ? "w" : "")
+const parse = (key) => key === "queen" ? { step: mem.letters.length + 2, wrong: false }
+    : key === "secret" ? { step: mem.letters.length + 1, wrong: false }
+    : key === "final" ? { step: mem.letters.length, wrong: false }
+    : { step: parseInt(key), wrong: key.endsWith("w") }
+const rank = (key) => key === "queen" ? 1e9 + 2 : key === "secret" ? 1e9 + 1 : key === "final" ? 1e9 : parseInt(key)
+// every letter there is: the badge goes complete once all are in
+const everyLetter = () => [...mem.letters.flatMap((_, step) => [keyOf(step), keyOf(step, true)]), "final", "secret"]
+const order = (a, b) => rank(a) - rank(b) || a.length - b.length
 
 mem.received = () => {
     const saved = mem.party.flag(mem.id, "received")
@@ -20,22 +27,43 @@ mem.received = () => {
     return Array.from({ length: Math.min(solved + 1, mem.letters.length) }, (_, step) => keyOf(step))
 }
 
+// New is judged by what was saved, so the very first letter is kept too
 mem.receive = (step, wrong) => {
     const key = keyOf(step, wrong)
     let list = mem.received()
-    if (!list.includes(key)) {
-        list = [...list, key].sort(order)
+    if (!(mem.party.flag(mem.id, "received") || []).includes(key)) {
+        list = [...new Set([...list, key])].sort(order)
         mem.party.setFlag(mem.id, "received", list)
+        // each letter has its own envelope color
+        const title = mem.isQueen(step) ? "Carta de Pentacoro" : mem.isSecret(step) ? "Carta Secreta" : mem.isFinal(step) ? "Carta Final" : "Carta " + (step + 1) + (wrong ? " (Incorrecto)" : "")
+        const look = mem.isQueen(step) ? "queen" : mem.isSecret(step) ? "secret-" + mem.team : mem.isFinal(step) ? "final"
+            : step === 1 && !wrong ? "2-" + mem.secondColor : (step + 1) + (wrong ? "-wrong" : "")
+        mem.party.record("letters", title, key, { image: "/plexos/app/game/Party/img/letter-" + look + ".svg", detail: mem.answerOf(step) || " " })
+        if (mem.isFinal(step)) mem.party.setBadge("letters", 2)
+        if (everyLetter().every(each => list.includes(each))) mem.party.setBadge("letters", 3)
     }
     mem.reading = list.indexOf(key)
+}
+
+// What each letter was answered with, shown under it in Cartas: a step's right answer for it
+// and its "Incorrecto" reply; for the final letter, the other teams' passwords taken so far
+const titleOf = (key) => { const { step, wrong } = parse(key); return mem.isQueen(step) ? "Carta de Pentacoro" : mem.isSecret(step) ? "Carta Secreta" : mem.isFinal(step) ? "Carta Final" : "Carta " + (step + 1) + (wrong ? " (Incorrecto)" : "") }
+mem.answerOf = (step) => mem.isFinal(step) ? Object.values(mem.otherTeams()).join(" · ") : mem.party.flag(mem.id, "answers")?.[step] || ""
+mem.noteAnswer = async (step, entry) => {
+    if (!mem.isFinal(step)) await mem.party.setFlag(mem.id, "answers", { ...mem.party.flag(mem.id, "answers"), [step]: entry })
+    for (const key of [keyOf(step), keyOf(step, true)]) mem.party.updateDetail("letters", titleOf(key), mem.answerOf(step))
 }
 
 const solved = (step) => step < mem.party.stepsSolved(mem.id)
 const finished = () => mem.party.stepsSolved(mem.id) >= mem.letters.length
 
-// The button under the letter: answered letters are sent again, the open one investigated
+// The button under the letter: answered letters are sent again, the open one investigated, the
+// final one answered. The secret letter has none.
 mem.labelButton = () => {
-    mem.investigate.textContent = solved(mem.step) ? "Reenviar" : "Investigar"
+    // Mariana alone answers the secret letter, and then her own, once
+    const herTurn = mem.isMariana && ((mem.isSecret(mem.step) && !mem.received().includes("queen")) || (mem.isQueen(mem.step) && !mem.party.flag(mem.id, "queenAnswered")))
+    mem.investigate.hidden = (mem.isSecret(mem.step) || mem.isQueen(mem.step)) && !herTurn
+    mem.investigate.textContent = mem.isFinal(mem.step) || herTurn ? "Responder" : solved(mem.step) ? "Reenviar" : "Investigar"
 }
 
 // The letter at a place in the strip becomes the one on the desk, and the one answered next
@@ -44,7 +72,7 @@ function showReceived(index) {
     mem.reading = index
     mem.step = step
     mem.setStepCategory(step)
-    mem.buildAnswer(mem.passwordOf(step).length)
+    mem.dressLetter(step, wrong)
     mem.showLetterText(mem.letterOf(step), wrong ? mem.wrong : null)
     mem.labelButton()
 }
@@ -64,13 +92,60 @@ const slide = "cubic-bezier(0.25, 0.8, 0.3, 1)"
 mem.browse = async (by) => {
     if (mem.busy) return
     if (mem.view === "desk") return by < 0 && mem.closeTypewriter(false, true)
+    // sealed again: from envelope to envelope, the strip's ends being its ends
+    if (mem.view === "mail" && mem.envelopes) {
+        const to = mem.reading + by
+        if (to >= 0 && to < mem.received().length) await slideEnvelope(to, by)
+        return
+    }
     if (mem.view !== "letter" && mem.view !== "done") return
     const list = mem.received()
     const from = mem.view === "done" ? list.length : mem.reading
     const to = from + by
     if (to < 0 || to > list.length) return
     // past the newest: turned over to answer, or the closing note once all are answered
-    if (to === list.length && !finished()) return mem.openTypewriter(true)
+    // the final letter can be answered until the secret one is in
+    const newest = list.at(-1)
+    const answerable = !finished() || newest === "final" || (mem.isMariana && ((newest === "secret") || (newest === "queen" && !mem.party.flag(mem.id, "queenAnswered"))))
+    if (to === list.length && answerable) return mem.openTypewriter(true)
+    await slideTo(to, by)
+}
+
+// A letter opened from the Cartas folder: the strip slides straight to it
+// A letter opened from the Cartas folder comes back sealed: its envelope falls in as when it
+// first arrived, and until one is opened every letter is in its envelope again, the strip
+// sliding from envelope to envelope
+mem.envelopes = false
+mem.showLetter = async (key) => {
+    const to = mem.received().indexOf(key)
+    if (to < 0 || mem.busy || !["letter", "done", "mail"].includes(mem.view)) return
+    mem.busy = true
+    mem.envelopes = true
+    mem.stage.classList.remove("done")
+    showReceived(to)
+    mem.view = "mail"
+    mem.placeMailAbove()
+    await mem.arrive()
+    mem.busy = false
+}
+
+async function slideEnvelope(to, by) {
+    mem.busy = true
+    mem.tiltReset()
+    const width = mem.stage.clientWidth
+    await mem.tween(mem.tilt, `translateX(${-by * width}px)`, 260, "cubic-bezier(0.5, 0, 0.9, 0.5)")
+    showReceived(to)
+    mem.setFolded()
+    mem.tilt.style.transform = `translateX(${by * width}px)`
+    await mem.tween(mem.tilt, "translateX(0px)", 340, slide)
+    mem.tilt.style.transform = ""
+    mem.busy = false
+}
+
+// The sheet on the desk slides out and the one at a place in the strip (or, past the end, the
+// closing note) slides in, the way by points
+async function slideTo(to, by) {
+    const list = mem.received()
     const width = mem.stage.clientWidth
     const g = mem.geometry()
     mem.busy = true

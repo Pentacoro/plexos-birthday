@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" stroke-linejoin="round" stroke-linecap="round">
+    <defs>
+        <radialGradient id="v" cx=".3" cy=".2" r="1"><stop offset="0" stop-color="#9a2238"/><stop offset=".6" stop-color="#6e0f22"/><stop offset="1" stop-color="#4a0816"/></radialGradient>
+        <linearGradient id="foil" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3e7ec"/><stop offset=".4" stop-color="#b9c2cf"/><stop offset=".6" stop-color="#f3e9f5"/><stop offset="1" stop-color="#c9d8e8"/></linearGradient>
+        <radialGradient id="pearl" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#cfc6cb"/></radialGradient>
+    </defs>
+    <rect x="6" y="15" width="52" height="36" rx="3" fill="url(#v)" stroke="#fff" stroke-width="3"/>
+    <path d="M6 18l26 19 26-19" fill="none" stroke="#3a0610" stroke-width="2.5"/>
+    <rect x="43" y="37" width="11" height="12" fill="url(#foil)" stroke="#fff" stroke-width="1.2"/>
+    <path d="M45.5 41l.7-2 1.2 1.3.9-1.8.9 1.8 1.2-1.3.7 2zM48.5 43.2a1.5 1.5 0 1 0 0 .1M46 48c.4-1.7 1.3-2.5 2.5-2.5s2.1.8 2.5 2.5" fill="none" stroke="#5a1a24" stroke-width=".7"/>
+    <circle cx="32" cy="36" r="5.5" fill="url(#pearl)" stroke="#fff" stroke-width="1"/>
+</svg>

@@ -85,7 +85,7 @@ mem.placeMailAbove = () => {
     mem.letterX = 0
     mem.letterY = g.above + g.inside
     mem.letter.style.transform = `translate(0px, ${mem.letterY}px)`
-    mem.stage.classList.remove("reading", "mail-gone", "unsealed", "sealed")
+    mem.stage.classList.remove("reading", "mail-gone", "unsealed", "sealed", "done")
 }
 
 // ...and falls into the middle of it

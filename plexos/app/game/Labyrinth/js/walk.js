@@ -1,4 +1,5 @@
 import {getTask} from "/plexos/lib/functions/dll.js"
+import {step} from "/plexos/app/game/Party/sound.js"
 import {pushBack} from "/plexos/app/game/Party/backStack.js"
 
 let task = getTask(/TASKID/)
@@ -21,6 +22,23 @@ mem.wayOut = (role) => mem.ways[mem.leg.maze + ":" + role]
 // Whether this team has its own package, picked up in any visit
 mem.carried = () => (mem.party.flag(mem.id, "packages") || []).some(key => key.endsWith(":" + mem.team))
 
+// A maze counts as passed once left by another opening than the one it was entered by. From
+// then on it shows its walls and the player's dot, and walls no longer send them back.
+mem.passed = () => mem.party.flag(mem.id, "passed") || []
+mem.shows = (name) => mem.revealed || mem.passed().includes(name)
+
+// In a maze not yet passed, a wall sends the player back to the way they came in
+mem.hitWall = () => {
+    mem.bump()
+    if (mem.shows(mem.leg.maze)) return
+    mem.at = [...mem.mazes[mem.leg.maze].openings.find(o => o.role === mem.leg.enter).cell]
+}
+
+// Done completely: finished, every maze passed, every team's package picked up
+mem.complete = () => mem.revealed
+    && ["first", "artifact", "second", "third"].every(name => mem.passed().includes(name))
+    && Object.entries(mem.mazes).every(([name, maze]) => Object.keys(maze.packages || {}).every(team => (mem.party.flag(mem.id, "packages") || []).includes(name + ":" + team)))
+
 mem.startLeg = (leg) => {
     mem.leg = leg
     const maze = mem.mazes[leg.maze]
@@ -39,12 +57,15 @@ mem.move = (dir) => {
     if (outside) {
         const opening = maze.openings.find(o => o.edge === edge)
         const way = opening && mem.wayOut(opening.role)
+        // the very first entrance, walked out of once everything is done: there is no out (abyss.js)
+        if (opening && mem.leg.maze === "first" && opening.role === "entry" && mem.complete()) return mem.abyss()
         if (way === "end" && mem.carried() && !mem.revealed) return mem.leaveMaze(opening.role)
         if (way && way !== "end") return mem.leaveMaze(opening.role)
-        return mem.bump()
+        return mem.hitWall()
     }
-    if (maze.walls.includes(edge)) return mem.bump()
+    if (maze.walls.includes(edge)) return mem.hitWall()
     mem.at = [nx, ny]
+    step()
     mem.drawPlayer()
     mem.pickUp(leg.maze, maze)
 }
@@ -66,10 +87,17 @@ mem.pickUp = (name, maze) => {
 mem.leaveMaze = async (role) => {
     mem.busy = true
     const way = mem.wayOut(role), from = { maze: mem.leg.maze, enter: role }
+    if (role !== mem.leg.enter && !mem.passed().includes(mem.leg.maze)) {
+        await mem.party.setFlag(mem.id, "passed", [...mem.passed(), mem.leg.maze])
+        // pictured by its own walls
+        mem.party.record("mazes", mem.mazeNames[mem.leg.maze], mem.leg.maze, { image: "/plexos/app/game/Party/img/maze-" + mem.leg.maze + ".svg" })
+    }
     const next = way === "end" ? null : { maze: way.split(":")[0], enter: way.split(":")[1] }
     if (next) await mem.party.setFlag(mem.id, "leg", next)
     else {
         await mem.party.setFlag(mem.id, "done", true)
+        // the third maze passed: the labyrinth is won
+        mem.party.setBadge("mazes", 1)
         await mem.party.solveStep(mem.id, 1)
     }
     await mem.fadeTo(() => next ? mem.startLeg(next) : mem.finish())

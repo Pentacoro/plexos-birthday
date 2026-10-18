@@ -1,5 +1,7 @@
 import {getTask} from "/plexos/lib/functions/dll.js"
 import {pushBack, leave} from "/plexos/app/game/Party/backStack.js"
+import {lock} from "/plexos/app/game/Party/cipher.js"
+import {typeKey, carriageReturn, wrong} from "/plexos/app/game/Party/sound.js"
 
 let task = getTask(/TASKID/)
 let mem  = task.mem
@@ -8,6 +10,24 @@ let mem  = task.mem
 // and the typebars travel along it, always striking the next empty dash.
 mem.answer = mem.stage.querySelector(".answer")
 mem.typewriterBack = null
+
+// Lines already written on the page, above the one being typed
+mem.history = document.createElement("div")
+mem.history.className = "answer-history"
+mem.slotsRow.before(mem.history)
+mem.writeHistory = (lines) => {
+    mem.history.replaceChildren(...lines.map(line => Object.assign(document.createElement("div"), { textContent: line })))
+}
+
+// Writing freely, the page just takes the text, as long as it gets; with hearts, any key sends
+mem.freeText = document.createElement("div")
+mem.freeText.className = "free-text"
+mem.slotsRow.after(mem.freeText)
+mem.setWriting = (mode) => {
+    mem.keys.classList.toggle("hearts", mode === "hearts")
+    mem.keys.classList.toggle("free", mode === "free")
+    mem.answer.classList.toggle("free", mode === "free")
+}
 
 mem.buildAnswer = (length) => {
     mem.slotsRow.replaceChildren()
@@ -18,6 +38,8 @@ mem.buildAnswer = (length) => {
 }
 
 mem.renderAnswer = () => {
+    mem.freeText.textContent = mem.entry
+    mem.freeText.scrollTop = mem.freeText.scrollHeight
     const slots = [...mem.slotsRow.children]
     slots.forEach((slot, i) => {
         const char = mem.entry[i] || ""
@@ -51,6 +73,7 @@ mem.alignCarriage = () => {
 
 // The carriage springs back to the middle once the line is done
 mem.returnCarriage = async () => {
+    carriageReturn()
     mem.typebars.style.left = ""
     mem.letterX = 0
     await mem.tween(mem.letter, `translate(0px, ${mem.letterY}px)`, 480, "cubic-bezier(0.3, 1.6, 0.5, 1)")
@@ -124,9 +147,11 @@ mem.closeTypewriter = async (byBack = false, turn = false) => {
 // A key swings its typebar up to the page; the letter lands as it hits
 mem.strike = (char, bar) => {
     if (mem.busy || mem.view !== "desk") return
-    const length = mem.slotsRow.children.length
+    if (mem.writing(mem.step) === "hearts") return mem.submitStep(true)
+    const length = mem.writing(mem.step) === "free" ? Infinity : mem.slotsRow.children.length
     if (mem.entry.length >= length) return
     mem.answer.classList.remove("wrong")
+    typeKey()
     const arm = mem.bars[bar]?.firstChild
     arm?.animate(
         [{ transform: "scaleY(0.25)" }, { transform: "scaleY(1)", offset: 0.45 }, { transform: "scaleY(0.25)" }],
@@ -140,7 +165,9 @@ mem.strike = (char, bar) => {
 }
 
 mem.erase = () => {
-    if (mem.busy || mem.view !== "desk" || !mem.entry) return
+    if (mem.busy || mem.view !== "desk") return
+    if (mem.writing(mem.step) === "hearts") return mem.submitStep(true)
+    if (!mem.entry) return
     mem.entry = mem.entry.slice(0, -1)
     mem.renderAnswer()
 }
@@ -148,9 +175,18 @@ mem.erase = () => {
 // Only the right password is sent. Anything else shakes the page and clears it.
 // Whatever is written goes, right or wrong, so it pays to be sure first. Only a line with
 // every dash filled can be sent; an unfinished one just shakes.
+// Mariana's free answer is locked with the password and goes out to WhatsApp in this same tap
+// (phones only let a page open another app from a tap), while the letter goes off
+const whatsapp = "https://wa.me/5491130323918?text="
 mem.send = async () => {
     if (mem.busy || mem.view !== "desk") return
-    if (mem.entry.length === mem.slotsRow.children.length) return mem.submitStep(mem.entry === mem.passwordOf(mem.step))
+    if (mem.writing(mem.step) === "free") {
+        if (!mem.entry.trim()) return
+        window.open(whatsapp + encodeURIComponent(lock(mem.entry, "princesa")), "_blank")
+        return mem.submitStep(true)
+    }
+    if (mem.entry.length === mem.slotsRow.children.length) return mem.submitStep(mem.accepts(mem.step, mem.entry))
     void mem.answer.offsetWidth
     mem.answer.classList.add("wrong")
+    wrong()
 }

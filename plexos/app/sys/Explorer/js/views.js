@@ -67,8 +67,9 @@ function stampOf(file) {
     return file.cfg.date?.Modified ?? file.cfg.date?.Created ?? 0
 }
 
+// A file can carry its own line for the type slot (cfg.detail), as a contact shows its number
 function typeOrOrigin(file) {
-    return binInfo(file)?.from ?? mem.typeName(file)
+    return binInfo(file)?.from ?? file.cfg.detail ?? mem.typeName(file)
 }
 
 function bytesOf(file) {

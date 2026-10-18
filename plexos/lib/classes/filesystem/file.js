@@ -525,6 +525,7 @@ export default class File {
         if (cfg && typeof cfg === "object") {
             if ("hidden" in cfg) file.cfg.hidden = cfg.hidden
             if ("edit" in cfg) file.cfg.edit = cfg.edit
+            if ("detail" in cfg) file.cfg.detail = cfg.detail // a line Explorer shows in place of the type
             if (cfg.icon && file.cfg.icon) {
                 const icon = file.cfg.icon
                 const patch = cfg.icon
@@ -595,6 +596,8 @@ export default class File {
     static open(path) {
         const file = File.at(path)
         if (!file) return
+        // a host can bring back a window that already has it instead (the party game does)
+        if (File.reuse?.(path)) return
         if (File.inBin(path)) { // recycled things are restored, not opened
             import("/plexos/app/sys/System/File Management/restore.js")
                 .then(module => module.askRestore(path, plexos.System.mem.focused))

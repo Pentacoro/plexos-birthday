@@ -9,8 +9,10 @@ const press = (node, action) => node.addEventListener("pointerdown", e => {
     action(e)
 })
 
+// the envelope opens on a tap that lifts without moving: a drag only tilts it (tilt.js)
 for (const piece of [mem.envBack, mem.envFront, mem.envFlap, mem.letter]) {
-    press(piece, () => { if (mem.view === "mail") mem.readMail() })
+    piece.addEventListener("pointerdown", e => e.preventDefault())
+    piece.addEventListener("pointerup", () => { if (mem.view === "mail" && !mem.tiltMoved) mem.readMail() })
 }
 press(mem.investigate, () => mem.openTypewriter())
 press(mem.sendButton, () => mem.send())
@@ -47,6 +49,7 @@ task.node.addEventListener("keydown", e => {
     if (mem.view !== "desk") return
     if (e.key === "Backspace") return mem.erase()
     if (e.key === "Enter") return mem.send()
+    if (e.key === " " && mem.writing(mem.step) === "free") return mem.strike(" ", 7)
     const char = e.key.toUpperCase()
     const key = mem.keys.querySelector(`.key[data-char="${char}"]`)
     if (key) mem.strike(char, Number(key.dataset.bar))

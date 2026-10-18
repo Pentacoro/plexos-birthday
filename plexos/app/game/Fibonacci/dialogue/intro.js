@@ -6,6 +6,8 @@ const sprite = "/plexos/app/game/Fibonacci/img/intro.png"
 export default {
     name: null,
     sprite,
+    // how they sound as they talk: low and buzzy, a smug drawl
+    voice: { type: "square", freq: 118, jitter: 0.06, gain: 0.07, length: 0.07, filter: 1400 },
     // The first call
     call: [
         new Line(sprite, "¿Hola? Ah, otro que marcó Fibonacci de memoria."),

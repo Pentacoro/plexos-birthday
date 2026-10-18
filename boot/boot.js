@@ -12,6 +12,7 @@ import Task from "../plexos/lib/classes/system/task.js"
 import { runLauncher } from "../plexos/lib/functions/dll.js"
 import { bootLocalPlexos } from "./cores.js"
 import { showPasswordBar } from "./password.js"
+import { showPost } from "./post.js"
 
 // For development: true skips the landing and opens the local Plexos clone.
 const bootLocalClone = false
@@ -56,6 +57,12 @@ async function boot() {
     plexos.Core.mem.booting = true
     plexos.Theme = { face: "landing" }
     await prepareConfig()
+    // right after the secret number wiped a player: the machine coming back from nothing
+    if (plexos.Config.voidBoot) {
+        await showPost()
+        plexos.Config.voidBoot = false
+        await plexos.db.setConfig(plexos.Config)
+    }
     await runLauncher("./plexos/app/sys/Theme Manager/themeManager.ls", { face: "landing" })
     await runLauncher("./plexos/app/sys/Window Manager/windowManager.ls")
     if (!Task.get("Window Manager")?.mem?.windows) {

@@ -11,6 +11,9 @@ function hide(task) {
 }
 
 export function hideOnClose(task) {
+    task.partyWindow = true
+    // the window is made right after: dark from its first frame, not white until its page loads
+    queueMicrotask(() => task.window?.node.classList.add("party-app"))
     task.onEnd = () => {
         task.suspended = suspendAbove(task.backEntry)
         leave(task.backEntry)

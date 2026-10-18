@@ -2,9 +2,26 @@ import { el, landing } from "./state.js"
 import { landingContent } from "./window.js"
 import { bootLocalPlexos } from "./cores.js"
 import plexos from "./plexos.js"
-import { playerByPassword } from "../plexos/app/game/Party/players.js"
+import { playerByPassword, playerByName } from "../plexos/app/game/Party/players.js"
 import { teams } from "../plexos/app/game/Party/teams.js"
 import { showWelcome, loadWelcomeStyle } from "./welcome.js"
+import { wrong } from "../plexos/app/game/Party/sound.js"
+
+// Typed in place of a password, this brings back whoever the secret number wiped (Party's
+// void.js kept their core aside). PLACEHOLDER: set it to the real code; no player may have it.
+const restoreCode = "000"
+
+async function restoreVoided() {
+    const name = plexos.Config?.voided
+    if (!name) return null
+    const kept = await plexos.db.getUser("void:" + name).catch(() => null)
+    if (!kept) return null
+    await plexos.db.saveUser({ ...kept, name })
+    await plexos.db.deleteUser("void:" + name)
+    plexos.Config.voided = null
+    await plexos.db.setConfig(plexos.Config)
+    return playerByName(name)
+}
 
 export function showPasswordBar() {
     loadWelcomeStyle()
@@ -25,11 +42,12 @@ export function showPasswordBar() {
         input.value = input.value.replace(/\D/g, "")
         input.classList.remove("wrong")
         if (input.value.length < 3) return
-        const player = playerByPassword(input.value)
+        const player = input.value === restoreCode ? await restoreVoided() : playerByPassword(input.value)
         if (!player) {
             // Restart the shake even when the same wrong code comes twice in a row
             void input.offsetWidth
             input.classList.add("wrong")
+            wrong()
             input.value = ""
             return
         }

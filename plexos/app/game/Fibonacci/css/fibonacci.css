@@ -312,6 +312,29 @@
     pointer-events: none;
 }
 
+/* the guide (guide.js): tints barely off the gray of the hint and the white of the slots */
+.sequence-hint .seq-a { color: #57514a; }
+.sequence-hint .seq-b { color: #524b60; }
+.slot-digits span.seq-a {
+    color: #fff8ec;
+    border-color: #fff8ec;
+    --flash: #ffe2aa;
+}
+.slot-digits span.seq-b {
+    color: #f6f2fd;
+    border-color: #f6f2fd;
+    --flash: #ddd0f6;
+}
+.slot-digits span.seq-pulse {
+    animation: fibonacci-guide 0.55s ease-out;
+}
+@keyframes fibonacci-guide {
+    15% { transform: translateX(-1.5px); color: var(--flash); border-color: var(--flash); }
+    35% { transform: translateX(1.5px); color: var(--flash); border-color: var(--flash); }
+    55% { transform: translateX(-1px); }
+    75% { transform: translateX(0.5px); }
+}
+
 @keyframes fibonacci-shake {
     20%, 60% { transform: translateX(-8px); }
     40%, 80% { transform: translateX(8px); }
@@ -320,4 +343,27 @@
 @keyframes fibonacci-dots {
     0%, 20% { opacity: 0; }
     50%, 100% { opacity: 1; }
+}
+
+/* the secret number: no one on the line, nothing but one answer to give (void.js) */
+.puzzle.void .dialogue {
+    display: none;
+}
+.void-choice {
+    position: absolute;
+    left: 50%;
+    bottom: 22%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    border: 0;
+    border-radius: 12px;
+    background: #fff;
+    color: #1b1b20;
+    font: 600 17px system-ui, sans-serif;
+    animation: fibonacci-void-in 1.2s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+@keyframes fibonacci-void-in {
+    from { opacity: 0; }
 }

@@ -24,6 +24,13 @@ export const players = [
     { name: "Sol", password: "928", team: "clubs", card: "Q", greeting: "Bienvenida" },
     { name: "Daniela", password: "249", team: "spades", card: "Q", greeting: "Bienvenida" },
     { name: "Marce", password: "386", team: "diamonds", card: "J", greeting: "Bienvenido" },
+    // test users, one per team, with the Entrenador app: remove before the party
+    { name: "Prueba Picas", password: "111", team: "spades", card: "A", greeting: "Bienvenido", tester: true },
+    { name: "Prueba Corazones", password: "222", team: "hearts", card: "A", greeting: "Bienvenido", tester: true },
+    { name: "Prueba Tréboles", password: "333", team: "clubs", card: "A", greeting: "Bienvenido", tester: true },
+    { name: "Prueba Diamantes", password: "444", team: "diamonds", card: "A", greeting: "Bienvenido", tester: true },
+    // starts with the whole game done (Party's everything.js), and counts as Mariana and Pentacoro
+    { name: "Prueba Todo", password: "555", team: "hearts", card: "A", greeting: "Bienvenido", everything: true, tester: true },
 ]
 
 export function playerByPassword(password) {

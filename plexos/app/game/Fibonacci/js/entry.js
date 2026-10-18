@@ -1,10 +1,12 @@
 import {getTask} from "/plexos/lib/functions/dll.js"
+import {wrong} from "/plexos/app/game/Party/sound.js"
 
 let task = getTask(/TASKID/)
 let mem  = task.mem
 
 mem.renderSlots = () => {
     mem.digitSlots.forEach((slot, i) => slot.textContent = mem.entry[i] || "")
+    mem.guide?.()
 }
 
 mem.clearEntry = () => {
@@ -25,5 +27,6 @@ mem.press = async (digit) => {
     if (accepted) return
     void mem.slots.offsetWidth
     mem.slots.classList.add("wrong")
+    wrong()
     setTimeout(mem.clearEntry, 350)
 }

@@ -1,3 +1,5 @@
+import {blip} from "./sound.js"
+
 // Character dialogue, after the stage system in Male. A conversation is a list of lines.
 // Each line types out letter by letter, pausing longer after "." and ",". A tap shows the
 // rest of the line at once, the next tap moves on. A line can move on by itself after a
@@ -51,6 +53,7 @@ export class Dialogue {
     }
 
     show(character) {
+        this.voice = character.voice
         this.sprite.src = character.sprite || ""
         this.name.textContent = character.name || ""
         this.name.hidden = !character.name
@@ -138,6 +141,8 @@ export class Dialogue {
                 if (shown >= line.text.length) return finish()
                 const letter = line.text.charAt(shown++)
                 this.text.textContent += letter
+                // each letter in the speaker's voice, the spaces and marks silent
+                if (/[\p{L}\p{N}]/u.test(letter)) blip(this.voice)
                 timer = setTimeout(type, (letter === "." || letter === ",") ? line.speed * 6 : line.speed)
             }
 

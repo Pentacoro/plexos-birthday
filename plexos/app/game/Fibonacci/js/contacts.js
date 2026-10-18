@@ -1,4 +1,4 @@
-import {getTask} from "/plexos/lib/functions/dll.js"
+import {getTask, runLauncher} from "/plexos/lib/functions/dll.js"
 import {teamIcon} from "/plexos/app/game/Party/teams.js"
 import {pushBack, leave} from "/plexos/app/game/Party/backStack.js"
 
@@ -34,10 +34,30 @@ mem.addContact = async (who, number) => {
     const contacts = mem.contacts()
     if (contacts.some(contact => contact.number === number)) return
     await mem.party.setFlag(mem.id, "contacts", [...contacts, { who, number }])
+    // each contact pictured by who answers: the Fibonacci spiral, or their team's suit
+    const image = who === "intro" ? "/plexos/app/game/Fibonacci/icon.svg" : "/plexos/app/game/Party/img/contact-" + who + ".svg" // contact-void.svg for the secret number
+    mem.party.record("contacts", contactName(who), number, { detail: number, image })
 }
 
 function contactName(who) {
+    if (who === "void") return "Desconocido"
     return mem.characters[who]?.name || (who === "intro" ? "Fibonacci" : mem.party.teams[who].name)
+}
+
+function nullPopup() {
+    runLauncher("/plexos/app/sys/System/Popup/popup.ls", {
+        name: "null", type: false, title: "null", description: "null",
+        icon: "/null.png", image: "/null.png", buttons: [{ label: "null" }],
+    })
+}
+
+// the secret number's: a dark hole
+function voidIcon() {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+    svg.setAttribute("viewBox", "0 0 24 24")
+    svg.classList.add("team-icon")
+    svg.innerHTML = '<circle cx="12" cy="12" r="8" fill="#000" stroke="#3a3a44" stroke-width="1.5"/>'
+    return svg
 }
 
 function phoneIcon() {
@@ -67,13 +87,15 @@ mem.renderContacts = () => {
         const digits = document.createElement("small")
         digits.textContent = number
         text.append(name, digits)
-        contact.append(who === "intro" ? phoneIcon() : teamIcon(who), text)
+        contact.append(who === "intro" ? phoneIcon() : who === "void" ? voidIcon() : teamIcon(who), text)
         mem.contactList.append(contact)
     }
 }
 
 mem.dialContact = (number) => {
     if (mem.mode !== "dial") return
+    // the secret number, called from the list it stayed in: nothing but null
+    if (number === mem.voidNumber) return nullPopup()
     mem.closeContacts()
     mem.entry = number
     mem.renderSlots()

@@ -71,14 +71,17 @@
     transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-/* the pad: four keys in a diamond */
+/* the pad: four square keys in a block turned on its point, a diamond, each arrow at its tip */
 .pad {
     flex: none;
     display: grid;
-    grid-template-columns: repeat(3, var(--key));
-    grid-template-rows: repeat(3, var(--key));
+    grid-template-columns: repeat(2, var(--key));
+    grid-template-rows: repeat(2, var(--key));
     gap: 6px;
-    --key: clamp(54px, 9vh, 76px);
+    --key: clamp(48px, 8vh, 66px);
+    /* turned, it reaches out past its own box */
+    margin: calc(var(--key) * 0.42);
+    transform: rotate(45deg);
 }
 .move {
     display: flex;
@@ -86,7 +89,7 @@
     justify-content: center;
     padding: 0;
     border: 0;
-    border-radius: 14px;
+    border-radius: 10px;
     background: #fff;
     color: #1b1b20;
     touch-action: manipulation;
@@ -99,10 +102,14 @@
 .move.pressed {
     background: rgba(255, 255, 255, 0.6);
 }
-.move.up { grid-area: 1 / 2; }
-.move.left { grid-area: 2 / 1; transform: rotate(-90deg); }
-.move.right { grid-area: 2 / 3; transform: rotate(90deg); }
-.move.down { grid-area: 3 / 2; transform: rotate(180deg); }
+.move.up { grid-area: 1 / 1; }
+.move.right { grid-area: 1 / 2; }
+.move.left { grid-area: 2 / 1; }
+.move.down { grid-area: 2 / 2; }
+.move.up svg { transform: rotate(-45deg); }
+.move.right svg { transform: rotate(45deg); }
+.move.left svg { transform: rotate(-135deg); }
+.move.down svg { transform: rotate(135deg); }
 
 /* once finished, the walls and the player show, with a note above the pad */
 .matrix .walls line {
