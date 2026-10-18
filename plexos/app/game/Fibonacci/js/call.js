@@ -1,6 +1,6 @@
 import {getTask} from "/plexos/lib/functions/dll.js"
 import {Dialogue, Line} from "/plexos/app/game/Party/dialogue.js"
-import {spokenCode, pairState, setPairState} from "/plexos/app/game/Sync/pairs.js"
+import {spokenCode, pairState, setPairState, codeName} from "/plexos/app/game/Sync/pairs.js"
 import {pushBack, leave} from "/plexos/app/game/Party/backStack.js"
 import intro from "./dialogue/intro.js"
 import spades from "./dialogue/spades.js"
@@ -76,7 +76,7 @@ mem.dial = async (number) => {
         // written down for the partner game's input, once
         if (live() && !pairState(mem.party, who).heard) {
             await setPairState(mem.party, who, { heard: code })
-            mem.party.record("codes", mem.party.teams[who].name + " - Código 3", code)
+            mem.party.record("codes", codeName(mem.team, who, 2), code)
             // the last thing either the phone or the codes give toward the end
             mem.party.setBadge("codes", 2)
             mem.party.setBadge("contacts", 2)

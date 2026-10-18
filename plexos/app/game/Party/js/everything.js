@@ -1,5 +1,5 @@
 import {getTask} from "/plexos/lib/functions/dll.js"
-import {random, pairName, spokenCode} from "/plexos/app/game/Sync/pairs.js"
+import {random, pairName, spokenCode, codeName} from "/plexos/app/game/Sync/pairs.js"
 import {pathPuzzle, stackPuzzle} from "/plexos/app/game/Sync/generate.js"
 
 let task = getTask(/TASKID/)
@@ -74,10 +74,9 @@ mem.unlockEverything = async () => {
     }
     for (const key of teamKeys) {
         const pair = pairName(team, key)
-        const name = mem.teams[key].name
-        await mem.record("codes", name + " - Código 1", pathPuzzle(random(pair + ":path")).code, quiet)
-        await mem.record("codes", name + " - Código 2", stackPuzzle(random(pair + ":stack")).solution.join(""), quiet)
-        await mem.record("codes", name + " - Código 3", pairs[key].heard, quiet)
+        await mem.record("codes", codeName(team, key, 0), pathPuzzle(random(pair + ":path")).code, quiet)
+        await mem.record("codes", codeName(team, key, 1), stackPuzzle(random(pair + ":stack")).solution.join(""), quiet)
+        await mem.record("codes", codeName(team, key, 2), pairs[key].heard, quiet)
     }
     for (const kind of ["contacts", "letters", "mazes", "codes"]) await mem.setBadge(kind, 3)
 }

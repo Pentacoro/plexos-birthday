@@ -7,6 +7,22 @@ export const order = ["spades", "clubs", "diamonds", "hearts"]
 export const sideOf = (team, partner) => order.indexOf(team) < order.indexOf(partner) ? 1 : 2
 export const pairName = (a, b) => [a, b].sort((x, y) => order.indexOf(x) - order.indexOf(y)).join("-")
 
+// A kept code's file name, the same on both phones: the suits side 1 first, then the stage's.
+// U+FE0E keeps each suit a plain character, as phones would draw them as emoji.
+const suits = { spades: "♠", hearts: "♥", clubs: "♣", diamonds: "♦" }
+const codeStages = ["Colors", "Stacks", "Final"]
+const plain = "\uFE0E"
+export const codeName = (a, b, stage) => pairName(a, b).split("-").map(team => suits[team] + plain).join(" ⇋ ") + " | " + codeStages[stage]
+
+// Where a kept code sorts in its folder, by stage and then by pair; null if it isn't one
+export function codeRank(name) {
+    const [pair, kind = ""] = name.split(" | ")
+    const stage = kind.split(".")[0]
+    const teams = (pair || "").split(" ⇋ ").map(each => Object.keys(suits).find(team => suits[team] + plain === each))
+    if (!codeStages.includes(stage) || teams.length !== 2 || !teams.every(Boolean)) return null
+    return codeStages.indexOf(stage) * 20 + order.indexOf(teams[0]) * 4 + order.indexOf(teams[1])
+}
+
 // The same numbers on both phones: a generator seeded by a name
 export function random(name) {
     let seed = 2166136261

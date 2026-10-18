@@ -3,6 +3,7 @@ import {getTask} from "/plexos/lib/functions/dll.js"
 import File from "/plexos/lib/classes/filesystem/file.js"
 import Icon from "/plexos/lib/classes/interface/icon.js"
 import {notify} from "/plexos/app/game/Party/notify.js"
+import {codeRank} from "/plexos/app/game/Sync/pairs.js"
 
 let task = getTask(/TASKID/)
 let mem  = task.mem
@@ -130,7 +131,5 @@ mem.inventoryRank = (file) => {
     if (exte === "item") return 10 + teamRank(data)
     if (exte === "carta") return letterOrder.includes(data) ? letterOrder.indexOf(data) : 50
     if (exte === "maze") return mazeOrder.includes(data) ? mazeOrder.indexOf(data) : 50
-    const code = file.name.match(/^(.+) - Código (\d)/)
-    if (code) return Number(code[2]) * 10 + Object.values(mem.teams).findIndex(team => team.name === code[1])
-    return 100
+    return codeRank(file.name) ?? 100
 }

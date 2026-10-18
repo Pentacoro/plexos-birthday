@@ -1,4 +1,5 @@
 import {getTask} from "/plexos/lib/functions/dll.js"
+import {codeName} from "/plexos/app/game/Sync/pairs.js"
 
 let task = getTask(/TASKID/)
 let mem  = task.mem
@@ -9,7 +10,7 @@ let mem  = task.mem
 // picked. Each code is kept under the team it came from.
 const builders = { path: () => mem.buildPath, stack: () => mem.buildStack, call: () => mem.buildCall }
 const cleared = () => mem.state().cleared ?? -1
-const teamName = () => mem.party.teams[mem.partner]?.name
+const codeTitle = (stage) => codeName(mem.team, mem.partner, stage)
 const last = () => mem.stages.length - 1
 
 mem.showStage = (stage) => {
@@ -29,8 +30,8 @@ mem.clearStage = async () => {
     await mem.lightWin()
     await mem.setState({ cleared: mem.stage })
     // the first two stages' codes are kept; the third is kept when the phone gives it
-    if (mem.stage === 0) mem.party.record("codes", teamName() + " - Código 1", mem.pathPuzzle().code)
-    if (mem.stage === 1) mem.party.record("codes", teamName() + " - Código 2", mem.stackPuzzle().solution.join(""))
+    if (mem.stage === 0) mem.party.record("codes", codeTitle(0), mem.pathPuzzle().code)
+    if (mem.stage === 1) mem.party.record("codes", codeTitle(1), mem.stackPuzzle().solution.join(""))
     if (mem.stage === last()) {
         await mem.setState({ done: true })
         await mem.party.solveStep(mem.id, 1)
