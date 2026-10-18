@@ -40,15 +40,6 @@ mem.codeParts = {
     diamonds: ["spades", "hearts", "clubs"],
 }
 
-// What each team's character gives once the 9 digits are right; the real ones wait where the
-// team's artifact is hidden, for the fifth puzzle. Spades' is still to be decided.
-mem.items = {
-    spades:   { name: "5 (por definir)", detail: "Objeto" },
-    hearts:   { name: "12 Bombones", detail: "Objeto" },
-    clubs:    { name: "7 Pesos", detail: "Objeto" },
-    diamonds: { name: "3 Piezas de Cubo Rubik", detail: "Objeto" },
-}
-
 mem.mode  = "dial"
 mem.entry = ""
 

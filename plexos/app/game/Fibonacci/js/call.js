@@ -2,6 +2,7 @@ import {getTask} from "/plexos/lib/functions/dll.js"
 import {Dialogue, Line} from "/plexos/app/game/Party/dialogue.js"
 import {spokenCode, pairState, setPairState, codeName} from "/plexos/app/game/Sync/pairs.js"
 import {pushBack, leave} from "/plexos/app/game/Party/backStack.js"
+import {puzzleById, isUnlocked} from "/plexos/app/game/Party/puzzles.js"
 import intro from "./dialogue/intro.js"
 import spades from "./dialogue/spades.js"
 import hearts from "./dialogue/hearts.js"
@@ -40,6 +41,7 @@ mem.dial = async (number) => {
     mem.mode = "call"
     mem.callBack = pushBack(() => mem.hangUp(true))
     mem.root.classList.add("ringing")
+    mem.sound.ring()
     await wait(1600)
     if (!live()) return true
     mem.root.classList.remove("ringing")
@@ -56,6 +58,14 @@ mem.dial = async (number) => {
         if (!live()) return true
         if (!called) await mem.party.setFlag(mem.id, "introCalled", true)
         mem.hangUp()
+        return true
+    }
+
+    // Before the party the phone is a preview: each team's character only says their preview
+    // lines, and the contact is kept for the night
+    if (!isUnlocked(puzzleById("fibonacci"))) {
+        await mem.dialogue.play(character.preview)
+        if (live()) mem.hangUp()
         return true
     }
 

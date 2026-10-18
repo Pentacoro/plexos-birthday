@@ -2,17 +2,25 @@
 // phone, with nothing passing between the phones. Both build the same puzzles from the pair's
 // name, so whatever one sees matches what the other needs. Fibonacci reads the call codes here.
 
-// Who leads: the first of the two in this order plays side 1
+// The pair's name, the same from both sides, seeds its puzzles
 export const order = ["spades", "clubs", "diamonds", "hearts"]
-export const sideOf = (team, partner) => order.indexOf(team) < order.indexOf(partner) ? 1 : 2
 export const pairName = (a, b) => [a, b].sort((x, y) => order.indexOf(x) - order.indexOf(y)).join("-")
+// Who leads (plays side 1) in each pairing, so every team gets both sides: spades and diamonds
+// lead twice, clubs and hearts once
+const leads = {
+    "spades-clubs": "spades", "spades-diamonds": "diamonds", "spades-hearts": "spades",
+    "clubs-diamonds": "clubs", "clubs-hearts": "hearts", "diamonds-hearts": "diamonds",
+}
+export const sideOf = (team, partner) => leads[pairName(team, partner)] === team ? 1 : 2
+// the two, side 1 first
+const sides = (a, b) => sideOf(a, b) === 1 ? [a, b] : [b, a]
 
 // A kept code's file name, the same on both phones: the suits side 1 first, then the stage's.
 // U+FE0E keeps each suit a plain character, as phones would draw them as emoji.
 const suits = { spades: "♠", hearts: "♥", clubs: "♣", diamonds: "♦" }
 const codeStages = ["Colors", "Stacks", "Final"]
 const plain = "\uFE0E"
-export const codeName = (a, b, stage) => pairName(a, b).split("-").map(team => suits[team] + plain).join(" ⇋ ") + " | " + codeStages[stage]
+export const codeName = (a, b, stage) => sides(a, b).map(team => suits[team] + plain).join(" ⇋ ") + " | " + codeStages[stage]
 
 // Where a kept code sorts in its folder, by stage and then by pair; null if it isn't one
 export function codeRank(name) {

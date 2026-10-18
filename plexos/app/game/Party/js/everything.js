@@ -22,12 +22,6 @@ function sequence(seed) {
     return digits.slice(0, 7)
 }
 
-const items = {
-    spades:   "5 (por definir)",
-    hearts:   "12 Bombones",
-    clubs:    "7 Pesos",
-    diamonds: "3 Piezas de Cubo Rubik",
-}
 const img = (name) => "/plexos/app/game/Party/img/" + name + ".svg"
 
 mem.unlockEverything = async () => {
@@ -47,7 +41,7 @@ mem.unlockEverything = async () => {
     }]))
     Object.assign(mem.progress.flags, {
         fibonacci: { introCalled: true, hintRetired: true, contacts, asked: teamKeys, voidCalled: true },
-        webdetective: { received: ["0", "0w", "1", "1w", "final", "secret", "queen"], otherTeams, answers },
+        webdetective: { received: ["0", "1", "wrong", "final", "secret", "queen"], otherTeams, answers },
         labyrinth: { done: true, passed: ["first", "artifact", "second", "third"], packages: ["first:spades", "first:hearts", "first:clubs", "artifact:diamonds"] },
         sync: { pair: team, pairs },
         everything: true,
@@ -61,11 +55,11 @@ mem.unlockEverything = async () => {
         const image = who === "intro" ? "/plexos/app/game/Fibonacci/icon.svg" : img("contact-" + who)
         await mem.record("contacts", names[who] || mem.teams[who].name, number, { detail: number, image, ...quiet })
     }
-    for (const key of teamKeys) await mem.record("items", items[key], key, { detail: "Objeto", image: img("item-" + key), ...quiet })
+    for (const key of teamKeys) await mem.record("items", mem.items[key].name, key, { detail: mem.items[key].detail, image: img("item-" + key), ...quiet })
     const final = Object.values(otherTeams).join(" · ")
     for (const [title, key, look, detail] of [
-        ["Carta 1", "0", "letter-1", answers[0]], ["Carta 1 (Incorrecto)", "0w", "letter-1-wrong", answers[0]],
-        ["Carta 2", "1", "letter-2-" + (["spades", "clubs"].includes(team) ? "teal" : "purple"), answers[1]], ["Carta 2 (Incorrecto)", "1w", "letter-2-wrong", answers[1]],
+        ["Carta 1", "0", "letter-1", answers[0]], ["Carta 2", "1", "letter-2-" + team, answers[1]],
+        ["Carta (Incorrecto)", "wrong", "letter-wrong", " "],
         ["Carta Final", "final", "letter-final", final], ["Carta Secreta", "secret", "letter-secret-" + team, " "],
         ["Carta de Pentacoro", "queen", "letter-queen", " "],
     ]) await mem.record("letters", title, key, { detail, image: img(look), ...quiet })

@@ -4,6 +4,8 @@ import {blip} from "./sound.js"
 // Each line types out letter by letter, pausing longer after "." and ",". A tap shows the
 // rest of the line at once, the next tap moves on. A line can move on by itself after a
 // delay (auto), offer choices, or run a script once it is left.
+// A sprite is a picture's path, or a character's pair of faces: { talking, rest }, the one
+// shown while a line types and the one it stays on once it stops.
 export class Line {
     constructor(sprite, text, params = {}) {
         this.sprite  = sprite
@@ -52,9 +54,19 @@ export class Dialogue {
         })
     }
 
+    setFace(face) {
+        if (!face) return
+        this.face = face
+        const { talking, rest } = typeof face === "string" ? { talking: face, rest: face } : face
+        // loaded ahead, so the switch never blinks out
+        for (const src of [talking, rest]) new Image().src = src
+        this.frames = { talking, rest }
+        this.sprite.src = rest
+    }
+
     show(character) {
         this.voice = character.voice
-        this.sprite.src = character.sprite || ""
+        this.setFace(character.sprite)
         this.name.textContent = character.name || ""
         this.name.hidden = !character.name
         this.node.hidden = false
@@ -90,7 +102,8 @@ export class Dialogue {
     }
 
     say(line) {
-        if (line.sprite) this.sprite.src = line.sprite
+        this.setFace(line.sprite || this.face)
+        if (this.frames) this.sprite.src = this.frames.talking
         this.text.textContent = ""
         this.choices.replaceChildren()
         this.node.classList.remove("waiting")
@@ -104,6 +117,7 @@ export class Dialogue {
                 clearTimeout(timer)
                 shown = line.text.length
                 this.text.textContent = line.text
+                if (this.frames) this.sprite.src = this.frames.rest
                 this.node.classList.remove("speaking")
                 if (line.choices) return offer()
                 if (line.auto !== undefined) {

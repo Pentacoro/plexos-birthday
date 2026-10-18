@@ -2,6 +2,7 @@ import {getTask} from "/plexos/lib/functions/dll.js"
 import {pushBack, leave} from "/plexos/app/game/Party/backStack.js"
 import {lock} from "/plexos/app/game/Party/cipher.js"
 import {typeKey, carriageReturn, wrong} from "/plexos/app/game/Party/sound.js"
+import {teams} from "/plexos/app/game/Party/teams.js"
 
 let task = getTask(/TASKID/)
 let mem  = task.mem
@@ -11,12 +12,18 @@ let mem  = task.mem
 mem.answer = mem.stage.querySelector(".answer")
 mem.typewriterBack = null
 
-// Lines already written on the page, above the one being typed
+// Lines already written on the page, above the one being typed: [team, password], each
+// password with its team's symbol beside it, in the ink of the page rather than the team's color
 mem.history = document.createElement("div")
 mem.history.className = "answer-history"
 mem.slotsRow.before(mem.history)
 mem.writeHistory = (lines) => {
-    mem.history.replaceChildren(...lines.map(line => Object.assign(document.createElement("div"), { textContent: line })))
+    mem.history.replaceChildren(...lines.map(([team, password]) => {
+        const line = document.createElement("div")
+        line.innerHTML = `<svg viewBox="0 0 24 24" class="history-team"><path d="${teams[team].path}" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`
+        line.append(Object.assign(document.createElement("span"), { textContent: password }))
+        return line
+    }))
 }
 
 // Writing freely, the page just takes the text, as long as it gets; with hearts, any key sends

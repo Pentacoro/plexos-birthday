@@ -65,6 +65,13 @@ mem.showPairing = () => {
     })
 }
 
+// Each role's icon, drawn in white like the suits: a keyboard for the Tecleador, a face
+// thinking with its hand on its chin for the Pensador
+const roleIcons = {
+    tecleador: `<svg viewBox="0 0 48 48" class="role-icon" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="13" width="40" height="24" rx="4"/><path d="M11 20h2M17.5 20h2M24 20h2M30.5 20h2M37 20h0M11 25.5h0M15 25.5h2M21.5 25.5h2M28 25.5h2M34.5 25.5h2.5M15 31h18"/></svg>`,
+    pensador: `<svg viewBox="0 0 48 48" class="role-icon" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="25" cy="21" r="16"/><path d="M27.5 12.5q3.5-2.5 7 0"/><path d="M15.5 15.5h5"/><circle cx="18" cy="20" r="1.6" fill="currentColor"/><circle cx="31" cy="19" r="1.6" fill="currentColor"/><path d="M21 29.5l7-1"/><path d="M8 46l4.5-8.5q1.5-3 5-2.6l9 1.2q2.4.4 2 2.6t-2.8 1.8l-6.2-.6"/></svg>`,
+}
+
 // With the own team: which of the two this player is
 mem.showRoles = () => {
     const roles = [
@@ -75,6 +82,7 @@ mem.showRoles = () => {
         option.type = "button"
         option.dataset.key = key
         option.style.setProperty("--team", mem.party.teams[mem.team].color)
+        option.innerHTML = roleIcons[key]
         option.append(mem.el("span", "", name), mem.el("small", "", about))
         return option
     })
@@ -82,4 +90,6 @@ mem.showRoles = () => {
         await setPairState(mem.party, mem.team, { role })
         await startWith(mem.team)
     })
+    // the two side by side
+    mem.screen.querySelector(".pair-list").classList.add("pair-roles")
 }

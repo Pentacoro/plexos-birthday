@@ -74,4 +74,12 @@ mem.showCode = (team) => {
     else setCategory(mem.badge, "teams")
     buildSlots(mem.codeParts[team].map(part => ({ length: 3, icon: part === "artifact" ? artifactIcon() : teamIcon(part) })))
     mem.teamRow.replaceChildren()
+    // the player's own symbol with their card's code beside it: the code is made of codes like it
+    if (!mem.team) return
+    const own = document.createElement("div")
+    own.className = "team own-code"
+    const code = document.createElement("span")
+    code.textContent = mem.party.teams[mem.team].code
+    own.append(teamIcon(mem.team), code)
+    mem.teamRow.append(own)
 }

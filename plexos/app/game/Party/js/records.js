@@ -117,7 +117,7 @@ mem.setBadge = (kind, level) => queue = queue.then(async () => {
 // diamonds'. Codes by stage, each through the suits. A file this doesn't place goes after.
 const suits = ["spades", "hearts", "clubs", "diamonds"]
 const teamRank = (team) => team === mem.player?.team ? 0 : 1 + suits.indexOf(team)
-const letterOrder = ["0", "0w", "1", "1w", "final", "secret", "queen"]
+const letterOrder = ["0", "1", "wrong", "final", "secret", "queen"]
 const mazeOrder = ["first", "second", "third", "artifact"]
 mem.inventoryRank = (file) => {
     const exte = file.cfg.exte, data = String(file.data ?? "")

@@ -103,6 +103,12 @@ const syncEntry = {
     launcherScriptFilePath: "/plexos/app/game/Sync/sync.ls",
 }
 
+const artifactsEntry = {
+    ...fibonacciEntry,
+    installationDirectory: "@/plexos/app/game/Artifacts",
+    launcherScriptFilePath: "/plexos/app/game/Artifacts/artifacts.ls",
+}
+
 const decoderEntry = {
     ...fibonacciEntry,
     installationDirectory: "@/plexos/app/game/Decoder",
@@ -128,6 +134,7 @@ function upgradeRegistry(registry) {
     if (!("WebDetective" in data.STANDALONE)) data.STANDALONE.WebDetective = webDetectiveEntry
     if (!("Labyrinth" in data.STANDALONE)) data.STANDALONE.Labyrinth = labyrinthEntry
     if (!("Sync" in data.STANDALONE)) data.STANDALONE.Sync = syncEntry
+    if (!("Artifacts" in data.STANDALONE)) data.STANDALONE.Artifacts = artifactsEntry
     if (!("Decoder" in data.STANDALONE)) data.STANDALONE.Decoder = decoderEntry
     if (!("Trainer" in data.STANDALONE)) data.STANDALONE.Trainer = trainerEntry
 }

@@ -2,7 +2,7 @@ import {getTask} from "/plexos/lib/functions/dll.js"
 import File from "/plexos/lib/classes/filesystem/file.js"
 import Icon from "/plexos/lib/classes/interface/icon.js"
 import Task from "/plexos/lib/classes/system/task.js"
-import {puzzles, tools, isUnlocked} from "./puzzles.js"
+import {puzzles, tools, onDesktop, toolOpen} from "./puzzles.js"
 
 let task = getTask(/TASKID/)
 let mem  = task.mem
@@ -46,7 +46,7 @@ mem.checkUnlocks = async () => {
         const stray = entry.folder && mem.desktopPath + "/" + entry.name + ".game"
         if (stray && File.at(stray)) await task.cmd("file.move", { path: stray, to: entry.folder })
         if (mem.progress.spawned.includes(entry.id)) continue
-        if (puzzles.includes(entry) && !isUnlocked(entry)) continue
+        if (puzzles.includes(entry) ? !onDesktop(entry) : !toolOpen(entry)) continue
         if (entry.only && entry.only !== mem.player?.name && !mem.player?.everything) continue
         if (entry.testers && !mem.player?.tester) continue
         await mem.spawnShortcut(entry)

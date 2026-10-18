@@ -3,25 +3,31 @@ import {getTask} from "/plexos/lib/functions/dll.js"
 let task = getTask(/TASKID/)
 let mem  = task.mem
 
-// Every letter received is kept in step order: each step's letter, then its "Incorrecto" reply
-// once one has come. They lie side by side like a strip: swiping right brings the one before in
-// from the left, swiping left the one after in from the right. Past the newest, the sheet turns
-// over onto the typewriter to answer it (or, all answered, the closing note shows). A letter
-// already answered has "Reenviar" instead of "Investigar", for a go that changes no progress.
-// The final letter, after the last step, is kept as "final" and always comes last
-const keyOf = (step, wrong) => mem.isQueen(step) ? "queen" : mem.isSecret(step) ? "secret" : mem.isFinal(step) ? "final" : step + (wrong ? "w" : "")
+// Every letter received is kept in step order: each step's letter, then the "Incorrecto" reply
+// once one has come, one letter for every step, plain white and saying only that. They lie side
+// by side like a strip: swiping right brings the one before in from the left, swiping left the
+// one after in from the right. Past the newest, the sheet turns over onto the typewriter to
+// answer it (or, all answered, the closing note shows). A letter already answered has
+// "Reenviar" instead of "Investigar", for a go that changes no progress. The final letter, after
+// the last step, is kept as "final" and comes after them.
+const keyOf = (step, wrong) => mem.isQueen(step) ? "queen" : mem.isSecret(step) ? "secret" : mem.isFinal(step) ? "final" : wrong ? "wrong" : String(step)
+// the "Incorrecto" belongs to whichever step is open, the last once all are answered
+const openStep = () => Math.min(mem.party.stepsSolved(mem.id), mem.letters.length - 1)
 const parse = (key) => key === "queen" ? { step: mem.letters.length + 2, wrong: false }
     : key === "secret" ? { step: mem.letters.length + 1, wrong: false }
     : key === "final" ? { step: mem.letters.length, wrong: false }
-    : { step: parseInt(key), wrong: key.endsWith("w") }
-const rank = (key) => key === "queen" ? 1e9 + 2 : key === "secret" ? 1e9 + 1 : key === "final" ? 1e9 : parseInt(key)
+    : key === "wrong" ? { step: openStep(), wrong: true }
+    : { step: parseInt(key), wrong: false }
+const rank = (key) => key === "queen" ? 1e9 + 2 : key === "secret" ? 1e9 + 1 : key === "final" ? 1e9 : key === "wrong" ? mem.letters.length - 0.5 : parseInt(key)
 // every letter there is: the badge goes complete once all are in
-const everyLetter = () => [...mem.letters.flatMap((_, step) => [keyOf(step), keyOf(step, true)]), "final", "secret"]
-const order = (a, b) => rank(a) - rank(b) || a.length - b.length
+const everyLetter = () => [...mem.letters.map((_, step) => keyOf(step)), "wrong", "final", "secret"]
+const order = (a, b) => rank(a) - rank(b)
+// progress from when each step had its own "Incorrecto" ("0w", "1w")
+mem.letterKey = (key) => /^\d+w$/.test(key) ? "wrong" : key
 
 mem.received = () => {
     const saved = mem.party.flag(mem.id, "received")
-    if (saved) return [...saved].sort(order)
+    if (saved) return [...new Set(saved.map(mem.letterKey))].sort(order)
     // progress from before letters were kept: the letters it must have had
     const solved = mem.party.stepsSolved(mem.id)
     return Array.from({ length: Math.min(solved + 1, mem.letters.length) }, (_, step) => keyOf(step))
@@ -35,24 +41,30 @@ mem.receive = (step, wrong) => {
         list = [...new Set([...list, key])].sort(order)
         mem.party.setFlag(mem.id, "received", list)
         // each letter has its own envelope color
-        const title = mem.isQueen(step) ? "Carta de Pentacoro" : mem.isSecret(step) ? "Carta Secreta" : mem.isFinal(step) ? "Carta Final" : "Carta " + (step + 1) + (wrong ? " (Incorrecto)" : "")
-        const look = mem.isQueen(step) ? "queen" : mem.isSecret(step) ? "secret-" + mem.team : mem.isFinal(step) ? "final"
-            : step === 1 && !wrong ? "2-" + mem.secondColor : (step + 1) + (wrong ? "-wrong" : "")
-        mem.party.record("letters", title, key, { image: "/plexos/app/game/Party/img/letter-" + look + ".svg", detail: mem.answerOf(step) || " " })
+        const look = key === "wrong" ? "wrong" : mem.isQueen(step) ? "queen" : mem.isSecret(step) ? "secret-" + mem.team : mem.isFinal(step) ? "final"
+            : step === 1 ? "2-" + mem.team : String(step + 1)
+        mem.party.record("letters", titleOf(key), key, { image: "/plexos/app/game/Party/img/letter-" + look + ".svg", detail: (key !== "wrong" && mem.answerOf(step)) || " " })
         if (mem.isFinal(step)) mem.party.setBadge("letters", 2)
         if (everyLetter().every(each => list.includes(each))) mem.party.setBadge("letters", 3)
     }
     mem.reading = list.indexOf(key)
 }
 
-// What each letter was answered with, shown under it in Cartas: a step's right answer for it
-// and its "Incorrecto" reply; for the final letter, the other teams' passwords taken so far
-const titleOf = (key) => { const { step, wrong } = parse(key); return mem.isQueen(step) ? "Carta de Pentacoro" : mem.isSecret(step) ? "Carta Secreta" : mem.isFinal(step) ? "Carta Final" : "Carta " + (step + 1) + (wrong ? " (Incorrecto)" : "") }
+// What each letter was answered with, shown under it in Cartas: a step's right answer; for the
+// final letter, the other teams' passwords taken so far
+function titleOf(key) {
+    if (key === "wrong") return "Carta (Incorrecto)"
+    const { step } = parse(key)
+    return mem.isQueen(step) ? "Carta de Pentacoro" : mem.isSecret(step) ? "Carta Secreta" : mem.isFinal(step) ? "Carta Final" : "Carta " + (step + 1)
+}
 mem.answerOf = (step) => mem.isFinal(step) ? Object.values(mem.otherTeams()).join(" · ") : mem.party.flag(mem.id, "answers")?.[step] || ""
 mem.noteAnswer = async (step, entry) => {
     if (!mem.isFinal(step)) await mem.party.setFlag(mem.id, "answers", { ...mem.party.flag(mem.id, "answers"), [step]: entry })
-    for (const key of [keyOf(step), keyOf(step, true)]) mem.party.updateDetail("letters", titleOf(key), mem.answerOf(step))
+    mem.party.updateDetail("letters", titleOf(keyOf(step)), mem.answerOf(step))
 }
+
+// The "Incorrecto" says only that; any other letter its text
+mem.showLetterOf = (step, wrong) => wrong ? mem.showLetterText("", mem.wrong) : mem.showLetterText(mem.letterOf(step), null)
 
 const solved = (step) => step < mem.party.stepsSolved(mem.id)
 const finished = () => mem.party.stepsSolved(mem.id) >= mem.letters.length
@@ -73,7 +85,7 @@ function showReceived(index) {
     mem.step = step
     mem.setStepCategory(step)
     mem.dressLetter(step, wrong)
-    mem.showLetterText(mem.letterOf(step), wrong ? mem.wrong : null)
+    mem.showLetterOf(step, wrong)
     mem.labelButton()
 }
 
@@ -117,7 +129,7 @@ mem.browse = async (by) => {
 // sliding from envelope to envelope
 mem.envelopes = false
 mem.showLetter = async (key) => {
-    const to = mem.received().indexOf(key)
+    const to = mem.received().indexOf(mem.letterKey(key))
     if (to < 0 || mem.busy || !["letter", "done", "mail"].includes(mem.view)) return
     mem.busy = true
     mem.envelopes = true

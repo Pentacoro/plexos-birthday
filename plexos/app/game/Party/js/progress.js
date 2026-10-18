@@ -24,6 +24,8 @@ mem.solveStep = async (id, step) => {
     if (mem.stepsSolved(id) >= step) return
     mem.progress.steps[id] = step
     await mem.saveProgress()
+    // a team's item comes once its phone code and its artifact's puzzle are both solved
+    mem.deliverItem()
 }
 
 // Anything else a puzzle needs to remember, such as whether a line was already called

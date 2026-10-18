@@ -1,13 +1,18 @@
 import {Line} from "/plexos/app/game/Party/dialogue.js"
 
 // Answers the picas number. DRAFT lines.
-const sprite = "/plexos/app/game/Fibonacci/img/spades.png"
+const sprite = { talking: "/plexos/app/game/Fibonacci/img/Spade_Talking.png", rest: "/plexos/app/game/Fibonacci/img/Spade_Smile.png" }
 
 export default {
     name: null,
     sprite,
     // how they sound as they talk: calm and smooth
     voice: { type: "triangle", freq: 230, jitter: 0.05, gain: 0.12, length: 0.06 },
+    // Before the party, the only thing said on any call (DRAFT lines, to be written)
+    preview: [
+        new Line(sprite, "¡Hola! Habla el contacto de Picas."),
+        new Line(sprite, "Todavía no es momento de hablar... Guardá este número, que el 24 a la noche lo vas a necesitar."),
+    ],
     // Every call opens with this
     intro: [
         new Line(sprite, "¡Hola! Habla el contacto de Picas."),

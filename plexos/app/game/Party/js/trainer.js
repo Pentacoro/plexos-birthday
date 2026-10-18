@@ -3,7 +3,7 @@ import {getTask} from "/plexos/lib/functions/dll.js"
 import File from "/plexos/lib/classes/filesystem/file.js"
 import {applyColorScheme} from "/plexos/lib/functions/theme.js"
 import {leave} from "/plexos/app/game/Party/backStack.js"
-import {puzzles, isUnlocked} from "./puzzles.js"
+import {puzzles, tools, onDesktop, toolOpen} from "./puzzles.js"
 
 let task = getTask(/TASKID/)
 let mem  = task.mem
@@ -36,13 +36,13 @@ mem.setTeam = async (team) => {
     mem.restartApps()
 }
 
-// Shortcuts for puzzles still locked at the clock's time go, to come back when it gets there
+// Shortcuts for puzzles and tools still locked at the clock's time go, to come back when it gets there
 mem.applySchedule = async () => {
-    for (const puzzle of puzzles) {
-        if (isUnlocked(puzzle)) continue
-        const path = mem.desktopPath + "/" + puzzle.name + ".game"
+    for (const entry of [...puzzles, ...tools]) {
+        if (puzzles.includes(entry) ? onDesktop(entry) : toolOpen(entry)) continue
+        const path = (entry.folder || mem.desktopPath) + "/" + entry.name + ".game"
         if (File.at(path)) await task.cmd("file.delete", { path })
-        mem.progress.spawned = mem.progress.spawned.filter(id => id !== puzzle.id)
+        mem.progress.spawned = mem.progress.spawned.filter(id => id !== entry.id)
     }
     await mem.saveProgress()
     File.refreshViews()

@@ -13,7 +13,7 @@ mem.startStep = async (step, { wrong = false } = {}) => {
     mem.view = "mail"
     mem.busy = true
     mem.setStepCategory(step)
-    mem.showLetterText(mem.letterOf(step), wrong ? mem.wrong : null)
+    mem.showLetterOf(step, wrong)
     mem.receive(step, wrong)
     mem.labelButton()
     mem.dressLetter(step, wrong)
@@ -72,14 +72,13 @@ mem.submitStep = async (correct) => {
 
 // A letter's look and answer sheet: the final one on black paper in a black and gold envelope,
 // with the passwords already taken written above the line; the secret one in the team's color
-// each letter's envelope in its file icon's color: the second step's teal for spades and clubs,
-// purple for hearts and diamonds, to sit well with their stamp; its "Incorrecto" plain white,
-// without stamp or seal. The final and secret ones dress themselves.
-mem.secondColor = ["spades", "clubs"].includes(mem.team) ? "teal" : "purple"
-const envelopes = [["#f2d27e", "#e0525c"], [mem.secondColor === "teal" ? "#1f6f78" : "#7660A9", "#f4f2ee"]]
+// each letter's envelope in its file icon's color: the second step's in the team's, muted
+// toward slate so the secret one stays the vivid one; the "Incorrecto" plain white, without
+// stamp or seal. The final and secret ones dress themselves.
+const envelopes = ["#f2d27e", "color-mix(in srgb, var(--team-color) 55%, #5c5f6b)"]
 mem.dressLetter = (step, wrong = false) => {
-    const color = envelopes[step]?.[wrong ? 1 : 0]
-    mem.stage.classList.toggle("plain", step === 1 && wrong)
+    const color = wrong ? "#f4f2ee" : envelopes[step]
+    mem.stage.classList.toggle("plain", wrong)
     if (color) mem.stage.style.setProperty("--env", color)
     else mem.stage.style.removeProperty("--env")
     if (mem.isFinal(step)) mem.stage.style.setProperty("--env", "#1a1a20")
@@ -89,7 +88,7 @@ mem.dressLetter = (step, wrong = false) => {
     mem.stage.classList.toggle("velvet", mem.isQueen(step))
     mem.setWriting(mem.writing(step))
     mem.buildAnswer(mem.writing(step) === "password" ? mem.answerLength(step) : 0)
-    mem.writeHistory(mem.isFinal(step) ? Object.values(mem.otherTeams()) : [])
+    mem.writeHistory(mem.isFinal(step) ? Object.entries(mem.otherTeams()) : [])
     mem.letter.classList.toggle("noir", mem.isFinal(step))
     mem.stage.classList.toggle("premium", mem.isFinal(step))
     mem.stage.classList.toggle("secret", mem.isSecret(step))

@@ -1,7 +1,7 @@
 import {Line} from "/plexos/app/game/Party/dialogue.js"
 
 // Answers 1123581, the classic sequence. DRAFT lines.
-const sprite = "/plexos/app/game/Fibonacci/img/intro.png"
+const sprite = { talking: "/plexos/app/game/Fibonacci/img/Fibo_Talking.png", rest: "/plexos/app/game/Fibonacci/img/Fibo_Idle.png" }
 
 export default {
     name: null,

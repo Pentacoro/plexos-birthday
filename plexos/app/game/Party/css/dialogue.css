@@ -19,7 +19,8 @@
     padding: 12px 16px 24px;
     border: 2px solid #fff;
     border-radius: 12px;
-    background: #1b1b20;
+    background: #fff;
+    color: #1b1b20;
     font-size: 18px;
     line-height: 1.4;
     touch-action: manipulation;
@@ -29,6 +30,7 @@
     margin-bottom: 6px;
     font-size: 17px;
     font-weight: 600;
+    color: #6b6b75;
 }
 .dialogue-name[hidden] {
     display: none;
@@ -40,7 +42,7 @@
     right: 14px;
     bottom: 10px;
     border: 7px solid transparent;
-    border-top: 9px solid #fff;
+    border-top: 9px solid #6b6b75;
     border-bottom: 0;
     animation: dialogue-blink 0.8s steps(2) infinite;
 }
@@ -60,6 +62,8 @@
     max-width: 90%;
     object-fit: contain;
     object-position: right top;
+    /* the portraits are drawn pixel by pixel, and stay crisp blown up */
+    image-rendering: pixelated;
     pointer-events: none;
 }
 .dialogue-sprite.entering {
@@ -85,8 +89,8 @@
     padding: 12px 16px;
     border: 2px solid #fff;
     border-radius: 12px;
-    background: #1b1b20;
-    color: #fff;
+    background: #fff;
+    color: #1b1b20;
     font: inherit;
     font-size: 17px;
     text-align: left;

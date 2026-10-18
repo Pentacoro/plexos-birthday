@@ -135,6 +135,17 @@
     width: clamp(22px, 3.8vh, 32px);
     height: clamp(22px, 3.8vh, 32px);
 }
+/* on the code screen: the player's own symbol and card code, side by side */
+.team.own-code {
+    flex-direction: row;
+    gap: 10px;
+    margin-top: clamp(10px, 2.2vh, 20px);
+    padding: 6px 14px;
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    font-size: clamp(18px, 2.8vh, 24px);
+    letter-spacing: 0.18em;
+}
 
 /* numbers that picked up before, in a menu that slides up from the bottom */
 .puzzle {

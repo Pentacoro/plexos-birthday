@@ -29,10 +29,12 @@ mem.grid.evaluateIconGrid = function (
     let windowW = desktop.node.offsetWidth
     let windowH = desktop.node.offsetHeight
 
-    // A set column count sizes the cells to fill the width with exactly that many,
-    // keeping the cells' proportions (the responsive icon styles grow the labels with them)
+    // A set column count sizes the cells to fill the width with at least that many, keeping the
+    // cells' proportions (the responsive icon styles grow the labels with them). Cells never grow
+    // past maxCellWidth: a screen wider than that allows takes more columns instead.
     if (cfg.grid.columns) {
-        const columns = cfg.grid.columns
+        const most = cfg.grid.maxCellWidth || 150
+        const columns = Math.max(cfg.grid.columns, Math.ceil((windowW - wm) / (most + wm)))
         w = Math.floor((windowW - wm * (columns + 1)) / columns)
         h = Math.round(w * (cfg.grid.cellRatio || 5 / 6))
         cfg.grid.width = w

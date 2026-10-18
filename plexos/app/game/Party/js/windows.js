@@ -193,24 +193,29 @@ task.cmd("event.on", { eventName: "window-scripted", callback: mem.phoneWindow, 
 File.reuse = (path) => {
     const file = File.at(path)
     if (!file) return false
+    // an item is only proof of what was given: opening it does nothing, and leaves Explorer open
+    if (file.cfg.exte === "item") return true
     // a file drawn as a folder (Inventario on the desktop) opens the folder it points to
     if (file.cfg.exte === "dir" && file.cfg.class !== "DirectoryFile") {
         File.open(file.data)
         return true
     }
-    // a file opened from Explorer brings up another app, and Explorer closes behind it
+    // a file opened from Explorer brings up another app, and Explorer closes behind it, except
+    // for Notepad, which closes back onto the folder it was opened from
     const opener = Task.System()?.mem.focused
-    if (opener?.name === "Explorer" && file.cfg.class !== "DirectoryFile") setTimeout(() => opener.end())
+    const inNotepad = plexos.Settings.apps[file.cfg.exte]?.includes("/Notepad/")
+    if (opener?.name === "Explorer" && file.cfg.class !== "DirectoryFile" && !inNotepad) setTimeout(() => opener.end())
     const open = plexos.Tasks.filter(each => each.partyWindow && each.window?.node?.isConnected)
     if (file.cfg.class === "DirectoryFile") {
         const explorer = open.find(each => each.name === "Explorer" && !each.mem.arg?.mode)
-        if (!explorer) return false
+        if (!explorer) return mem.standInFor(file), false
         if (explorer.mem.address !== path) explorer.mem.navigate(path)
         reopen(explorer)
         return true
     }
     const holder = open.find(each => each.mem.arg?.fileAddr === path || each.mem.arg?.path === path)
-    if (!holder) return false
+    // not open: the app starts, with a window standing in until its own is up (standIn.js)
+    if (!holder) return mem.standInFor(file), false
     reopen(holder)
     return true
 }

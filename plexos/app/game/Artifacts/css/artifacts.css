@@ -1,0 +1,150 @@
+.puzzle {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 16px 16px max(20px, 3vh);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #1b1b20;
+    color: #fff;
+    font-family: system-ui, sans-serif;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.badge-row {
+    position: relative;
+    align-self: stretch;
+}
+
+/* one dot per stage, under the badges */
+.stage-dots {
+    display: flex;
+    gap: 10px;
+    margin: 14px 0 6px;
+}
+.stage-dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #3a3a42;
+}
+.stage-dots span.done {
+    background: #fff;
+}
+.stage-dots span.current {
+    background: transparent;
+    box-shadow: inset 0 0 0 2px #fff;
+}
+
+.screen {
+    flex: 1;
+    min-height: 0;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+/* stage 1: the equation, its unknowns as items */
+.equation {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px 8px;
+    max-width: 100%;
+    font-size: clamp(26px, 4vh, 34px);
+    font-weight: 600;
+}
+.equation .item {
+    width: 1.6em;
+    height: 1.6em;
+}
+.equation .op {
+    opacity: 0.75;
+}
+.equation sup {
+    align-self: flex-start;
+    margin-left: -6px;
+    font-size: 0.6em;
+}
+/* a root: the sign, and a bar over everything it covers */
+.equation .root {
+    display: inline-flex;
+    align-items: stretch;
+}
+.equation .radical {
+    display: flex;
+    align-items: center;
+    font-size: 1.35em;
+    font-weight: 400;
+    line-height: 1;
+}
+.equation .radicand {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px 8px;
+    padding: 4px 4px 0;
+    border-top: 2.5px solid #fff;
+}
+
+.slots {
+    display: flex;
+    gap: 14px;
+}
+.slots span {
+    width: 38px;
+    height: 46px;
+    border-bottom: 3px solid #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: 600;
+}
+.slots.wrong {
+    animation: artifacts-shake 0.35s;
+}
+.slots.solved span {
+    border-color: #6bf0a0;
+    color: #6bf0a0;
+}
+
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 10px;
+}
+.keypad button {
+    width: clamp(60px, 20vw, 80px);
+    height: clamp(48px, 7.5vh, 64px);
+    border: 0;
+    border-radius: 12px;
+    background: #fff;
+    color: #1b1b20;
+    font: inherit;
+    font-size: 26px;
+    font-weight: 600;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+.keypad button:last-child {
+    grid-column: 2;
+}
+.keypad button.pressed {
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.soon {
+    font-size: 20px;
+    opacity: 0.6;
+}
+
+@keyframes artifacts-shake {
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+}

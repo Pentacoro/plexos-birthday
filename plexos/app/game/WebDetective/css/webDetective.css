@@ -465,6 +465,16 @@
 .answer-history:empty {
     display: none;
 }
+.answer-history > div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.answer-history .history-team {
+    width: 0.95em;
+    height: 0.95em;
+    flex: none;
+}
 
 /* each letter's envelope is the color of its file's icon (--env, set per letter in dressLetter) */
 
@@ -655,7 +665,7 @@
     background: linear-gradient(120deg, #d9dde3, #f7f8fa 25%, #b9c2cf 45%, #f3e9f5 60%, #c9d8e8 80%, #eef1f4) calc(50% + var(--tx, 0) * 40%) calc(50% + var(--ty, 0) * 40%) / 400% 400%;
 }
 
-/* the second step's "Incorrecto": a plain white envelope, no stamp, no seal */
+/* the "Incorrecto": a plain white envelope, no stamp, no seal */
 .stage.plain .env-stamp,
 .stage.plain .env-seal {
     visibility: hidden;

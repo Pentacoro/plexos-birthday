@@ -15,6 +15,7 @@ export const sounds = {
     dialPulse:   null,   // Fibonacci: one pulse per hole as the dial winds back
     dialRest:    null,   // Fibonacci: the dial comes to rest
     keypad:      null,   // Fibonacci: a key on the pad (made: that digit's touch-tone)
+    ringback:    null,   // Fibonacci: the line ringing before someone picks up
 }
 
 // A sound given a file, or silenced: true once handled, so the made one doesn't play too
@@ -244,4 +245,6 @@ export const phone = {
         replaced("dialRest", duration) || click({ at: duration, freq: 900, q: 2, gain: 0.4, length: 0.05 })
     },
     key: (digit) => dtmf[digit] && (replaced("keypad") || tone(dtmf[digit], { length: 0.14 })),
+    // the line ringing at the other end, as an Argentine phone hears it: one second of 425 Hz
+    ring: () => replaced("ringback") || tone([425], { length: 1, gain: 0.12 }),
 }
