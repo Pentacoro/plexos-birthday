@@ -261,18 +261,18 @@ export default class Task {
         if (Task.System().mem.focused === this) return
         if (Task.System().mem.focused) Task.System().mem.focused.blur()
         Task.System().mem.focused = this
-        window.getSelection().removeAllRanges()
+        try { window.getSelection().removeAllRanges() } catch (e) {}
         if (this.window) {
             this.window.focus()
             this.window.statNode()
             let taskRange = this.mem.selectionRange
             if (taskRange && taskRange.commonAncestorContainer instanceof HTMLElement) {
-                taskRange.commonAncestorContainer.focus()
+                try { taskRange.commonAncestorContainer.focus() } catch (e) {}
             } else {
                 taskRange = null
             }
         }
-        document.activeElement.blur()
+        document.activeElement?.blur()
         if (this.onfocus) this.onfocus()
         if (this.node) this.node.focus()
         if (this.node?.onfocus) this.node.onfocus()

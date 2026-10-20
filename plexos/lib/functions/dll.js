@@ -179,12 +179,12 @@ export async function loadFront({url, taskid, data, container, focus = null, com
                         await window.eval(js)
                     } else if (module) {
                         let proxy = await blobModule(js)
-                        Task.id(taskid).blobList.push({proxy:proxy,source:src})
+                        const owner = Task.id(taskid)
+                        if (owner) owner.blobList.push({proxy:proxy,source:src})
                         await import(proxy)
                     } else {
                         await window.eval(`(async () => { ${js} \n})()`)
                     }
-                    if (task?.window) task.focus()
                 } catch (e) {
                     e.taskId = taskid
                     e.source = src
@@ -195,9 +195,10 @@ export async function loadFront({url, taskid, data, container, focus = null, com
                     )
                     if (task) task.end()
                     return
-                } finally {
-                    count++
                 }
+                // Not the script. A focus glitch here used to be reported as that script failing, and closed the app.
+                try { if (task?.window) task.focus() } catch (e) { console.error(e) }
+                count++
             }
             resolve("Success")
     })}

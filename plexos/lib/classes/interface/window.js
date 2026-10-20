@@ -429,8 +429,9 @@ export default class Window {
 
 		//make DOM elements's IDs and zIndex match new object arrangement
 		for(let window of document.getElementsByClassName("window")){ 
-			let windowId = window.id.match(/(\d+)/)[0]
-			let windowInt= parseInt(windowId)
+			let windowId = window.id.match(/(\d+)/)
+			if (!windowId) continue
+			let windowInt= parseInt(windowId[0])
 			
 			if(windowInt > thisIndex){
 				window.id = "window_" + (windowInt - 1)
@@ -459,8 +460,9 @@ export default class Window {
 
 			//make DOM elements's IDs and zIndex match new object arrangement
 			for(let window of document.getElementsByClassName("window")){ 
-				let windowId = window.id.match(/(\d+)/)[0]
-				let windowInt= parseInt(windowId)
+				let windowId = window.id.match(/(\d+)/)
+				if (!windowId) continue
+				let windowInt= parseInt(windowId[0])
 
 				if(window != this.node && windowInt < thisIndex){
 					window.id = "window_" + (windowInt + 1)

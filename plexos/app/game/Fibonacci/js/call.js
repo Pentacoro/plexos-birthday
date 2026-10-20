@@ -29,9 +29,10 @@ const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 // last stage is reached, gets that stage's code (in symbols, for hearts). The call, and the code screen after it, is
 // one screen the back button leaves.
 mem.dial = async (number) => {
-    if (number !== mem.introNumber) mem.retireHint()
     const who = mem.answererOf(number)
     if (!who) return false
+    // a wrong number leaves the hint; it goes once a real number, other than the plain line, answers
+    if (number !== mem.introNumber) mem.retireHint()
     // the secret number, called again: everything goes (Party's void.js)
     if (who === "void" && mem.party.flag(mem.id, "voidCalled")) {
         mem.party.collapse()

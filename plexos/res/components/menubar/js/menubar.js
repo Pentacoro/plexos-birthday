@@ -4,10 +4,13 @@ import ContextMenu from "/plexos/lib/classes/interface/contextmenu.js"
 
 let task = getTask(/TASKID/)
 let mem  = task.mem
+if (!mem.menubar) mem.menubar = {}
 
 mem.menubar.continuousContext = false
 mem.menubarRender = function () {
-    const mount = task.node.getElementById(task.id + "_menubar")
+    // The window's own lookup is a CSS selector and throws or misses on a phone. The id is unique.
+    const mount = document.getElementById(task.id + "_menubar")
+    if (!mount) return
     const menubar = control("menubar", { items: mem.menubar.menubarButtons })
     mount.replaceChildren(menubar.node)
     mem.menubar.keyNodes = menubar.keyNodes

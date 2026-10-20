@@ -9,12 +9,15 @@ let mem  = task.mem
 
 mem.badge = categoryBadge("solo")
 mem.hint = hintButton(mem.hintEntry)
-mem.hint.hidden = !!mem.party.flag(mem.id, "hintRetired")
+// A call that was actually answered, other than the plain line. A wrong number used to be
+// remembered as retired; that flag alone no longer hides the hint.
+const answered = (mem.party.flag(mem.id, "contacts") || []).some(contact => contact.who !== "intro")
+mem.hint.hidden = answered
 mem.root.querySelector(".badge-row").append(mem.badge, storyButton(task, mem.id), mem.hint)
 mem.tellStory = () => tellStory(task, mem.id)
 
-// The hint is for working out the numbers: it goes for good once the player dials one
-// of their own, anything but the plain Fibonacci line
+// The hint is for working out the numbers: it goes for good once a real number answers,
+// anything but the plain Fibonacci line. A number that leads nowhere leaves it.
 mem.retireHint = async () => {
     if (mem.hint.hidden) return
     mem.hint.classList.remove("open")
