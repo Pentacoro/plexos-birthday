@@ -2,6 +2,7 @@ import {getTask} from "/plexos/lib/functions/dll.js"
 import {categoryBadge, setCategory} from "/plexos/app/game/Party/categories.js"
 import {teamIcon, teamOrder} from "/plexos/app/game/Party/teams.js"
 import {hintButton} from "/plexos/app/game/Party/hint.js"
+import {storyButton, tellStory} from "/plexos/app/game/Party/story.js"
 
 let task = getTask(/TASKID/)
 let mem  = task.mem
@@ -9,7 +10,8 @@ let mem  = task.mem
 mem.badge = categoryBadge("solo")
 mem.hint = hintButton(mem.hintEntry)
 mem.hint.hidden = !!mem.party.flag(mem.id, "hintRetired")
-mem.root.querySelector(".badge-row").append(mem.badge, mem.hint)
+mem.root.querySelector(".badge-row").append(mem.badge, storyButton(task, mem.id), mem.hint)
+mem.tellStory = () => tellStory(task, mem.id)
 
 // The hint is for working out the numbers: it goes for good once the player dials one
 // of their own, anything but the plain Fibonacci line

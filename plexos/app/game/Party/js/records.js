@@ -15,8 +15,8 @@ mem.records = {
     contacts: { folder: "@/Inventario/Contactos", exte: "contact", notice: "Añadido a Contactos", view: "tiles" },
     letters:  { folder: "@/Inventario/Cartas", exte: "carta", notice: "Carta Guardada", view: "tiles" },
     mazes:    { folder: "@/Inventario/Laberintos", exte: "maze", notice: "Laberinto Revelado", view: "icons", image: "/plexos/app/game/Labyrinth/icon.svg" },
-    // what a team's Fibonacci character hands over once their code is right, kept with the contacts
-    items:    { folder: "@/Inventario/Contactos", exte: "item", notice: "Objeto Recibido", view: "tiles" },
+    // what a team's Fibonacci character sends, kept in Inventario itself, after its folders
+    items:    { folder: "@/Inventario", exte: "item", notice: "Objeto Recibido" },
     codes:    { folder: "@/Inventario/Códigos", exte: "txt", notice: "Código Anotado", view: "details", showData: true },
 }
 
@@ -46,7 +46,7 @@ async function ensureFolder(kind) {
     if (view && files) files[folder].applications.Explorer.view = view
 }
 
-// Inventario, empty, from the start, and on the desktop, in the top right corner, a folder that
+// Inventario, empty, from the start, and on the desktop, in the bottom right corner, a folder that
 // opens it (a file drawn as a folder: windows.js opens where it points)
 mem.ensureInventory = async () => {
     await ensureInventoryFolder()
@@ -54,7 +54,7 @@ mem.ensureInventory = async () => {
     const name = "Inventario.dir"
     if (!File.at(mem.desktopPath + "/" + name)) {
         const icon = new Icon({ name, class: "StringFile", exte: "dir", state: 0 })
-        const coords = mem.cornerCoords("top-right")
+        const coords = mem.cornerCoords("bottom-right")
         if (coords) icon.coords = coords
         await task.cmd("file.create", { path: mem.desktopPath, Type: "StringFile", name, icon, content: mem.inventoryPath })
         File.refreshViews()
@@ -63,11 +63,25 @@ mem.ensureInventory = async () => {
     await mem.saveProgress()
 }
 
+// Items were kept with the contacts before: brought out to Inventario, with when they came
+mem.moveItemsOut = async () => {
+    const contacts = File.at(mem.inventoryPath + "/Contactos")
+    if (!contacts) return
+    for (const file of File.children(contacts).filter(file => file.cfg.exte === "item")) {
+        if (File.at(mem.inventoryPath + "/" + file.name)) continue
+        await task.cmd("file.move", { path: file.cfg.path, to: mem.inventoryPath })
+        await task.cmd("file.modify", { path: mem.inventoryPath + "/" + file.name, cfg: { detail: mem.stamp() } })
+    }
+    File.refreshViews()
+}
+
 // title: the file's name without its extension. data: what it holds. detail: a line Explorer
 // shows in place of the file type (codes show what they say). image: its picture, when not the
 // kind's own. Resolves true when the file is new. One at a time, so two
 // arriving together never both make the folder.
 const stamp = new Intl.DateTimeFormat("es-AR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" })
+// now, as Inventario writes when something was last kept
+mem.stamp = () => stamp.format(new Date())
 let queue = Promise.resolve()
 mem.record = (...args) => queue = queue.then(() => record(...args)).catch(error => (console.error(error), false))
 
@@ -128,7 +142,8 @@ mem.inventoryRank = (file) => {
         const team = suits.find(each => image.includes("contact-" + each))
         return team ? 1 + teamRank(team) : 50
     }
-    if (exte === "item") return 10 + teamRank(data)
+    // in Inventario, items come after its folders
+    if (exte === "item") return 200 + teamRank(data)
     if (exte === "carta") return letterOrder.includes(data) ? letterOrder.indexOf(data) : 50
     if (exte === "maze") return mazeOrder.includes(data) ? mazeOrder.indexOf(data) : 50
     return codeRank(file.name) ?? 100

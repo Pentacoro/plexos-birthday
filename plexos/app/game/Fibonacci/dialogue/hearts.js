@@ -10,8 +10,9 @@ export default {
     voice: { type: "sine", freq: 560, jitter: 0.06, glide: 0.08, gain: 0.12, length: 0.06 },
     // Before the party, the only thing said on any call (DRAFT lines, to be written)
     preview: [
-        new Line(sprite, "¡Hola! Habla el contacto de Corazones."),
-        new Line(sprite, "¡Llamaste antes de tiempo! Guardá este número y volvé a llamar el 24 a la noche."),
+        new Line(sprite, "¡Buenas noches! Usted llamó a la Bombonería Dulcinea."),
+        new Line(sprite, "Actualmente, esta línea se encuentra reservada para el sábado 24 de octubre a partir de las 10:00pm."),
+        new Line(sprite, "Por favor, vuélvanos a llamar este sábado. ¡Gracias!"),
     ],
     // Every call opens with this
     intro: [
@@ -36,7 +37,7 @@ export default {
         new Line(sprite, "Tan solo confírmeme el número del pedido para enviárselo. Cuando esté listo, márquelo en el teclado."),
     ],
     right: [
-        new Line(sprite, "¡Excelente! Doce bombones camino a Boulogne Sur Mer. Llegan 9:30pm."),
+        new Line(sprite, "¡Excelente! Doce bombones camino a Boulogne Sur Mer. Llegan 11:30pm."),
         new Line(sprite, "Gracias por llamar a la Bombonería Dulcinea. ¡Que tengas una linda noche!"),
     ],
     // To the own team once the code is solved: two questions to pick from, each with its own

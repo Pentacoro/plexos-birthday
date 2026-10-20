@@ -18,6 +18,13 @@ let mem  = task.mem
 // anywhere else leads back to Inventario. Its views are drawn bigger, for fingers.
 const closing = ["Explorer", "Notepad"]
 
+// A file's name as the player sees it: without its extension. A folder keeps its whole name,
+// since a dot in it is not an extension.
+function showName(icon) {
+    if (!icon.keyNodes?.text) return
+    icon.keyNodes.text.textContent = icon.class === "DirectoryFile" ? icon.name : icon.name.replace(/\.[^.]+$/, "") || icon.name
+}
+
 function closeOnBack(owner) {
     owner.partyWindow = true
     const entry = pushBack(() => owner.end())
@@ -48,12 +55,20 @@ mem.phoneWindow = (win) => {
     const create = owner.mem.createExplorerIcons
     // at the root only Inventario shows, and the tools kept there (the Entrenador, the Descifrador)
     owner.mem.createExplorerIcons = (files) => create.call(owner.mem, files.filter(file => File.dirname(file.cfg.path) !== "@" || file.cfg.path === inventory || file.cfg.exte === "game"))
-        .then(() => owner.mem.applySort())
+        .then(() => { for (const icon of owner.mem.iconArray) showName(icon); owner.mem.applySort() })
+    // names without their extension, as on the desktop, also when an icon is drawn again
+    const IconDir = owner.mem.class?.IconDir
+    if (IconDir && !IconDir.partyNames) {
+        const render = IconDir.prototype.render
+        IconDir.prototype.render = function () { render.call(this); showName(this) }
+        IconDir.partyNames = true
+    }
     // unless a column was picked to sort by, what the game keeps shows in the game's order
     const sort = owner.mem.applySort
     owner.mem.applySort = () => {
         sort.call(owner.mem)
-        if (owner.mem.sort || !String(owner.mem.address).startsWith(inventory + "/")) return
+        const address = String(owner.mem.address)
+        if (owner.mem.sort || (address !== inventory && !address.startsWith(inventory + "/"))) return
         const list = owner.mem.ui.view.keyNodes.list
         const ranked = owner.mem.iconArray.map(icon => ({ icon, rank: File.at(icon.file) ? mem.inventoryRank(File.at(icon.file)) : 1e9 }))
         ranked.sort((a, b) => a.rank - b.rank)
@@ -65,7 +80,7 @@ mem.phoneWindow = (win) => {
     // Some folders show only two columns in details: the name, and the line each file carries in
     // place of its type (cfg.detail). Códigos shows what each code says; Inventario when each
     // folder last got a file.
-    const twoColumns = { "@/Inventario": "Última actualización", "@/Inventario/Códigos": "Contenido" }
+    const twoColumns = { "@/Inventario": "Última Act.", "@/Inventario/Códigos": "Contenido" }
     const load = owner.mem.loadFolderView
     owner.mem.loadFolderView = (path) => {
         load.call(owner.mem, path)
@@ -150,7 +165,10 @@ const style = `
 .window.party-explorer .background.view-icons .explorerIcon > .iconFrame > .iconSquare,
 .window.party-explorer .background.view-icons .iconSquare > .iconArt { width: 100% !important; height: 100% !important; }
 .window.party-explorer .iconSticker > img { width: 100%; height: 100%; transform: translate(18%, 18%) scale(1.3); }
-.window.party-two-columns .background { --details-columns: 56px minmax(0, 1fr) minmax(0, 1fr) !important; }
+.window.party-two-columns .background { --details-columns: 56px minmax(0, 1fr) 7.2em !important; }
+.window.party-two-columns .background.view-details > .detailsHeader,
+.window.party-two-columns .background.view-details > .list { min-width: 0 !important; width: 100% !important; max-width: 100%; padding: 0 6px; box-sizing: border-box; }
+.window.party-two-columns .background.view-details .explorerIcon > .explorerIconText { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .window.party-two-columns .background.view-details .list > .explorerIcon { height: 58px !important; }
 .window.party-two-columns .background.view-details .explorerIcon > .iconFrame { width: 50px !important; height: 50px !important; }
 .window.party-two-columns .detailsColumn.date, .window.party-two-columns .detailsColumn.size,

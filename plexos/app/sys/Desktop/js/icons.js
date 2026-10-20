@@ -323,7 +323,10 @@ mem.class.IconDesk = class IconDesk {
             // preventDefault on a touch's pointerdown also stops its late mouse events, so only one drag runs
             const kind = e.pointerType === "touch" ? "pointer" : "mouse"
             document["on" + kind + "up"] = closeDragIcon
-            if(e.button == 0 && !coreReadOnly()) document["on" + kind + "move"] = iconDrag
+            // a finger that scrolls the desktop instead ends as a cancel
+            if (kind === "pointer") document.onpointercancel = closeDragIcon
+            // a desktop that scrolls keeps its icons where they are: dragging there scrolls it
+            if(e.button == 0 && !coreReadOnly() && !mem.grid.overflows()) document["on" + kind + "move"] = iconDrag
             iframeAntiHover(true)
         }								 
     
@@ -395,6 +398,7 @@ mem.class.IconDesk = class IconDesk {
             document.onmousemove = null
             document.onpointerup = null
             document.onpointermove = null
+            document.onpointercancel = null
             iframeAntiHover(false)
             const paths = task.pocket.map(icon => icon.file)
             const dragged = System.mem.var.dragging
@@ -684,6 +688,8 @@ mem.repositionIcons = function(icons, mustSet = false){
             validatedIcons.push(icon)
         }else if(mustSet){
             let newGrid = mem.orderIconPosition()
+            // a full desktop grows a row below the screen, and scrolls to it
+            if (newGrid === undefined && mem.grid.addRow()) newGrid = mem.orderIconPosition()
             if (newGrid === undefined) {
                 icon.deleteNode(true)
                 icon.coords = null

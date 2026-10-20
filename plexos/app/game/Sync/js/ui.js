@@ -1,13 +1,15 @@
 import {getTask} from "/plexos/lib/functions/dll.js"
 import {categoryBadge, setCategory} from "/plexos/app/game/Party/categories.js"
 import {hintButton} from "/plexos/app/game/Party/hint.js"
+import {storyButton, tellStory} from "/plexos/app/game/Party/story.js"
 
 let task = getTask(/TASKID/)
 let mem  = task.mem
 
 mem.badgeRow = mem.root.querySelector(".badge-row")
 mem.badge = categoryBadge("teams")
-mem.badgeRow.append(mem.badge)
+mem.badgeRow.append(mem.badge, storyButton(task, mem.id))
+mem.tellStory = () => tellStory(task, mem.id)
 mem.hint = null
 
 // The whole game needs the other team. Hearts' last stage needs their artifact too, to read

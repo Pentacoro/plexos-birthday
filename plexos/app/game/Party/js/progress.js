@@ -15,6 +15,8 @@ mem.loadProgress = () => {
 
 mem.saveProgress = async () => {
     await task.cmd("file.write", { path: mem.progressPath, data: JSON.stringify(mem.progress, null, "\t") })
+    // the desktop's game icons show how far each game is (stickers.js)
+    mem.updateStickers?.()
 }
 
 // How many steps of a puzzle this player has solved
@@ -23,9 +25,13 @@ mem.stepsSolved = (id) => mem.progress.steps[id] || 0
 mem.solveStep = async (id, step) => {
     if (mem.stepsSolved(id) >= step) return
     mem.progress.steps[id] = step
+    // when each step was solved, for the results at the end
+    mem.progress.times = { ...mem.progress.times, [id + ":" + step]: Date.now() }
     await mem.saveProgress()
     // a team's item comes once its phone code and its artifact's puzzle are both solved
     mem.deliverItem()
+    // and whatever that step opens appears at once (an artifact on the desktop)
+    mem.checkUnlocks()
 }
 
 // Anything else a puzzle needs to remember, such as whether a line was already called

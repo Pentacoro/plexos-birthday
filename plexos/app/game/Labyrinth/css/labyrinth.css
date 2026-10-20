@@ -29,6 +29,10 @@
     justify-content: center;
     padding: 8px 0;
 }
+/* a step: the maze leans the way it went, a little, and back */
+.board.nudge {
+    animation: labyrinth-nudge 0.18s ease-out;
+}
 .matrix {
     width: 100%;
     height: 100%;
@@ -120,21 +124,44 @@
 .matrix .player {
     transition: cx 0.12s ease, cy 0.12s ease;
 }
-.done-note {
-    display: none;
-    margin: 4px 24px 14px;
-    font-size: 16px;
+/* what the maze says: a message on arriving, under the maze, a moment and then faded; and in
+   diamonds' maze the digit the player stands on, above it. Their heights are kept even when
+   empty, so nothing jumps. */
+.maze-note,
+.maze-digit {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    margin: 0;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 17px;
     text-align: center;
-    opacity: 0.85;
+    /* in a quiet gray, messages and digits alike */
+    color: #8a8a96;
 }
-.done .done-note {
-    display: block;
-    order: 2;
+.maze-note {
+    transition: opacity 0.6s ease;
 }
+.maze-note.faded {
+    opacity: 0;
+}
+.maze-digit {
+    font-size: 38px;
+    font-weight: 700;
+}
+
 .done .pad {
     order: 3;
 }
 
+@keyframes labyrinth-nudge {
+    35% { transform: translate(var(--nx), var(--ny)); }
+}
 @keyframes labyrinth-shake {
     20%, 60% { transform: translateX(-8px); }
     40%, 80% { transform: translateX(8px); }

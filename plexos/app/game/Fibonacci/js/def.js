@@ -1,4 +1,5 @@
 import {getTask} from "/plexos/lib/functions/dll.js"
+import {codes} from "/plexos/app/game/StarDisc/disc.js"
 import Task from "/plexos/lib/classes/system/task.js"
 
 let task = getTask(/TASKID/)
@@ -26,7 +27,7 @@ mem.voidNumber = "0000000"
 
 // Step 2: the team's character asks for 9 digits, three ID card codes in this order.
 // "artifact" is the code clubs finds hidden in the house instead of on a card.
-mem.artifactCode = "357"
+mem.artifactCode = codes.clubs
 // Artifact 1: the hint photos for finding it
 mem.artifactPlace = "living"   // where the artifact is hidden, for its badge
 mem.artifactPhotos = [

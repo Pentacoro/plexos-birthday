@@ -33,6 +33,7 @@ mem.restartApps = () => {
 mem.setTeam = async (team) => {
     await mem.setFlag("trainer", "team", team)
     mem.applyTrainerTeam()
+    await mem.wearCard()
     mem.restartApps()
 }
 

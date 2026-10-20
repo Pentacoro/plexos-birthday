@@ -67,15 +67,17 @@ export function callCode(caller, partner, player = "") {
 }
 
 // Artifact 4, hidden in the storage room: a card for hearts that turns symbols into numbers,
-// with a column for each team they can pair with. In the last stage, the partner's character
-// tells hearts their code in that team's symbols. Index = number.
+// with a column for each team, their own included, since hearts can pair with hearts. In the
+// last stage, the partner's character tells hearts their code in that team's symbols. Caja
+// Fuerte's fifth stage reads it too, every team in its own column. Index = number.
 export const artifactSymbols = {
     spades:   ["#", "?", "+", "/", "!", "&", "%", "@", "<", ">", "-"],
+    hearts:   ["%", "<", "/", "@", "#", "!", ">", "&", "-", "?", "+"],
     clubs:    ["@", "!", "-", "&", "<", "%", "?", ">", "#", "+", "/"],
     diamonds: ["&", ">", "#", "%", "+", "-", "/", "<", "?", "!", "@"],
 }
 
-// The code as the partner's character says it: hearts hears another team's ciphered
+// The code as the partner's character says it: hearts hears it ciphered in that team's column
 export const spokenCode = (caller, partner, player = "") => {
     const code = callCode(caller, partner, player)
     return caller === "hearts" && artifactSymbols[partner] ? [...code].map(digit => artifactSymbols[partner][digit]).join("") : code

@@ -18,7 +18,11 @@ const near = (i) => cells.filter(j => j !== i && Math.abs(j % 3 - i % 3) <= 1 &&
 export function pathPuzzle(rand) {
     const a = pick(rand, cells)
     const b = pick(rand, near(a))
-    const c = pick(rand, near(b).filter(j => j !== a))
+    let c = pick(rand, near(b).filter(j => j !== a))
+    // never a straight line, which keys pressed down a row could hit by chance: picked again
+    // only then, so every other path stays as it was
+    const straight = (j) => j % 3 - b % 3 === b % 3 - a % 3 && Math.floor(j / 3) - Math.floor(b / 3) === Math.floor(b / 3) - Math.floor(a / 3)
+    if (straight(c)) c = pick(rand, near(b).filter(j => j !== a && !straight(j)))
     const path = [a, b, c]
     const code = shuffle(rand, colors).slice(0, 3)
     const others = shuffle(rand, [
@@ -37,17 +41,22 @@ export function pathPuzzle(rand) {
     }
 }
 
-// Stage 2: three looping strips of blocks, stacked; the steps that match the target are the code
+// Stage 2: three looping strips of blocks, stacked; the steps that match the target are the code.
+// A block in about a third of a strip's columns, and a target mostly of single blocks, with one
+// or two stacks of three at most.
 export const steps = 10
 export const width = steps
+const density = 0.35
 
 export function stackPuzzle(rand) {
     for (;;) {
-        const strips = [0, 1, 2].map(() => Array.from({ length: steps }, () => pick(rand, [0, 1])))
+        const strips = [0, 1, 2].map(() => Array.from({ length: steps }, () => rand() < density ? 1 : 0))
         const solution = [0, 1, 2].map(() => Math.floor(rand() * 10))
         if (solution.every(step => step === 0)) continue
         const stack = (at) => Array.from({ length: width }, (_, c) => strips.reduce((sum, strip, i) => sum + strip[(at[i] + c) % steps], 0))
-        const target = stack(solution).join()
+        const heights = stack(solution), count = (h) => heights.filter(each => each === h).length
+        if (count(3) < 1 || count(3) > 2 || count(1) <= count(2) || count(1) < 4) continue
+        const target = heights.join()
         // only one way to reach it, so the code can't be anything else
         let ways = 0
         for (let a = 0; a < steps; a++) for (let b = 0; b < steps; b++) for (let c = 0; c < steps; c++) {

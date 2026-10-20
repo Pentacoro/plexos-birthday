@@ -55,7 +55,7 @@ mem.unlockEverything = async () => {
         const image = who === "intro" ? "/plexos/app/game/Fibonacci/icon.svg" : img("contact-" + who)
         await mem.record("contacts", names[who] || mem.teams[who].name, number, { detail: number, image, ...quiet })
     }
-    for (const key of teamKeys) await mem.record("items", mem.items[key].name, key, { detail: mem.items[key].detail, image: img("item-" + key), ...quiet })
+    for (const key of teamKeys) await mem.record("items", mem.items[key].name, key, { detail: mem.stamp(), image: img("item-" + key), ...quiet })
     const final = Object.values(otherTeams).join(" · ")
     for (const [title, key, look, detail] of [
         ["Carta 1", "0", "letter-1", answers[0]], ["Carta 2", "1", "letter-2-" + team, answers[1]],
@@ -73,4 +73,6 @@ mem.unlockEverything = async () => {
         await mem.record("codes", codeName(team, key, 2), pairs[key].heard, quiet)
     }
     for (const kind of ["contacts", "letters", "mazes", "codes"]) await mem.setBadge(kind, 3)
+    // and what all that opens appears at once: every team's artifact on the desktop
+    await mem.checkUnlocks()
 }

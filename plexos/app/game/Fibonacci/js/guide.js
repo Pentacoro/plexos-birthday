@@ -7,7 +7,8 @@ let mem  = task.mem
 // purple. On the dial, the number being typed is read as a sequence: its first two digits, then
 // each sum of the two before it. Whenever another number of it is complete, the last two
 // numbers' slots take those same tints, the older warm and the newer purple, and give a tiny
-// shake with a flash of their color before settling back to almost white.
+// shake with a flash of their color before settling back to almost white. Only a number that
+// is on its way to one that answers is read so: the tints are the sign of being on the right track.
 
 // The slots each number of the sequence covers, [start, end), for as long as the entry follows it
 function terms(entry) {
@@ -29,7 +30,10 @@ let counted = 0
 mem.guide = () => {
     const slots = mem.digitSlots
     for (const slot of slots) slot.classList.remove("seq-a", "seq-b")
-    const spans = mem.mode === "dial" ? terms(mem.entry) : []
+    // the secret number stays out of it: nothing ever hints at it
+    const real = [mem.introNumber, ...Object.keys(mem.seeds).map(mem.teamNumber)]
+    const onTrack = real.some(number => number.startsWith(mem.entry))
+    const spans = mem.mode === "dial" && onTrack ? terms(mem.entry) : []
     if (spans.length < 2) return counted = spans.length
     const [older, newer] = spans.slice(-2)
     const mark = ([start, end], name) => slots.slice(start, end).map(slot => (slot.classList.add(name), slot))

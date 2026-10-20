@@ -46,7 +46,21 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: center;
+}
+/* what a stage shows, centered in the room above the pad */
+.prompt {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(16px, 3.5vh, 32px);
+}
+.screen > .keypad {
+    flex: none;
+    margin: 12px 0 4px;
 }
 
 /* stage 1: the equation, its unknowns as items */
@@ -90,6 +104,92 @@
     gap: 6px 8px;
     padding: 4px 4px 0;
     border-top: 2.5px solid #fff;
+}
+
+/* stage 2: the artifact, and the color of the line to line it up with */
+.disc-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+.disc-hint img {
+    width: clamp(96px, 16vh, 140px);
+    height: clamp(96px, 16vh, 140px);
+}
+.disc-line {
+    width: 64px;
+    height: 14px;
+}
+
+/* stage 3: the papers, and the name to find on them */
+.table-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+.table-hint .papers {
+    width: 64px;
+    height: 64px;
+    color: #fff;
+}
+.table-name {
+    padding: 6px 16px;
+    border-radius: 8px;
+    background: #f4f2ee;
+    color: #1b1b20;
+    font: 700 20px "Courier New", monospace;
+}
+
+/* stage 4: one square of the maze's cells per digit, its own cell lit */
+.cell-grids {
+    display: flex;
+    gap: clamp(14px, 5vw, 26px);
+}
+.cell-grid {
+    width: clamp(84px, 26vw, 110px);
+    height: clamp(84px, 26vw, 110px);
+    padding: 2px;
+    border: 2px solid #3a3a42;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+.cell-grid circle {
+    fill: #8a8a96;
+}
+.cell-grid circle.lit {
+    fill: #fff;
+}
+.cell-grid .arrow {
+    fill: #b4b4c0;
+}
+
+/* stage 5: the team's suit, and its code in that column's symbols */
+.symbols-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+.symbols-hint .team-icon {
+    width: 44px;
+    height: 44px;
+}
+.symbols-word {
+    display: flex;
+    gap: 12px;
+}
+.symbols-word span {
+    width: 52px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #f4f2ee;
+    color: #1b1b20;
+    font: 700 34px "Courier New", monospace;
 }
 
 .slots {
@@ -147,4 +247,100 @@
 @keyframes artifacts-shake {
     20%, 60% { transform: translateX(-8px); }
     40%, 80% { transform: translateX(8px); }
+}
+
+/* stage 6, and the routes (route.js): the password as at the landing */
+.route-password {
+    box-sizing: border-box;
+    width: 180px;
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font: 28px system-ui, sans-serif;
+    letter-spacing: 0.5em;
+    text-indent: 0.5em;
+    text-align: center;
+    outline: none;
+    user-select: text;
+    -webkit-user-select: text;
+}
+.route-password::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+.route-password:focus {
+    border-color: rgba(255, 255, 255, 0.45);
+}
+.route-password.wrong {
+    animation: route-shake 0.35s;
+    border-color: rgba(255, 90, 110, 0.7);
+}
+@keyframes route-shake {
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+}
+.route-note {
+    max-width: 300px;
+    margin: 22px 0 0;
+    font-size: 16px;
+    line-height: 1.45;
+    text-align: center;
+    opacity: 0.8;
+}
+.route-title {
+    margin: 0 0 18px;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+}
+.route-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: min(100%, 340px);
+}
+.route-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 2px solid #3a3a42;
+    border-radius: 12px;
+    background: #24242b;
+    color: #fff;
+    font: 600 17px system-ui, sans-serif;
+    touch-action: manipulation;
+}
+.route-step {
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0.6;
+}
+.route-check {
+    width: 22px;
+    height: 22px;
+    color: #3ddc6a;
+}
+.route-button {
+    margin-top: 20px;
+    padding: 13px 30px;
+    border: 0;
+    border-radius: 12px;
+    background: #fff;
+    color: #1b1b20;
+    font: 700 17px system-ui, sans-serif;
+    touch-action: manipulation;
+}
+.route-back {
+    flex: none;
+    margin-top: 14px;
+    padding: 8px 18px;
+    border: 0;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    font: 600 15px system-ui, sans-serif;
+    text-decoration: underline;
+    touch-action: manipulation;
 }

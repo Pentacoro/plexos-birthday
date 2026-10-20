@@ -1,4 +1,5 @@
 import {openPhotos} from "./photoViewer.js"
+import {teams} from "./teams.js"
 
 // The badge in a puzzle's corner says how it gets solved. Tapping it spells that out.
 export const categories = {
@@ -12,7 +13,7 @@ export const categories = {
         </svg>`,
     },
     teams: {
-        message: "Coordinado: necesitás información de otros equipos",
+        message: "Coordinado: necesitás información de otros",
         svg: `<svg viewBox="0 0 24 24" fill="currentColor">
             <circle cx="8" cy="9" r="3.2"/>
             <path d="M2 20.5c.6-3.6 2.9-5.6 6-5.6s5.4 2 6 5.6z"/>
@@ -89,15 +90,16 @@ export function categoryBadge(category, options) {
 
 // A puzzle step can change what kind of help it needs. Photos (the artifact's hints)
 // add a button at the end of the open badge that shows them. A place swaps the artifact's
-// cube for the room it is hidden in.
-export function setCategory(badge, category, { photos, place } = {}) {
+// cube for the room it is hidden in; a team, for that team's suit, once the artifact is theirs.
+export function setCategory(badge, category, { photos, place, team } = {}) {
     // prefixed, so a category name never matches a puzzle's own class names
     badge.className = "category-badge category-" + category
     badge.dataset.message = categories[category].message
     badge.innerHTML = categories[category].svg
     // the cube and the room stacked: opening the badge fades one into the other
-    if (category === "artifact" && places[place]) {
-        badge.innerHTML = `<span class="category-icon"><span class="category-cube">${categories.artifact.svg}</span><span class="category-place">${places[place]}</span></span>`
+    const swap = teams[team] ? suit(team) : places[place]
+    if (category === "artifact" && swap) {
+        badge.innerHTML = `<span class="category-icon"><span class="category-cube">${categories.artifact.svg}</span><span class="category-place">${swap}</span></span>`
     }
     const label = document.createElement("span")
     label.className = "category-label"
@@ -108,6 +110,9 @@ export function setCategory(badge, category, { photos, place } = {}) {
     if (photos?.length) badge.append(photoButton(badge, photos))
     stopScrolling(badge)
 }
+
+// A team's suit, drawn as the game's team icons are
+const suit = (team) => `<svg viewBox="0 0 24 24"><path d="${teams[team].path}" fill="none" stroke="${teams[team].color}" stroke-width="1.8" stroke-linejoin="round"/></svg>`
 
 // Not a nested button, which HTML doesn't allow inside the badge's own
 function photoButton(badge, photos) {

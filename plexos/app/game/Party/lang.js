@@ -32,7 +32,7 @@ const english = {
     "Archivo no encontrado": "File not found",
     "El archivo ya no existe.": "The file no longer exists.",
     "Nombre": "Name",
-    "Última actualización": "Last updated",
+    "Última Act.": "Updated",
     "Contenido": "Contents",
 
     // ---- Teléfono Fibonacci
@@ -72,6 +72,7 @@ const english = {
     // hearts: Bombonería Dulcinea
     "¡Hola! Habla el contacto de Corazones.": "Hi! This is the Hearts contact.",
     "¡Llamaste antes de tiempo! Guardá este número y volvé a llamar el 24 a la noche.": "You called too early! Save this number and call again on the night of the 24th.",
+    "Actualmente, esta línea se encuentra reservada para el sábado 24 de octubre a partir de las 10:00pm.": "This line is currently reserved for Saturday, October 24th, from 10:00pm.",
     "¡Buenas noches! Habla con la Bombonería Dulcinea.": "Good evening! You've reached Dulcinea's Chocolate Shop.",
     "¿De dónde llama?": "Where are you calling from?",
     "Awww... Disculpame, corazón, acá no es. Tenés que llamar al número de tu localidad.": "Awww... Sorry, sweetheart, this isn't the place. You need to call your local number.",
@@ -81,7 +82,7 @@ const english = {
     "¡Un gusto hablar con usted!": "A pleasure to speak with you!",
     "Se lleva entonces una docena de bombones a su domicilio.": "So that's a dozen chocolates delivered to your home.",
     "Tan solo confírmeme el número del pedido para enviárselo. Cuando esté listo, márquelo en el teclado.": "Just confirm the order number for me so I can send it. When you're ready, type it on the keypad.",
-    "¡Excelente! Doce bombones camino a Boulogne Sur Mer. Llegan 9:30pm.": "Excellent! Twelve chocolates on their way to Boulogne Sur Mer. Arriving at 9:30pm.",
+    "¡Excelente! Doce bombones camino a Boulogne Sur Mer. Llegan 11:30pm.": "Excellent! Twelve chocolates on their way to Boulogne Sur Mer. Arriving at 11:30pm.",
     "¿No es un poco tarde?": "Isn't it a bit late?",
     "Ayyy ¡Qué confrontacional! Pero sí, estos no son nuestros horarios de jornada usuales.": "Oooh, how confrontational! But yes, these aren't our usual business hours.",
     "Tampoco abrimos sábados, pero hoy reservaron nuestro servicio para los invitados del cumpleaños de un tal... ¿Pentacoro?": "We don't open on Saturdays either, but tonight our service was booked for the guests at the birthday of someone called... Pentacoro?",
@@ -98,7 +99,7 @@ const english = {
 
     // clubs: the Clover Club
     "Buenas noches, se comunicó con la línea de redención del Clover Club.": "Good evening, you've reached the Clover Club redemption line.",
-    "Nuestras oficinas abren el 24 a la noche. Agende este número; lo vamos a estar esperando.": "Our offices open on the night of the 24th. Save this number; we'll be expecting you.",
+    "Nuestras oficinas abren el 24 de octubre a las 10:00pm.": "Our offices open on October 24th at 10:00pm.",
     "Buenas noches. Gracias por llamar a la línea de redención de lotería del Clover Club.": "Good evening. Thank you for calling the Clover Club lottery redemption line.",
     "¿Me decís tu afiliación?": "Can you tell me your affiliation?",
     "Ah... Disculpá, no te puedo ayudar en este momento. Probá con la línea de tu club, o llamá mas tarde.": "Ah... Sorry, I can't help you right now. Try your own club's line, or call back later.",
@@ -129,14 +130,14 @@ const english = {
 
     // diamonds: Juguetería Rombic
     "Juguetería Rombic.": "Rombic Toy Store.",
-    "Cerrado por inventario. Abrimos el 24 a la noche.": "Closed for stocktaking. We open on the night of the 24th.",
+    "No enviamos repuestos hasta el sábado 24 de octubre a las 10:00pm.": "We don't ship spare parts until Saturday, October 24th, at 10:00pm.",
     "¿Afiliación?": "Affiliation?",
     "Llame a su línea de afiliación.": "Call your affiliation's line.",
     "No vuelva a llamar.": "Don't call again.",
     "Tiene un pedido de repuestos para el 'Diamond Fidget Spinner Rubik's Cube 3x3x1'.": "You have an order of spare parts for the 'Diamond Fidget Spinner Rubik's Cube 3x3x1'.",
     "Necesito el código del pedido. Cuando esté listo, ingréselo por el teclado.": "I need the order code. When you're ready, enter it on the keypad.",
     "Un momento...": "One moment...",
-    "Las 3 piezas de repuesto ya fueron enviadas. Llegan a las 9:00pm.": "The 3 spare parts have been sent. They arrive at 9:00pm.",
+    "Las 3 piezas de repuesto ya fueron enviadas. Llegan a las 11:00pm.": "The 3 spare parts have been sent. They arrive at 11:00pm.",
     "Gracias. Hasta luego.": "Thanks. Goodbye.",
     "¿Sí?": "Yes?",
     "¿Eso es tu pelo?": "Is that your hair?",
@@ -156,7 +157,7 @@ const english = {
     "Lorem ipsum: no hay más cartas por ahora.": "Lorem ipsum: no more letters for now.",
 
     // ---- Laberinto Yuxtapuesto
-    "Lorem ipsum: llegaste al final del laberinto.": "Lorem ipsum: you reached the end of the labyrinth.",
+    "Te faltó algo...": "You missed something...",
     "Arriba": "Up",
     "Abajo": "Down",
     "Izquierda": "Left",
@@ -175,6 +176,38 @@ const english = {
     "Emparejar con otro equipo": "Pair with another team",
     "Reiniciar emparejamiento": "Restart pairing",
     "¿Seguro? Tocá otra vez": "Sure? Tap again",
+
+    // ---- Estado
+    "Código de grupo": "Group code",
+    "Contraseña": "Password",
+    "Mostrar contraseña": "Show password",
+    "Ocultar contraseña": "Hide password",
+
+    // ---- the games' texts (stories.js): their buttons
+    "Textos": "Texts",
+    "Marcar": "Dial",
+    "Recoger": "Collect",
+    "Sincronizar": "Sync",
+    "Abrir": "Open",
+    "Continuar": "Continue",
+
+    // ---- Caja Fuerte's routes
+    "¿Qué ruta querés hacer?": "Which route do you want to take?",
+    "Nueva ruta": "New route",
+    "Contraseña de la ruta": "Route password",
+    "Rutas": "Routes",
+    "Volver": "Back",
+    "Completaste la ruta de caja alternativa. Podés continuar.": "You completed an alternate safe route. You can continue.",
+    "Llamada pendiente": "Call pending",
+    "Número pendiente": "Number pending",
+    "Hecho": "Done",
+    "Completo": "Complete",
+    "Pendiente": "Pending",
+    "Vista previa": "Preview",
+    "Laberinto 1": "Maze 1",
+    "Laberinto 2": "Maze 2",
+    "Laberinto 3": "Maze 3",
+    "Laberinto del Artefacto": "Artifact Maze",
 
     // ---- Caja Fuerte
     "Próximamente": "Coming soon",
@@ -211,11 +244,15 @@ const patterns = [
     [/^Código anotado: (.*)$/, (_, code) => `Code noted: ${code}`],
     [/^Libro de pistas: (.+)$/, (_, n) => `Hint book: ${n}`],
     [/^en (\d+) min$/, (_, n) => `in ${n} min`],
+    [/^Cartas (\d+\/\d+)$/, (_, n) => `Letters ${n}`],
+    [/^Paso (\d+\/\d+)$/, (_, n) => `Step ${n}`],
+    [/^Abre (.+)$/, (_, time) => `Opens ${time}`],
     // the letters' first lines, while the letters are still drafts
     [/^(Picas|Corazones|Tréboles|Diamantes), paso (\d+)\.$/, (_, name, n) => `${team(name)}, step ${n}.`],
     [/^(Picas|Corazones|Tréboles|Diamantes), carta final\.$/, (_, name) => `${team(name)}, final letter.`],
     [/^(Picas|Corazones|Tréboles|Diamantes), carta secreta\.$/, (_, name) => `${team(name)}, secret letter.`],
     [/^Acá va el mensaje especial\.$/, () => `The special message goes here.`],
+    [/^Tu contraseña falsa: (.+)$/, (_, fake) => `Your fake password: ${fake}`],
 ]
 
 function translate(text) {

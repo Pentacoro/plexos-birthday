@@ -1,18 +1,23 @@
 import {getTask} from "/plexos/lib/functions/dll.js"
 import {categoryBadge, setCategory} from "/plexos/app/game/Party/categories.js"
 import {hintButton} from "/plexos/app/game/Party/hint.js"
+import {storyButton, tellStory} from "/plexos/app/game/Party/story.js"
 
 let task = getTask(/TASKID/)
 let mem  = task.mem
 
 mem.badgeRow = mem.root.querySelector(".badge-row")
 mem.badge = categoryBadge("teams")
-mem.badgeRow.append(mem.badge)
+mem.badgeRow.append(mem.badge, storyButton(task, mem.id))
+mem.tellStory = () => tellStory(task, mem.id)
 mem.hint = null
 
-// Every stage needs the other teams; each has its own entry in the hint book, once written
+// Every stage needs the other teams; some need a team's artifact too, which waits where it was
+// hidden (def.js). Each stage has its own entry in the hint book, once written.
 mem.setStageBadges = (stage) => {
-    setCategory(mem.badge, "teams")
+    const artifact = mem.stageArtifacts[mem.stages[stage]]
+    if (artifact) setCategory(mem.badge, "artifact", artifact)
+    else setCategory(mem.badge, "teams")
     mem.hint?.remove()
     mem.hint = mem.hintEntries[stage] ? hintButton(mem.hintEntries[stage]) : null
     if (mem.hint) mem.badgeRow.append(mem.hint)

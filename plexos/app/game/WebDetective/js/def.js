@@ -25,10 +25,23 @@ mem.passwords = [
     { spades: "PICAS", hearts: "CORAZONES", clubs: "TREBOLES", diamonds: "DIAMANTES" },
 ]
 const me = mem.party.player?.name
-const teamOfPassword = mem.teamOfEntry = (password) => players.find(player => player.password === password && player.name !== me)?.team
+const self = players.find(player => player.name === me)
+// Whose a password is: another player's, by their real password or by the fake one their second
+// letter gave them, which works just the same; which of the two it was is kept (the results)
+mem.whoseEntry = (entry) => {
+    for (const player of players) {
+        if (player.name === me) continue
+        if (player.password === entry) return { player, kind: "real" }
+        if (player.fake === entry) return { player, kind: "fake" }
+    }
+    return null
+}
+const teamOfPassword = mem.teamOfEntry = (entry) => mem.whoseEntry(entry)?.player.team
+// the player's own code on spades' artifact, the papers: it opens the second letter too
+mem.ownCode = self?.code || null
 
-// The first step is solved alone. The second needs the password from someone of the own team;
-// spades also needs their artifact there.
+// The first step is solved alone. The second needs the password from someone of the own team,
+// or the player's own code from spades' artifact; spades also needs their artifact there.
 mem.categoryOf = (step) => step === 0 ? "solo" : mem.team === "spades" ? "artifact" : "teams"
 mem.artifactPlace = "kitchen"   // where the artifact is hidden, for its badge
 mem.artifactPhotos = [
@@ -45,7 +58,8 @@ mem.isSecret = (step) => step === mem.letters.length + 1
 // and, only for Mariana, the letter that answers her heart
 mem.isQueen = (step) => step === mem.letters.length + 2
 mem.isMariana = mem.party.player?.name === "Mariana" || !!mem.party.player?.everything
-mem.letterOf = (step) => mem.isQueen(step) ? queen : teamOf(mem.isSecret(step) ? secret : mem.isFinal(step) ? final : mem.letters[step])
+// {falsa} in a letter is the player's own fake password (the second letter gives it)
+mem.letterOf = (step) => (mem.isQueen(step) ? queen : teamOf(mem.isSecret(step) ? secret : mem.isFinal(step) ? final : mem.letters[step])).replaceAll("{falsa}", self?.fake || "")
 // how a letter is answered: a password in dashes, a heart (any key sends it), or free writing
 mem.writing = (step) => mem.isQueen(step) ? "free" : mem.isSecret(step) ? "hearts" : "password"
 
@@ -56,7 +70,7 @@ mem.answerLength = (step) => step === 0 ? mem.passwordOf(0).length : 3
 mem.accepts = (step, entry) => {
     if (step === 0) return entry === mem.passwordOf(0)
     const team = teamOfPassword(entry)
-    if (step === 1) return team === mem.team
+    if (step === 1) return team === mem.team || (!!mem.ownCode && entry === mem.ownCode)
     return !!team && team !== mem.team && !(team in mem.otherTeams())
 }
 

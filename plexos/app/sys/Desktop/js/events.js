@@ -55,11 +55,25 @@ desktop.node.addEventListener("mousedown", e => {
 		}
 	} 
 })
+// A desktop with more icons than fit scrolls instead: no select box, icons stay put (icons.js),
+// and a finger anywhere on it, icons included, drags it along
+const overflows = desktop.mem.grid.overflows
+// touch-action is read as the finger lands, so it is kept up to date beforehand
+const updateTouch = () => {
+	const touch = overflows() ? "pan-x pan-y" : "none"
+	for (const node of [desktop.node, ...desktop.node.querySelectorAll(".icon")]) {
+		if (node.style.touchAction !== touch) node.style.touchAction = touch
+	}
+}
+const overflowWatch = new MutationObserver(updateTouch)
+overflowWatch.observe(desktop.node, { childList: true, subtree: true, attributes: true, attributeFilter: ["style"] })
+window.addEventListener("resize", updateTouch)
+
 desktop.node.addEventListener("mousedown", e => {
 	//if not clicking icon
 	if(
 		(e.target.id == "desktopLayer" || e.target.id == "selectBox" || e.target.classList.contains("gap")) &&
-		!System.mem.var.dragging
+		!System.mem.var.dragging && !overflows()
 	) {
 		desktop.mem.selectBox(e)
 	}
@@ -68,7 +82,7 @@ desktop.node.addEventListener("mousedown", e => {
 // A finger on bare desktop does what a mouse press does: clears the selection and draws the
 // select box, which then gathers icons to move together. Phones only send mouse events once
 // the touch is over, so this listens for the touch itself.
-desktop.node.style.touchAction = "none"
+updateTouch()
 desktop.node.addEventListener("pointerdown", e => {
 	if (e.pointerType !== "touch") return
 	if (!(e.target.id == "desktopLayer" || e.target.id == "selectBox" || e.target.classList.contains("gap"))) return
@@ -78,7 +92,7 @@ desktop.node.addEventListener("pointerdown", e => {
 		desktop.pocket = desktop.pocket.remove(icon)
 		icon.statNode(0)
 	}
-	desktop.mem.selectBox(e)
+	if (!overflows()) desktop.mem.selectBox(e)
 })
 
 task.onfocus = e => {

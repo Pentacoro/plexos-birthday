@@ -488,6 +488,29 @@ mem.grid.evaluateIconGrid = function (
         })
     }
 }
+// More icons than cells: a row grows below the screen, so the desktop scrolls to them instead of
+// hiding them. Each new cell copies the one above it, a row lower. Returns whether it grew.
+desktop.mem.grid.addRow = function(){
+    const cols = desktop.mem.grid.gridArr
+    if (!cols.length || !cols[0]?.length) return false
+    const y = cols[0].length
+    const margin = cfg.grid.modVmargin || cfg.grid.vMargin
+    for (const column of cols) {
+        const above = column[y - 1]
+        const cell = { ...above, posY: above.posY + above.height + margin, arrY: y, id: "id" + above.arrX + "-" + y, used: false, icon: null }
+        column.push(cell)
+        const node = document.getElementById(above.id)?.cloneNode()
+        if (!node) continue
+        node.id = cell.id
+        node.style.top = cell.posY + "px"
+        document.getElementById("gridLayer").appendChild(node)
+    }
+    cfg.grid.vLength = cols[0].length
+    return true
+}
+// Whether the desktop holds more than the screen, and scrolls
+desktop.mem.grid.overflows = () => desktop.node.scrollHeight > desktop.node.clientHeight + 1 || desktop.node.scrollWidth > desktop.node.clientWidth + 1
+
 desktop.mem.grid.gridAvailable = function(x, y){
     if(desktop.mem.grid.gridExists(x, y)){
         if(desktop.mem.grid.gridArr[x][y].used == false) return true

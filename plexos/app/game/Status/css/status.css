@@ -1,0 +1,177 @@
+.status {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    background: #1b1b20;
+    color: #fff;
+    font-family: system-ui, sans-serif;
+    overflow-y: auto;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* the player: their card, as on the welcome, and who they are */
+.player {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+.player-card {
+    position: relative;
+    flex: none;
+    width: 84px;
+    height: 116px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #f4f2ee;
+    color: var(--team, #888);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+.player-card svg {
+    width: 58%;
+    height: 58%;
+}
+.player-card .rank {
+    position: absolute;
+    top: 6px;
+    left: 9px;
+    font: 700 20px Georgia, "Times New Roman", serif;
+}
+.player-info p {
+    margin: 0;
+}
+.player-name {
+    font-size: 22px;
+    font-weight: 700;
+}
+.player-team {
+    margin-top: 2px !important;
+    font-size: 16px;
+    opacity: 0.7;
+}
+.player-code {
+    display: flex;
+    flex-direction: column;
+    margin-top: 12px !important;
+}
+.player-code .label {
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.55;
+}
+.player-code .code {
+    font: 700 26px "Courier New", monospace;
+    letter-spacing: 0.18em;
+    color: var(--team);
+}
+
+/* a row per game */
+.games {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.game {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #24242a;
+}
+.game-icon {
+    flex: none;
+    width: 36px;
+    height: 36px;
+}
+.game-name {
+    flex: 1;
+    min-width: 0;
+    font-size: 15px;
+    line-height: 1.2;
+}
+.game-icon.censored {
+    display: flex;
+    color: #9a9aa6;
+}
+.game-icon.censored svg {
+    width: 100%;
+    height: 100%;
+}
+.game-name.censored::before {
+    content: "";
+    display: block;
+    width: 62%;
+    height: 12px;
+    border-radius: 6px;
+    background: currentColor;
+    opacity: 0.28;
+}
+.game-state {
+    flex: none;
+    max-width: 46%;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: right;
+    background: #34343c;
+    color: #c8c8d2;
+}
+.game.locked {
+    opacity: 0.5;
+}
+.game.done .game-state {
+    background: #fff;
+    color: #1b1b20;
+}
+.game.complete .game-state {
+    background: linear-gradient(135deg, #f7e08f, #d4a73e 55%, #e9c86a);
+    color: #3b2a08;
+}
+
+/* the password: dots, and the eye that shows it */
+.player-password {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px !important;
+}
+.player-password .label {
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.55;
+}
+.player-password .secret {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.player-password .code {
+    min-width: 3.4em;
+    font: 700 26px "Courier New", monospace;
+    letter-spacing: 0.18em;
+}
+.reveal {
+    width: 36px;
+    height: 36px;
+    padding: 4px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #fff;
+    opacity: 0.75;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+.reveal svg {
+    width: 100%;
+    height: 100%;
+}

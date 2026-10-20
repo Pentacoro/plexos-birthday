@@ -7,3 +7,5 @@ let mem  = task.mem
 if (!mem.partner) mem.showPairing()
 else mem.showStage(Math.min(mem.state().stage || 0, mem.stages.length - 1))
 task.focus()
+// the game's texts, the first time each is due (Party's story.js)
+mem.tellStory()

@@ -25,13 +25,15 @@ mem.carried = () => (mem.party.flag(mem.id, "packages") || []).some(key => key.e
 // A maze counts as passed once left by another opening than the one it was entered by. From
 // then on it shows its walls and the player's dot, and walls no longer send them back.
 mem.passed = () => mem.party.flag(mem.id, "passed") || []
-mem.shows = (name) => mem.revealed || mem.passed().includes(name)
+// Finished, every maze shows, but diamonds' own: only once it has been walked through.
+mem.shows = (name) => (mem.revealed && name !== "artifact") || mem.passed().includes(name)
 
 // In a maze not yet passed, a wall sends the player back to the way they came in
 mem.hitWall = () => {
     mem.bump()
     if (mem.shows(mem.leg.maze)) return
     mem.at = [...mem.mazes[mem.leg.maze].openings.find(o => o.role === mem.leg.enter).cell]
+    mem.noteCell()
 }
 
 // Done completely: finished, every maze passed, every team's package picked up
@@ -46,6 +48,9 @@ mem.startLeg = (leg) => {
     mem.picked = new Set()
     mem.setStageBadges()
     mem.drawMatrix()
+    mem.noteArrival()
+    mem.placeNote()
+    mem.tellStory()
 }
 
 mem.move = (dir) => {
@@ -66,7 +71,9 @@ mem.move = (dir) => {
     if (maze.walls.includes(edge)) return mem.hitWall()
     mem.at = [nx, ny]
     step()
+    mem.nudge(dir)
     mem.drawPlayer()
+    mem.noteCell()
     mem.pickUp(leg.maze, maze)
 }
 

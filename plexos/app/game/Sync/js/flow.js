@@ -45,6 +45,7 @@ function afterClear(stage) {
     mem.lightSet("#fff")
     if (stage < last()) return mem.next.hidden = false
     mem.root.classList.add("finished")
+    mem.tellStory()
     const another = mem.el("button", "pair-confirm", "Emparejar con otro equipo")
     another.type = "button"
     mem.pressKeys(another, () => !mem.busy && mem.showPairing())

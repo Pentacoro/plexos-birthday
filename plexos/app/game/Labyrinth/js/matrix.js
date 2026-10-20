@@ -145,6 +145,19 @@ mem.drawPlayer = () => {
     mem.playerDot.setAttribute("cy", mem.at[1] + 0.5)
 }
 
+// A step: the whole maze leans a few pixels the way it went and settles back, so a step taken
+// blind is still felt, and which way. The board moves, so it never fights a bump's shake.
+mem.board = mem.root.querySelector(".board")
+const lean = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }
+mem.nudge = (dir) => {
+    const [x, y] = lean[dir]
+    mem.board.style.setProperty("--nx", x * 5 + "px")
+    mem.board.style.setProperty("--ny", y * 5 + "px")
+    mem.board.classList.remove("nudge")
+    void mem.board.offsetWidth
+    mem.board.classList.add("nudge")
+}
+
 // A bump: the dots go red and the matrix shakes, then all is white again
 mem.bump = () => {
     wrong()

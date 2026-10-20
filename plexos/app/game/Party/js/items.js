@@ -8,10 +8,10 @@ let mem  = task.mem
 // prop: it is only kept once the puzzle that needs that artifact is solved too. For clubs that
 // is the phone itself.
 mem.items = {
-    spades:   { name: "5 Lapiceras", detail: "Objeto" },
-    hearts:   { name: "12 Bombones", detail: "Objeto" },
-    clubs:    { name: "7 Pesos", detail: "Objeto" },
-    diamonds: { name: "3 Piezas de Cubo Rubik", detail: "Objeto" },
+    spades:   { name: "5 Lapiceras" },
+    hearts:   { name: "12 Bombones" },
+    clubs:    { name: "7 Pesos" },
+    diamonds: { name: "3 Piezas de Cubo Rubik" },
 }
 
 // the puzzle that needs each team's artifact, and the step that solves it
@@ -22,12 +22,17 @@ const artifactPuzzle = {
     hearts:   ["sync", 1],
 }
 
-// Checked whenever a step is solved (progress.js): kept once, with its notice
+// Checked whenever a step is solved (progress.js): kept once, with its notice. The safe's first
+// stage, whose equation asks for them, brings every team's.
 mem.deliverItem = () => {
+    if (mem.stepsSolved("artifacts") >= 1) for (const [each, item] of Object.entries(mem.items)) {
+        mem.record("items", item.name, each, { detail: mem.stamp(), image: "/plexos/app/game/Party/img/item-" + each + ".svg" })
+    }
     const team = mem.player?.team
     if (!mem.items[team]) return
     const [id, step] = artifactPuzzle[team]
     if (mem.stepsSolved("fibonacci") < 2 || mem.stepsSolved(id) < step) return
     const item = mem.items[team]
-    mem.record("items", item.name, team, { detail: item.detail, image: "/plexos/app/game/Party/img/item-" + team + ".svg" })
+    // beside Inventario's folders, with when it came, as they show when they last changed
+    mem.record("items", item.name, team, { detail: mem.stamp(), image: "/plexos/app/game/Party/img/item-" + team + ".svg" })
 }

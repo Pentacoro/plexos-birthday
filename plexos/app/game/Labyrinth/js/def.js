@@ -12,7 +12,8 @@ mem.mazes = mazes
 
 // The openings joined to each other, both ways: walking out of one comes in by the other. The
 // first maze's way in leads nowhere, and the third's way out ends the labyrinth, once this
-// team's own package is in hand. Diamonds' waits in their maze on the artifact.
+// team's own package is in hand. Diamonds' waits in their maze, on the artifact, which lies
+// over the back of their own cards: those show the ways in and out.
 const links = [
     ["first:exit", "second:entry"],
     ["first:exit-diamonds", "artifact:entry"],

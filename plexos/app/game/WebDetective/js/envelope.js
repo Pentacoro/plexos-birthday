@@ -25,8 +25,12 @@ mem.geometry = () => {
     return {
         above: -(stageH / 2 + eh + 80),
         below: stageH / 2 + eh + 80,
-        // where the letter goes: in the envelope, half out of it, centred to read, in the typewriter
-        inside: 0,
+        // where the letter goes: in the envelope, half out of it, centred to read, in the typewriter.
+        // Inside, the folded sheet (half its height, from 8px under the envelope's top) is lifted
+        // as much as it takes to end a few pixels short of the envelope's bottom: on narrow screens
+        // it would reach it, and a turned envelope would show its edge flickering under the front.
+        // The flap covers its top, so the lift never shows.
+        inside: Math.max(-7, Math.min(0, eh - 8 - lh / 2 - 5)),
         out: -eh * 0.62,
         center: stageH / 2 - lh / 2 - 34 - top,
         desk: deskTop() - top,

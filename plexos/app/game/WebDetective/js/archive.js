@@ -8,7 +8,7 @@ let mem  = task.mem
 // by side like a strip: swiping right brings the one before in from the left, swiping left the
 // one after in from the right. Past the newest, the sheet turns over onto the typewriter to
 // answer it (or, all answered, the closing note shows). A letter already answered has
-// "Reenviar" instead of "Investigar", for a go that changes no progress. The final letter, after
+// "Reenviar" instead of "Responder", for a go that changes no progress. The final letter, after
 // the last step, is kept as "final" and comes after them.
 const keyOf = (step, wrong) => mem.isQueen(step) ? "queen" : mem.isSecret(step) ? "secret" : mem.isFinal(step) ? "final" : wrong ? "wrong" : String(step)
 // the "Incorrecto" belongs to whichever step is open, the last once all are answered
@@ -63,6 +63,14 @@ mem.noteAnswer = async (step, entry) => {
     mem.party.updateDetail("letters", titleOf(keyOf(step)), mem.answerOf(step))
 }
 
+// Every password that opened a letter, for the results at the end: whose it was, whether real
+// or fake (or the player's own code from spades' papers), on which letter, and when
+mem.logEntry = async (step, entry) => {
+    const whose = mem.whoseEntry(entry)
+    const record = { step, entry, kind: whose ? whose.kind : "code", from: whose?.player.name || null, at: Date.now() }
+    await mem.party.setFlag(mem.id, "entries", [...(mem.party.flag(mem.id, "entries") || []), record])
+}
+
 // The "Incorrecto" says only that; any other letter its text
 mem.showLetterOf = (step, wrong) => wrong ? mem.showLetterText("", mem.wrong) : mem.showLetterText(mem.letterOf(step), null)
 
@@ -74,8 +82,19 @@ const finished = () => mem.party.stepsSolved(mem.id) >= mem.letters.length
 mem.labelButton = () => {
     // Mariana alone answers the secret letter, and then her own, once
     const herTurn = mem.isMariana && ((mem.isSecret(mem.step) && !mem.received().includes("queen")) || (mem.isQueen(mem.step) && !mem.party.flag(mem.id, "queenAnswered")))
-    mem.investigate.hidden = (mem.isSecret(mem.step) || mem.isQueen(mem.step)) && !herTurn
-    mem.investigate.textContent = mem.isFinal(mem.step) || herTurn ? "Responder" : solved(mem.step) ? "Reenviar" : "Investigar"
+    mem.investigate.hidden = (mem.isSecret(mem.step) || mem.isQueen(mem.step)) && !herTurn && !mem.firstEnding()
+    mem.investigate.textContent = mem.firstEnding() ? "Continuar" : solved(mem.step) && !mem.isFinal(mem.step) && !herTurn ? "Reenviar" : "Responder"
+}
+
+// The black letter and the secret one, the first time each: read, it only goes on to its text
+// (won, complete), and back to the desktop. Answering it comes on coming back to it.
+const endingOf = () => mem.isFinal(mem.step) ? "done" : mem.isSecret(mem.step) ? "complete" : null
+mem.firstEnding = () => !!endingOf() && !mem.storySeen(endingOf())
+mem.answerPressed = () => {
+    if (mem.busy || mem.view !== "letter") return
+    if (!mem.firstEnding()) return mem.openTypewriter()
+    mem.showStory(endingOf())
+    mem.labelButton()
 }
 
 // The letter at a place in the strip becomes the one on the desk, and the one answered next
@@ -119,6 +138,8 @@ mem.browse = async (by) => {
     // the final letter can be answered until the secret one is in
     const newest = list.at(-1)
     const answerable = !finished() || newest === "final" || (mem.isMariana && ((newest === "secret") || (newest === "queen" && !mem.party.flag(mem.id, "queenAnswered"))))
+    // the black and the secret letter, the first time, lead on to their text, not the typewriter
+    if (to === list.length && mem.firstEnding()) return mem.answerPressed()
     if (to === list.length && answerable) return mem.openTypewriter(true)
     await slideTo(to, by)
 }

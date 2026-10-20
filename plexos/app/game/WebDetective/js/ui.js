@@ -1,13 +1,18 @@
 import {getTask} from "/plexos/lib/functions/dll.js"
 import {categoryBadge, setCategory} from "/plexos/app/game/Party/categories.js"
 import {hintButton} from "/plexos/app/game/Party/hint.js"
+import {storyButton, tellStory, showStory, storySeen} from "/plexos/app/game/Party/story.js"
 import {gemSvg} from "/plexos/app/game/Party/gems.js"
 
 let task = getTask(/TASKID/)
 let mem  = task.mem
 
 mem.badge = categoryBadge("solo")
-mem.root.querySelector(".badge-row").append(mem.badge)
+mem.root.querySelector(".badge-row").append(mem.badge, storyButton(task, mem.id))
+// the won and complete texts wait for the black and the secret letter to be read (mem.answerPressed)
+mem.tellStory = () => tellStory(task, mem.id, { hold: ["done", "complete"] })
+mem.storySeen = (page) => storySeen(mem.id, page)
+mem.showStory = (page) => showStory(task, mem.id, page)
 
 // the hint button only exists for teams with a hint, and only shows on its step
 const hintEntry = mem.hintEntries[mem.team]
@@ -42,7 +47,7 @@ if (team) {
     stamp.className = "env-stamp"
     stamp.style.setProperty("--team", team.color)
     // the team's suit, and, kept for Mariana's velvet letter, the Queen of Hearts in foil
-    stamp.innerHTML = `<div class="env-stamp-face"><span class="stamp-card">${mem.party.player?.card || ""}</span><svg class="suit" viewBox="0 0 24 24"><path d="${team.path}" fill="#fff"/></svg><svg class="queen-art" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 7 8.6 3.6l1.9 2.3L12 3l1.5 2.9 1.9-2.3L16.5 7z"/><ellipse cx="12" cy="10.6" rx="3.1" ry="3.5"/><path d="M8.9 9.3c-.5 3.4.1 5.6-1.3 7.6M15.1 9.3c.5 3.4-.1 5.6 1.3 7.6"/><path d="M10.7 10.2h.8M12.5 10.2h.8M11.3 12.3q.7.5 1.4 0"/><path d="M10.6 14v1.6M13.4 14v1.6M5.5 22c.6-3.8 3.2-5.8 6.5-5.8s5.9 2 6.5 5.8"/><path d="M9.6 16.6 12 19.4l2.4-2.8"/><path d="M17 18.3c-.5-.6-1.5-.4-1.5.4 0 .9 1.5 1.8 1.5 1.8s1.5-.9 1.5-1.8c0-.8-1-1-1.5-.4z"/></svg></div>`
+    stamp.innerHTML = `<div class="env-stamp-face"><span class="stamp-card">${mem.party.player?.card || ""}</span><svg class="suit" viewBox="0 0 24 24"><path d="${team.path}" fill="#fff"/></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 56" class="queen-art"><defs><g id="queen-half"><path d="M15.3 13.1V9.6l1.5 1.5 1.3-2.8 1.5 2.4 1.5-3 1.4 3 1.4-2.4.9 2.5v3.3z"/><path d="M15.3 13.8c-1 2.6-.9 5.3.4 7.6.5.9.6 1.6.4 2.3-1.9.9-3.2 2.6-3.7 5h14.6c-.5-2.4-2.4-4.3-4.9-4.9l.1-2.6c.9 0 1.8-.3 2.4-.9.3-.3.3-.7 0-1 .2-.4.3-.8.1-1.4l.9-.5-.5-.6c-.7-.8-1.1-1.7-1.2-2.9z"/></g><g id="queen-cuts" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round"><path d="M16.9 14.3c-.9 2.4-.7 4.9.6 7" stroke-width="0.75"/><path d="M16.4 24.1c2 1.4 3.9 1.4 5.7 0" stroke-width="0.75"/><path d="M15.6 11.9h8.3" stroke-width="0.6"/><circle cx="22.6" cy="16.9" r="0.35" fill="#000" stroke="none"/></g><path id="queen-heart" d="M0 1.7S-2.1.4-2.1-.9a1.1 1.1 0 0 1 2.1-.6 1.1 1.1 0 0 1 2.1.6C2.1.4 0 1.7 0 1.7z"/><g id="queen-index"><text x="4.2" y="7.4" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="6.6" text-anchor="middle">Q</text><use href="#queen-heart" transform="translate(4.2 11.4) scale(1.15)"/></g><mask id="queen-cut" maskUnits="userSpaceOnUse" x="0" y="0" width="40" height="56"><rect width="40" height="56" fill="#fff"/><g transform="translate(20 28) scale(1.2) translate(-20 -28)"><use href="#queen-cuts"/><use href="#queen-cuts" transform="rotate(180 20 28)"/><path d="M9.5 32.6 30.5 23.4" stroke="#000" stroke-width="1.1" stroke-linecap="round"/></g></mask></defs><g fill="#5a1a24" mask="url(#queen-cut)"><g transform="translate(20 28) scale(1.2) translate(-20 -28)"><use href="#queen-half"/><use href="#queen-half" transform="rotate(180 20 28)"/></g></g><g fill="#5a1a24"><use href="#queen-index"/><use href="#queen-index" transform="rotate(180 20 28)"/></g></svg></div>`
     mem.envFront.append(stamp)
 }
 

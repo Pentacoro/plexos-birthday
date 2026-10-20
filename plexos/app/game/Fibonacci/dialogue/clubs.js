@@ -10,8 +10,9 @@ export default {
     voice: { type: "triangle", freq: 340, jitter: 0.3, gain: 0.12, length: 0.05 },
     // Before the party, the only thing said on any call (DRAFT lines, to be written)
     preview: [
-        new Line(sprite, "Buenas noches, se comunicó con la línea de redención del Clover Club."),
-        new Line(sprite, "Nuestras oficinas abren el 24 a la noche. Agende este número; lo vamos a estar esperando."),
+        new Line(sprite, "Buenas noches, te comunicaste con la línea de redención del Clover Club."),
+        new Line(sprite, "Nuestras oficinas abren el 24 de octubre a las 10:00pm."),
+        new Line(sprite, "Ya tiene nuestro número; hablamos entonces."),
     ],
     // Every call opens with this
     intro: [
@@ -45,7 +46,7 @@ export default {
     // To the own team once the code is solved: two questions to pick from, each with its own
     // reply. TEMPLATE: replace the labels and the replies.
     help: [
-        new Line(sprite, "Buenas noches. ¿En qué te puedo ayudar?", {
+        new Line(sprite, "¿Qué onda?", {
             choices: [
                 { label: "¿Qué estás escuchando?", reply: [
                     new Line(sprite, "Nujabes."),

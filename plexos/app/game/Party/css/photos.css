@@ -92,3 +92,48 @@
 .photo-dots button.on::before {
     background: #fff;
 }
+
+/* A game's texts (story.js): each slide a wall of text that scrolls up and down, ending in its
+   button. A finger scrolls the text itself, and swipes sideways between slides. */
+.story-viewer {
+    touch-action: pan-y;
+    background: #1b1b20;
+}
+.story-slide {
+    display: block;
+    padding: 0;
+    overflow-y: auto;
+    /* touch-action stops at the nearest scrolling box, which each slide is: it has its own */
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+.story-text {
+    box-sizing: border-box;
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 72px 24px 24px;
+    color: #fff;
+    font: 18px/1.6 system-ui, sans-serif;
+    white-space: pre-line;
+}
+.story-continue {
+    display: block;
+    margin: 12px auto 72px;
+    padding: 14px 34px;
+    border: 0;
+    border-radius: 12px;
+    background: #fff;
+    color: #1b1b20;
+    font: 700 18px system-ui, sans-serif;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    /* comes in once its text has typed out */
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+.story-continue.ready {
+    visibility: visible;
+    opacity: 1;
+}

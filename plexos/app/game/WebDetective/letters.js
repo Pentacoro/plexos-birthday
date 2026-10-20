@@ -1,5 +1,6 @@
 // The letters that arrive in Detective Web, one per step, in order, each team with its own.
-// Write them here. Line breaks are kept as written.
+// Write them here. Line breaks are kept as written. {falsa} is the reader's own fake password:
+// the second letter gives it to them.
 
 export const letters = [
     // Step 1
@@ -21,16 +22,24 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Excepteur sint occaecat
     {
         spades: `Picas, paso 2.
 
-Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra.`,
+Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra.
+
+Tu contraseña falsa: {falsa}`,
         hearts: `Corazones, paso 2.
 
-Curabitur pretium tincidunt lacus. Est eros bibendum elit, nec luctus magna felis sollicitudin mauris.`,
+Curabitur pretium tincidunt lacus. Est eros bibendum elit, nec luctus magna felis sollicitudin mauris.
+
+Tu contraseña falsa: {falsa}`,
         clubs: `Tréboles, paso 2.
 
-Curabitur pretium tincidunt lacus. Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus.`,
+Curabitur pretium tincidunt lacus. Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus.
+
+Tu contraseña falsa: {falsa}`,
         diamonds: `Diamantes, paso 2.
 
-Curabitur pretium tincidunt lacus. Vulputate vehicula. Donec lobortis risus a elit. Etiam tempor.`,
+Curabitur pretium tincidunt lacus. Vulputate vehicula. Donec lobortis risus a elit. Etiam tempor.
+
+Tu contraseña falsa: {falsa}`,
     },
 ]
 

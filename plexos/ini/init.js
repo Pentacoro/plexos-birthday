@@ -109,6 +109,36 @@ const artifactsEntry = {
     launcherScriptFilePath: "/plexos/app/game/Artifacts/artifacts.ls",
 }
 
+const starDiscEntry = {
+    ...fibonacciEntry,
+    installationDirectory: "@/plexos/app/game/StarDisc",
+    launcherScriptFilePath: "/plexos/app/game/StarDisc/stardisc.ls",
+}
+
+const mazeArtifactEntry = {
+    ...fibonacciEntry,
+    installationDirectory: "@/plexos/app/game/MazeArtifact",
+    launcherScriptFilePath: "/plexos/app/game/MazeArtifact/mazeartifact.ls",
+}
+
+const symbolCardEntry = {
+    ...fibonacciEntry,
+    installationDirectory: "@/plexos/app/game/SymbolCard",
+    launcherScriptFilePath: "/plexos/app/game/SymbolCard/symbolcard.ls",
+}
+
+const statusEntry = {
+    ...fibonacciEntry,
+    installationDirectory: "@/plexos/app/game/Status",
+    launcherScriptFilePath: "/plexos/app/game/Status/status.ls",
+}
+
+const codeTableEntry = {
+    ...fibonacciEntry,
+    installationDirectory: "@/plexos/app/game/CodeTable",
+    launcherScriptFilePath: "/plexos/app/game/CodeTable/codetable.ls",
+}
+
 const decoderEntry = {
     ...fibonacciEntry,
     installationDirectory: "@/plexos/app/game/Decoder",
@@ -135,6 +165,11 @@ function upgradeRegistry(registry) {
     if (!("Labyrinth" in data.STANDALONE)) data.STANDALONE.Labyrinth = labyrinthEntry
     if (!("Sync" in data.STANDALONE)) data.STANDALONE.Sync = syncEntry
     if (!("Artifacts" in data.STANDALONE)) data.STANDALONE.Artifacts = artifactsEntry
+    if (!("StarDisc" in data.STANDALONE)) data.STANDALONE.StarDisc = starDiscEntry
+    if (!("CodeTable" in data.STANDALONE)) data.STANDALONE.CodeTable = codeTableEntry
+    if (!("MazeArtifact" in data.STANDALONE)) data.STANDALONE.MazeArtifact = mazeArtifactEntry
+    if (!("SymbolCard" in data.STANDALONE)) data.STANDALONE.SymbolCard = symbolCardEntry
+    if (!("Status" in data.STANDALONE)) data.STANDALONE.Status = statusEntry
     if (!("Decoder" in data.STANDALONE)) data.STANDALONE.Decoder = decoderEntry
     if (!("Trainer" in data.STANDALONE)) data.STANDALONE.Trainer = trainerEntry
 }

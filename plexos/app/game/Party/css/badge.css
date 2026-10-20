@@ -148,3 +148,38 @@
 .hint-button[hidden] {
     display: none;
 }
+
+/* The story button sits between the two, in the middle of the row (story.js) */
+.story-button {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(40px, 6.2vh, 52px);
+    height: clamp(40px, 6.2vh, 52px);
+    padding: 0;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    background: #1b1b20;
+    color: #fff;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.2s ease;
+}
+.story-button svg {
+    width: clamp(26px, 4.2vh, 34px);
+    height: clamp(26px, 4.2vh, 34px);
+}
+.story-button[hidden] {
+    display: none;
+}
+/* an open badge or hint runs across the middle: the story button steps aside meanwhile */
+.badge-row:has(.category-badge.open) .story-button,
+.badge-row:has(.hint-button.open) .story-button {
+    opacity: 0;
+    pointer-events: none;
+}

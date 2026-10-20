@@ -1,13 +1,15 @@
 import {getTask} from "/plexos/lib/functions/dll.js"
 import {categoryBadge, setCategory} from "/plexos/app/game/Party/categories.js"
 import {hintButton} from "/plexos/app/game/Party/hint.js"
+import {storyButton, tellStory} from "/plexos/app/game/Party/story.js"
 
 let task = getTask(/TASKID/)
 let mem  = task.mem
 
 mem.badge = categoryBadge("teams")
 mem.hint = hintButton(mem.hintEntry)
-mem.root.querySelector(".badge-row").append(mem.badge, mem.hint)
+mem.root.querySelector(".badge-row").append(mem.badge, storyButton(task, mem.id), mem.hint)
+mem.tellStory = () => tellStory(task, mem.id)
 
 // Per maze: diamonds' own maze is their artifact, with its photos and room; the hint only
 // shows in the first maze

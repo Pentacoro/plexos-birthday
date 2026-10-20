@@ -55,7 +55,7 @@ mem.showPairing = () => {
         option.dataset.key = key
         option.style.setProperty("--team", team.color)
         option.innerHTML = `<svg viewBox="0 0 24 24"><path d="${team.path}" fill="currentColor"/></svg>`
-        option.append(mem.el("span", "", key === mem.team ? team.name + " (tu equipo)" : team.name))
+        option.append(mem.el("span", "", team.name))
         if (done(key)) option.insertAdjacentHTML("beforeend", check)
         return option
     })

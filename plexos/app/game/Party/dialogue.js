@@ -1,10 +1,21 @@
 import {blip} from "./sound.js"
 import {t} from "./lang.js"
+import Task from "/plexos/lib/classes/system/task.js"
+
+// (NOMBRE) and (GRUPO) in a line are the player being spoken to: their name, their team's name
+function fill(text) {
+    const party = Task.get("Party")?.mem
+    const player = party?.player
+    return text
+        .replaceAll("(NOMBRE)", player?.name || "")
+        .replaceAll("(GRUPO)", t(party?.teams?.[player?.team]?.name || ""))
+}
 
 // Character dialogue, after the stage system in Male. A conversation is a list of lines.
 // Each line types out letter by letter, pausing longer after "." and ",". A tap shows the
 // rest of the line at once, the next tap moves on. A line can move on by itself after a
-// delay (auto), offer choices, or run a script once it is left.
+// delay (auto), offer choices, or run a script once it is left. Taps count anywhere in the
+// container, not only on the box.
 // A sprite is a picture's path, or a character's pair of faces: { talking, rest }, the one
 // shown while a line types and the one it stays on once it stops.
 export class Line {
@@ -48,10 +59,12 @@ export class Dialogue {
         this.node.append(this.box, this.stage, this.choices)
         container.append(this.node)
 
-        // pointerdown, so one tap is always one step
-        this.box.addEventListener("pointerdown", e => {
+        // A tap anywhere in the window steps it on, but on a button, which keeps its own job (a
+        // choice, the badge). pointerdown, so one tap is always one step.
+        container.addEventListener("pointerdown", e => {
+            if (this.node.hidden || !this.tap || e.target.closest("button, [role=button]")) return
             e.preventDefault()
-            this.tap?.()
+            this.tap()
         })
     }
 
@@ -106,7 +119,7 @@ export class Dialogue {
         this.setFace(line.sprite || this.face)
         if (this.frames) this.sprite.src = this.frames.talking
         // in the player's language, typed out as it will read
-        const text = t(line.text)
+        const text = fill(t(line.text))
         this.text.textContent = ""
         this.choices.replaceChildren()
         this.node.classList.remove("waiting")

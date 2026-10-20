@@ -4,6 +4,7 @@
 // profile, which boots its own writable local clone of the core. Mounting it
 // closes this stage, swaps in the core's session face from settings.json, and
 // only then opens the desktop. The profile and core landing (users.js, cores.js) stays unused.
+import "./version.js"
 import "../plexos/lib/functions/prototype.js"
 import "./system.js"
 import "../plexos/ini/events.js"

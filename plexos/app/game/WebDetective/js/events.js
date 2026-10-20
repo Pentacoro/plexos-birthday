@@ -14,7 +14,7 @@ for (const piece of [mem.envBack, mem.envFront, mem.envFlap, mem.letter]) {
     piece.addEventListener("pointerdown", e => e.preventDefault())
     piece.addEventListener("pointerup", () => { if (mem.view === "mail" && !mem.tiltMoved) mem.readMail() })
 }
-press(mem.investigate, () => mem.openTypewriter())
+press(mem.investigate, () => mem.answerPressed())
 press(mem.sendButton, () => mem.send())
 
 mem.keys.addEventListener("pointerdown", e => {

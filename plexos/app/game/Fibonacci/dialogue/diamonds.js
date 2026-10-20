@@ -11,7 +11,7 @@ export default {
     // Before the party, the only thing said on any call (DRAFT lines, to be written)
     preview: [
         new Line(sprite, "Juguetería Rombic."),
-        new Line(sprite, "Cerrado por inventario. Abrimos el 24 a la noche."),
+        new Line(sprite, "No enviamos repuestos hasta el sábado 24 de octubre a las 10:00pm."),
     ],
     // Every call opens with this
     intro: [
@@ -31,12 +31,12 @@ export default {
     // To the own team, every call until the code is solved
     ask: [
         new Line(sprite, "Tiene un pedido de repuestos para el 'Diamond Fidget Spinner Rubik's Cube 3x3x1'."),
-        new Line(sprite, "Necesito el código del pedido. Cuando esté listo, ingréselo por el teclado."),
+        new Line(sprite, "Necesito el código de su producto. Ingréselo por el teclado."),
     ],
     right: [
         new Line(sprite, "Un momento..."),
         new Line(sprite, "..."),
-        new Line(sprite, "Las 3 piezas de repuesto ya fueron enviadas. Llegan a las 9:00pm."),
+        new Line(sprite, "Las 3 piezas de repuesto ya fueron enviadas. Llegan a las 11:00pm."),
         new Line(sprite, "Gracias. Hasta luego."),
     ],
     // To the own team once the code is solved: two questions to pick from, each with its own

@@ -9,7 +9,7 @@ import { wrong } from "../plexos/app/game/Party/sound.js"
 import { lang } from "../plexos/app/game/Party/lang.js"
 
 // Typed in place of a password, this brings back whoever the secret number wiped (Party's
-// void.js kept their core aside). PLACEHOLDER: set it to the real code; no player may have it.
+// void.js kept their core aside). Easy to stumble on, and that's fine; no player may have it.
 const restoreCode = "000"
 
 async function restoreVoided() {
@@ -22,6 +22,24 @@ async function restoreVoided() {
     plexos.Config.voided = null
     await plexos.db.setConfig(plexos.Config)
     return playerByName(name)
+}
+
+// A player renamed since they last played (players.js, formerly): their save, and one the secret
+// number set aside, move to the new name, so they come back to everything they had
+async function carryOver(player) {
+    for (const old of player.formerly || []) {
+        for (const [from, to] of [[old, player.name], ["void:" + old, "void:" + player.name]]) {
+            const saved = await plexos.db.getUser(from).catch(() => null)
+            if (!saved) continue
+            const taken = await plexos.db.getUser(to).catch(() => null)
+            if (!taken) await plexos.db.saveUser({ ...saved, name: to })
+            await plexos.db.deleteUser(from)
+        }
+        if (!plexos.Config) continue
+        if (plexos.Config.lastUserLog === old) plexos.Config.lastUserLog = player.name
+        if (plexos.Config.voided === old) plexos.Config.voided = player.name
+        await plexos.db.setConfig(plexos.Config)
+    }
 }
 
 export function showPasswordBar() {
@@ -59,6 +77,7 @@ export function showPasswordBar() {
         // the welcome stays up while the desktop loads behind it, and at least long enough to read
         const welcome = await showWelcome(player)
         const shown = new Promise(resolve => setTimeout(resolve, 2400))
+        await carryOver(player)
         await bootLocalPlexos(player.name)
         await shown
         welcome.dismiss()

@@ -389,16 +389,12 @@
     width: 19%;
     aspect-ratio: 0.82;
     padding: 4px;
-    background: #fbfaf6;
-    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
-    -webkit-mask:
-        linear-gradient(#000 0 0) content-box,
-        radial-gradient(circle, transparent 0 2px, #000 2.4px) -3px -3px / 6px 6px;
-    -webkit-mask-composite: source-over;
-    mask:
-        linear-gradient(#000 0 0) content-box,
-        radial-gradient(circle, transparent 0 2px, #000 2.4px) -3px -3px / 6px 6px;
-    mask-composite: add;
+    /* the perforated edge: bites in the envelope's own color round the paper, painted rather than
+       cut with a mask, since a mask (or a filter) makes a turned envelope render blurred */
+    background:
+        radial-gradient(circle, var(--env, #e6d5ae) 0 2px, transparent 2.4px) -3px -3px / 6px 6px,
+        #fbfaf6;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
 }
 .env-stamp-face {
     box-sizing: border-box;
@@ -632,7 +628,8 @@
     overflow-wrap: anywhere;
 }
 
-/* Mariana's letter: soft red paper, in velvet red with a pearl seal and the Queen of Hearts in foil */
+/* Mariana's letter: soft red paper, in velvet red with a pearl seal, and on its foil stamp the Queen
+   of Hearts printed in wine, her lines cut out to the foil */
 .letter.rose .letter-full,
 .letter.rose .half {
     background: #f7dfe2;

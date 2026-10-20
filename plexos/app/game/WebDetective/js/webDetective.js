@@ -20,6 +20,8 @@ mem.startStep = async (step, { wrong = false } = {}) => {
     mem.placeMailAbove()
     await mem.arrive()
     mem.busy = false
+    // the letter in: whatever the last answer won is told now
+    mem.tellStory()
 }
 
 mem.readMail = async () => {
@@ -46,6 +48,7 @@ mem.submitStep = async (correct) => {
     // a password of another team on the final letter is kept, to stay written on it
     if (correct && mem.isFinal(mem.step)) await mem.party.setFlag(mem.id, "otherTeams", { ...mem.otherTeams(), [mem.teamOfEntry(mem.entry)]: mem.entry })
     if (correct && mem.step <= mem.letters.length) await mem.noteAnswer(mem.step, mem.entry)
+    if (correct && mem.step >= 1 && mem.step <= mem.letters.length) await mem.logEntry(mem.step, mem.entry)
     await mem.returnCarriage()
     mem.stage.classList.remove("typing")
     const g = mem.geometry()
@@ -100,4 +103,5 @@ mem.finish = () => {
     mem.doneNote.textContent = mem.finished
     mem.stage.classList.add("done", "mail-gone")
     mem.setStepCategory(mem.letters.length - 1)
+    mem.tellStory()
 }

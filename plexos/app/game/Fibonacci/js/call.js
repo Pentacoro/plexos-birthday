@@ -3,6 +3,7 @@ import {Dialogue, Line} from "/plexos/app/game/Party/dialogue.js"
 import {spokenCode, pairState, setPairState, codeName} from "/plexos/app/game/Sync/pairs.js"
 import {pushBack, leave} from "/plexos/app/game/Party/backStack.js"
 import {puzzleById, isUnlocked} from "/plexos/app/game/Party/puzzles.js"
+import {teams} from "/plexos/app/game/Party/teams.js"
 import intro from "./dialogue/intro.js"
 import spades from "./dialogue/spades.js"
 import hearts from "./dialogue/hearts.js"
@@ -49,7 +50,9 @@ mem.dial = async (number) => {
     if (who === "void") return mem.voidCall(number, live)
     await mem.addContact(who, number)
     const character = mem.characters[who]
-    mem.dialogue.show(character)
+    // Before the party the phone is a preview, and each team on it is only its suit, in its color
+    const preview = who !== "intro" && !isUnlocked(puzzleById("fibonacci"))
+    mem.dialogue.show(preview ? { ...character, sprite: suitSprite(who) } : character)
 
     if (who === "intro") {
         // He introduces himself once, then only insists
@@ -63,9 +66,12 @@ mem.dial = async (number) => {
 
     // Before the party the phone is a preview: each team's character only says their preview
     // lines, and the contact is kept for the night
-    if (!isUnlocked(puzzleById("fibonacci"))) {
-        await mem.dialogue.play(character.preview)
-        if (live()) mem.hangUp()
+    if (preview) {
+        const suit = suitSprite(who)
+        await mem.dialogue.play(character.preview.map(line => new Line(suit, line.text, line)))
+        if (!live()) return true
+        await notePreview(who)
+        mem.hangUp()
         return true
     }
 
@@ -91,16 +97,21 @@ mem.dial = async (number) => {
             mem.party.setBadge("codes", 2)
             mem.party.setBadge("contacts", 2)
         }
-        if (live()) mem.hangUp()
-    } else if (!mem.isOwnTeam(who)) {
-        // asked once, then only turned away
+        // the code given, the phone goes back to the desktop, to take it to the partner game
+        if (live()) {
+            mem.hangUp()
+            task.end()
+        }
+    } else if (!mem.isOwnTeam(who) && !pairState(mem.party, who).heard) {
+        // asked once, then only turned away, until they have given a code for the partner game
         if (asked.includes(who)) await mem.dialogue.play(character.refuseAgain)
         else {
             await askTeam()
             if (live()) await mem.dialogue.play(character.refuse)
         }
         if (live()) mem.hangUp()
-    } else if (mem.party.stepsSolved(mem.id) >= 2) {
+    } else if (!mem.isOwnTeam(who) || mem.party.stepsSolved(mem.id) >= 2) {
+        // the own team once the code is solved, another once it gave its code: their questions
         const choice = await mem.dialogue.play(character.help)
         if (live() && choice?.reply) await mem.dialogue.play(choice.reply)
         if (live()) mem.hangUp()
@@ -114,6 +125,20 @@ mem.dial = async (number) => {
         mem.showCode(who)
     }
     return true
+}
+
+// A team's suit as a picture, in its color: the preview's portrait
+function suitSprite(team) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="${teams[team].path}" fill="${teams[team].color}"/></svg>`
+    return "data:image/svg+xml," + encodeURIComponent(svg)
+}
+
+// Every team's preview heard: its text comes (Party's story.js). Before the party every team
+// on the phone is a preview, so the contacts already kept count too.
+async function notePreview(who) {
+    const heard = new Set([...(mem.party.flag(mem.id, "previewed") || []), ...mem.contacts().map(contact => contact.who), who])
+    const list = Object.keys(teams).filter(team => heard.has(team))
+    if (list.length !== (mem.party.flag(mem.id, "previewed") || []).length) await mem.party.setFlag(mem.id, "previewed", list)
 }
 
 // The one answer to "which team": the truth
@@ -131,4 +156,6 @@ mem.hangUp = (byBack = false) => {
     mem.callBack = null
     mem.dialogue.stop()
     mem.showDial()
+    // back on the dial: whatever the call won is told now
+    mem.tellStory()
 }
