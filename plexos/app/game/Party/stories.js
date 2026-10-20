@@ -1,6 +1,6 @@
 // The texts each game opens and ends with, shown full screen as a wall of text that scrolls
 // (story.js): preview (the phone only) once every team's preview call has been heard before the
-// party, intro the first time the game is opened once it is open for play, done once it is
+// party, intro the first time the game is opened (the phone, already while it is a preview), done once it is
 // won, complete once everything in it is found (completion.js). Write them here, between the
 // backticks; line breaks are kept as written. button: what ends the intro and starts the game.
 // The done and complete texts end with "Continuar", back to the desktop.

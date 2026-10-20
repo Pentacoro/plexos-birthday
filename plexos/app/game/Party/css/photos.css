@@ -71,6 +71,9 @@
     justify-content: center;
     gap: 6px;
 }
+.photo-dots[hidden] {
+    display: none;
+}
 .photo-dots button {
     width: 28px;
     height: 28px;
@@ -108,11 +111,17 @@
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
 }
+.story-icon {
+    display: block;
+    width: 84px;
+    height: 84px;
+    margin: 36px auto 0;
+}
 .story-text {
     box-sizing: border-box;
     max-width: 560px;
     margin: 0 auto;
-    padding: 72px 24px 24px;
+    padding: 28px 24px 24px;
     color: #fff;
     font: 18px/1.6 system-ui, sans-serif;
     white-space: pre-line;

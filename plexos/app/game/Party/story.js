@@ -11,17 +11,21 @@ import {t} from "./lang.js"
 // over, a stage cleared). The story button between the badge and the hint brings back every one
 // reached so far, side by side.
 const party = () => Task.get("Party").mem
-const pages = ["preview", "intro", "done", "complete"]
-
-// the pages reached: a preview's, for a game that has one, once every team's preview is heard
-// (Fibonacci's); the intro once the game is open for play, then however far it is
+// the pages reached. The intro is the first screen of a game: for the phone, already while it is
+// only a preview, since that is when it is first opened. Then a preview's text, once every
+// team's preview is heard, and done and complete once the game is open for play and that far.
 function reached(id) {
     if (!stories[id]) return []
-    const previewed = !!stories[id].preview && (party().flag(id, "previewed") || []).length >= 4
-    const before = previewed ? ["preview"] : []
-    if (!isUnlocked(puzzleById(id))) return before
+    const puzzle = puzzleById(id)
+    const open = isUnlocked(puzzle)
+    const list = []
+    if (open || puzzle?.preview) list.push("intro")
+    if (stories[id].preview && (party().flag(id, "previewed") || []).length >= 4) list.push("preview")
+    if (!open) return list
     const state = gameState(party(), id)[0]
-    return [...before, ...pages.filter(page => page === "intro" || (page === "done" && ["done", "complete"].includes(state)) || (page === "complete" && state === "complete"))]
+    if (["done", "complete"].includes(state)) list.push("done")
+    if (state === "complete") list.push("complete")
+    return list
 }
 
 // Types a slide's text out as the dialogue boxes do (dialogue.js): letter by letter, a longer
@@ -59,6 +63,10 @@ function slide(task, id, page, closeViewer) {
     const story = stories[id]
     const node = document.createElement("div")
     node.className = "photo-slide story-slide"
+    const icon = document.createElement("img")
+    icon.className = "story-icon"
+    icon.src = puzzleById(id)?.icon || ""
+    icon.alt = ""
     const text = document.createElement("div")
     text.className = "story-text"
     const button = document.createElement("button")
@@ -70,7 +78,7 @@ function slide(task, id, page, closeViewer) {
         closeViewer()
         if (page !== "intro") task.end()
     }
-    node.append(text, button)
+    node.append(icon, text, button)
     node.typer = typer(text, t(story[page]), button)
     return node
 }
@@ -91,7 +99,7 @@ export function tellStory(task, id, { hold = [] } = {}) {
     task.mem.storyButton?.toggleAttribute("hidden", !all.length)
     const seen = party().flag("story", id) || []
     const due = all.filter(page => !seen.includes(page) && !hold.includes(page))
-    if (!due.length) return false
+    if (!due.length || task.node.querySelector(".story-viewer")) return false
     party().setFlag("story", id, [...seen, ...due])
     open(task, id, all, all.indexOf(due[0]), false)
     return true

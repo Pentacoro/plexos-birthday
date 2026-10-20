@@ -30,4 +30,6 @@ export function reopen(task) {
     task.backEntry = pushBack(() => hide(task))
     resume(task.suspended || [])
     task.suspended = null
+    // a page that became due while the game was closed, such as the phone's intro after its preview
+    task.mem.tellStory?.()
 }
