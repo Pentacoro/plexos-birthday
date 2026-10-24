@@ -65,7 +65,7 @@ export const places = {
         <path d="M8.5 14.3 6 21.5M15.5 14.3 18 21.5M12 15v6.5M7 18.5h10"/>
     </svg>`,
     // 6, Galpón: the open box
-    storage: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round">
+    galpon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round">
         <path d="M4 9.5 12 7l8 2.5V18l-8 3-8-3z"/>
         <path d="M4 9.5l8 2.8 8-2.8M12 12.3V21"/>
         <path d="M4 9.5 2 6l8-2.5L12 7M20 9.5 22 6l-8-2.5L12 7"/>

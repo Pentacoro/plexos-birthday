@@ -15,6 +15,24 @@ mem.tween = (el, to, duration, easing = "ease") => {
     return el.animate([{ transform: from }, { transform: to }], { duration, easing }).finished
 }
 
+// Turns a string into a fragment: plain text as text nodes, http/https URLs as <a> links
+function renderText(text) {
+    const frag = document.createDocumentFragment()
+    let last = 0
+    for (const m of text.matchAll(/https?:\/\/\S+/g)) {
+        if (m.index > last) frag.append(text.slice(last, m.index))
+        const a = document.createElement("a")
+        a.href = m[0]
+        a.textContent = m[0]
+        a.target = "_blank"
+        a.rel = "noopener noreferrer"
+        frag.append(a)
+        last = m.index + m[0].length
+    }
+    if (last < text.length) frag.append(text.slice(last))
+    return frag
+}
+
 // A letter can open with a heading, as the reply to a wrong answer does
 mem.letterHeading = null
 mem.showLetterText = (text, heading = mem.letterHeading) => {
@@ -26,7 +44,7 @@ mem.showLetterText = (text, heading = mem.letterHeading) => {
         title.textContent = t(heading)
         mem.letterText.append(title)
     }
-    mem.letterText.append(t(text))
+    mem.letterText.append(renderText(t(text)))
     mem.letterText.scrollTop = 0
     mem.letter.classList.remove("mode-answer")
     mem.letter.classList.add("mode-text")

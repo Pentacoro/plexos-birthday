@@ -132,6 +132,11 @@ mem.drawMatrix = () => {
     const dots = svg("g", { class: "dots" })
     for (let y = 0; y <= maze.h; y++) for (let x = 0; x <= maze.w; x++) dots.append(svg("circle", { cx: x, cy: y, r: 0.085 }))
     m.append(dots)
+    // delivery points: a colored square for each package waiting to be delivered in this maze
+    for (const { team, cell } of (mem.pendingDrops?.(leg.maze) || [])) {
+        const color = mem.party.teams[team]?.color || "#fff"
+        m.append(svg("rect", { x: cell[0] + 0.2, y: cell[1] + 0.2, width: 0.6, height: 0.6, fill: color, rx: 0.1, opacity: "0.85" }))
+    }
     if (mem.shows(leg.maze)) {
         mem.playerDot = svg("circle", { r: 0.26, class: "player", fill: mem.party.teams[mem.team]?.color || "#fff" })
         m.append(mem.playerDot)

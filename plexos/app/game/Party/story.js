@@ -24,6 +24,7 @@ function reached(id) {
     if (!open) return list
     const state = gameState(party(), id)[0]
     if (["done", "complete"].includes(state)) list.push("done")
+    if (id === "artifacts" && ["done", "complete"].includes(state)) list.push("drawing")
     if (state === "complete") list.push("complete")
     return list
 }
@@ -33,9 +34,10 @@ function reached(id) {
 // shows once the text is all there. Following the text down while the reader hasn't scrolled up.
 const speed = 30
 function typer(node, text, button) {
-    let shown = 0, timer = null, started = false
+    let shown = 0, timer = null, started = false, readyTimer = null
     const done = () => {
         clearTimeout(timer)
+        clearTimeout(readyTimer)
         shown = text.length
         node.textContent = text
         button.classList.add("ready")
@@ -53,7 +55,13 @@ function typer(node, text, button) {
     // a tap anywhere on the slide skips to the whole text; a swipe or a scroll isn't a tap
     node.parentElement.addEventListener("click", () => { if (started && shown < text.length) done() })
     return {
-        start() { if (started) return; started = true; type() },
+        start() {
+            if (started) return
+            started = true
+            // button appears after a short wait so the screen is never stuck
+            readyTimer = setTimeout(() => button.classList.add("ready"), 1200)
+            type()
+        },
         // swiped away while typing: the rest is there to come back to
         finish() { if (started && shown < text.length) done() },
     }
@@ -63,21 +71,55 @@ function slide(task, id, page, closeViewer) {
     const story = stories[id]
     const node = document.createElement("div")
     node.className = "photo-slide story-slide"
+    const button = document.createElement("button")
+    button.type = "button"
+    button.className = "story-continue"
+    button.textContent = "Continuar"
+    button.onclick = () => { closeViewer(); if (page !== "intro") task.end() }
+
+    if (page === "drawing") {
+        const name = party().player?.name || ""
+        node.classList.add("drawing-slide")
+        const img = document.createElement("img")
+        img.className = "drawing-img"
+        img.src = `/assets/Dibujos/${name}.png`
+        img.alt = ""
+        img.onerror = () => { img.hidden = true }
+        img.addEventListener("pointerdown", (e) => {
+            if (img.hidden) return
+            e.stopPropagation()
+            const overlay = document.createElement("div")
+            overlay.className = "drawing-expand"
+            const big = document.createElement("img")
+            big.src = img.src
+            big.alt = ""
+            big.className = "drawing-expand-img"
+            const x = document.createElement("button")
+            x.type = "button"
+            x.className = "drawing-expand-close"
+            x.setAttribute("aria-label", "Cerrar")
+            x.textContent = "×"
+            x.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); overlay.remove() })
+            overlay.append(big, x)
+            node.closest(".story-viewer")?.append(overlay)
+        })
+        const msg = document.createElement("div")
+        msg.className = "drawing-msg"
+        msg.textContent = `¡Gracias por jugar, ${name}!`
+        button.classList.add("ready")
+        node.append(img, msg, button)
+        node.typer = { start() {}, finish() {} }
+        return node
+    }
+
+    button.textContent = page === "intro" ? story.button : "Continuar"
     const icon = document.createElement("img")
     icon.className = "story-icon"
     icon.src = puzzleById(id)?.icon || ""
     icon.alt = ""
     const text = document.createElement("div")
     text.className = "story-text"
-    const button = document.createElement("button")
-    button.type = "button"
-    button.className = "story-continue"
-    button.textContent = page === "intro" ? story.button : "Continuar"
     // the intro opens the game; the others are an ending, and go back to the desktop
-    button.onclick = () => {
-        closeViewer()
-        if (page !== "intro") task.end()
-    }
     node.append(icon, text, button)
     node.typer = typer(text, t(story[page]), button)
     return node

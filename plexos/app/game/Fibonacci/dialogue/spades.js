@@ -5,6 +5,7 @@ const sprite = { talking: "/plexos/app/game/Fibonacci/img/Spade_Talking.png", re
 
 export default {
     name: null,
+    team: "spades",
     sprite,
     // how they sound as they talk: calm and smooth
     voice: { type: "triangle", freq: 230, jitter: 0.05, gain: 0.12, length: 0.06 },
@@ -12,7 +13,7 @@ export default {
     preview: [
         new Line(sprite, "¡Buenas noches! Le responden de Naipes, su librería de confianza."),
         new Line(sprite, "Esta línea de atención fue reservada para la fecha del 24 de octubre; el próximo sábado."),
-        new Line(sprite, "Esperaremos su llamada a partir de las 10:00pm. ¡Gracias por escribir con Naipes, su librería de confianza!"),
+        new Line(sprite, "Esperaremos su llamada a partir de las 9:00pm. ¡Gracias por escribir con Naipes, su librería de confianza!"),
     ],
     // Every call opens with this
     intro: [
@@ -41,7 +42,7 @@ export default {
     ],
     right: [
         new Line(sprite, "¡Confirmado! Gracias por validar su identidad."),
-        new Line(sprite, "Podrá pasar a buscar las cinco fibras a partir de las 10:30pm."),
+        new Line(sprite, "Podrá pasar a buscar las cinco fibras (ITEM) a partir de las 9:30pm."),
         new Line(sprite, "¡Gracias por escribir con Naipes, su librería de confianza! ¡Que tenga una linda noche!"),
     ],
     // To the own team once the code is solved: two questions to pick from, each with its own
@@ -55,7 +56,7 @@ export default {
                     new Line(sprite, "Pero... gracias por... su preocupación."),
                 ] },
                 { label: "¿Me decís tu nombre?", reply: [new Line(sprite, "Leila. Un gusto, (NOMBRE).")] },
-                { label: "Intérprete, ¿me decís tu nombre?", reply: [new Line(sprite, "Uhh")] },
+                { label: "Sos muy profesional.", reply: [new Line(sprite, "¡Gracias!")] },
             ],
         }),
     ],
@@ -67,12 +68,12 @@ export default {
         new Line(sprite, "Le pido disculpas, nuestro sistema de generación de códigos de sincronización emparejada está teniendo problemas."),
         new Line(sprite, "Le voy a colocar en un breve periodo de espera."),
         new Line(sprite, "Por favor aguarde en línea."),
+        new Line(sprite, "...", { hide: true }),
         new Line(sprite, "..."),
         new Line(sprite, "..."),
         new Line(sprite, "..."),
         new Line(sprite, "..."),
-        new Line(sprite, "..."),
-        new Line(sprite, "Volví. ¡Gracias por su paciencia!"),
+        new Line(sprite, "Volví. ¡Gracias por su paciencia!", { show: true }),
         new Line(sprite, "El código es " + [...code].join(" ") + "."),
         new Line(sprite, "¡Gracías por escribir con Naipes, su librería de confianza! ¡Que tenga una linda noche!"),
     ],

@@ -18,10 +18,8 @@ const rows = 7
 
 // the papers, in reading order, a team each
 const papers = ["spades", "hearts", "clubs", "diamonds"]
-const guestsOf = (team) => [
-    ...players.filter(player => player.team === team && !player.tester && !player.spare).sort((a, b) => a.name.localeCompare(b.name, "es")),
-    ...players.filter(player => player.team === team && player.spare),
-]
+const guestsOf = (team) =>
+    players.filter(player => player.team === team && !player.tester && !player.spare && !player.unlisted).sort((a, b) => a.name.localeCompare(b.name, "es"))
 
 const top = 22                        // a paper's heading above its rows
 const rowH = (side - top - 12) / rows

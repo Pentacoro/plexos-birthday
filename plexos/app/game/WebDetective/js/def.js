@@ -18,11 +18,12 @@ mem.letters  = letters
 mem.wrong    = wrong
 mem.finished = finished
 
-// The first step's password for each team. For testing, the team's name: replace them.
-// Letters (Ñ included) and digits only, as the typewriter has no other keys. The second step's
-// is the login password of any teammate.
+// Passwords for each team, one entry per step. For testing, the team's name: replace them.
+// Letters (Ñ included) and digits only, as the typewriter has no other keys.
+// Step 2 (spades) is answered with their own code from the artifact table, not from here.
 mem.passwords = [
-    { spades: "PICAS", hearts: "CORAZONES", clubs: "TREBOLES", diamonds: "DIAMANTES" },
+    { spades: "CROWNFISH",  hearts: "SIGNALIS", clubs: "BURG", diamonds: "849" },
+    { spades: "PICAS2", hearts: "ROR2",     clubs: "TURKEY",    diamonds: "GDICOMM" },
 ]
 const me = mem.party.player?.name
 const self = players.find(player => player.name === me)
@@ -40,10 +41,14 @@ const teamOfPassword = mem.teamOfEntry = (entry) => mem.whoseEntry(entry)?.playe
 // the player's own code on spades' artifact, the papers: it opens the second letter too
 mem.ownCode = self?.code || null
 
-// The first step is solved alone. The second needs the password from someone of the own team,
-// or the player's own code from spades' artifact; spades also needs their artifact there.
-mem.categoryOf = (step) => step === 0 ? "solo" : mem.team === "spades" ? "artifact" : "teams"
-mem.artifactPlace = "kitchen"   // where the artifact is hidden, for its badge
+// Steps 0 and 1 are solo (each team has their own answer). Step 1 for spades needs their
+// artifact. Step 2 needs a password from someone on the player's own team.
+mem.categoryOf = (step) => {
+    if (step === 0) return "solo"
+    if (step === 1) return mem.team === "spades" ? "artifact" : "solo"
+    return "teams"
+}
+mem.artifactPlace = "patio"   // where the artifact is hidden, for its badge
 mem.artifactPhotos = [
     "/plexos/app/game/WebDetective/img/artifact-1.png",
     "/plexos/app/game/WebDetective/img/artifact-2.png",
@@ -58,19 +63,40 @@ mem.isSecret = (step) => step === mem.letters.length + 1
 // and, only for Mariana, the letter that answers her heart
 mem.isQueen = (step) => step === mem.letters.length + 2
 mem.isMariana = mem.party.player?.name === "Mariana" || !!mem.party.player?.everything
-// {falsa} in a letter is the player's own fake password (the second letter gives it)
-mem.letterOf = (step) => (mem.isQueen(step) ? queen : teamOf(mem.isSecret(step) ? secret : mem.isFinal(step) ? final : mem.letters[step])).replaceAll("{falsa}", self?.fake || "")
+// Placeholders a letter can use:
+// {falsa}  — the player's own fake password (given in the third letter)
+// {nombre} — the player's name
+// {card}   — the player's card, e.g. "7♣"
+// {card2}  — the card of the teammate whose password answered the third letter
+const suitSymbol = { spades: "♠", hearts: "♥", clubs: "♣", diamonds: "♦" }
+const cardLabel = (player) => player ? player.card + (suitSymbol[player.team] || "") : ""
+mem.letterOf = (step) => {
+    const raw = mem.isQueen(step) ? queen : teamOf(mem.isSecret(step) ? secret : mem.isFinal(step) ? final : mem.letters[step])
+    const entries = mem.party.flag(mem.id, "entries") || []
+    const step2 = entries.find(e => e.step === 2)
+    const card2Player = step2?.from ? players.find(p => p.name === step2.from) : null
+    return raw
+        .replaceAll("{falsa}", self?.fake || "")
+        .replaceAll("{nombre}", self?.name || "")
+        .replaceAll("{card}", cardLabel(self))
+        .replaceAll("{card2}", cardLabel(card2Player))
+}
 // how a letter is answered: a password in dashes, a heart (any key sends it), or free writing
 mem.writing = (step) => mem.isQueen(step) ? "free" : mem.isSecret(step) ? "hearts" : "password"
 
 // The final letter is answered with login passwords of players of other teams, one team at a
 // time; each one taken stays written on its page. Three teams, and the secret letter comes.
 mem.otherTeams = () => mem.party.flag(mem.id, "otherTeams") || {}
-mem.answerLength = (step) => step === 0 ? mem.passwordOf(0).length : 3
+mem.answerLength = (step) => {
+    if (step === 0) return mem.passwordOf(0).length
+    if (step === 1) return mem.team === "spades" ? 3 : mem.passwordOf(1).length
+    return 3
+}
 mem.accepts = (step, entry) => {
     if (step === 0) return entry === mem.passwordOf(0)
+    if (step === 1) return mem.team === "spades" ? (!!mem.ownCode && entry === mem.ownCode) : entry === mem.passwordOf(1)
     const team = teamOfPassword(entry)
-    if (step === 1) return team === mem.team || (!!mem.ownCode && entry === mem.ownCode)
+    if (step < mem.letters.length) return team === mem.team   // step 2: own team member password
     return !!team && team !== mem.team && !(team in mem.otherTeams())
 }
 

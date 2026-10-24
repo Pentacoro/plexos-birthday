@@ -10,7 +10,7 @@ mem.submitCode = async (entry) => {
     const call = mem.callId
     const live = () => call === mem.callId
     mem.mode = "call"
-    // the phone is won; the team's item is on its way, and comes with their artifact (Party's items.js)
+    // the phone is won; the team's item arrives now (Party's items.js)
     await mem.party.solveStep(mem.id, 2)
     mem.party.setBadge("contacts", 1)
     mem.root.classList.add("solved")

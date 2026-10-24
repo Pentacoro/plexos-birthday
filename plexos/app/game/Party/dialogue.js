@@ -26,6 +26,8 @@ export class Line {
         this.auto    = params.auto
         this.choices = params.choices
         this.script  = params.script
+        this.hide    = params.hide   // slide sprite out to the right when this line starts
+        this.show    = params.show   // slide sprite back in when this line starts
     }
 }
 
@@ -83,6 +85,7 @@ export class Dialogue {
         this.setFace(character.sprite)
         this.name.textContent = character.name || ""
         this.name.hidden = !character.name
+        this.characterTeam = character.team || null
         this.node.hidden = false
         // restart the entrance, so every call slides the portrait in from the right
         this.sprite.classList.remove("entering")
@@ -117,22 +120,68 @@ export class Dialogue {
 
     say(line) {
         this.setFace(line.sprite || this.face)
+        if (line.hide) {
+            this.sprite.classList.remove("entering")
+            void this.sprite.offsetWidth
+            this.sprite.classList.add("leaving")
+        } else if (line.show) {
+            this.sprite.classList.remove("leaving", "entering")
+            void this.sprite.offsetWidth
+            this.sprite.classList.add("entering")
+        }
         if (this.frames) this.sprite.src = this.frames.talking
         // in the player's language, typed out as it will read
         const text = fill(t(line.text))
-        this.text.textContent = ""
+        this.text.replaceChildren()
         this.choices.replaceChildren()
         this.node.classList.remove("waiting")
         this.node.classList.add("speaking")
 
+        // Split around (ITEM) to inline the team's item icon
+        const itemSrc = this.characterTeam
+            ? `/plexos/app/game/Party/img/item-${this.characterTeam}.svg`
+            : null
+        const parts = itemSrc ? text.split("(ITEM)") : [text]
+        const tokens = []
+        parts.forEach((seg, i) => {
+            for (const ch of seg) tokens.push(ch)
+            if (i < parts.length - 1) tokens.push({ img: itemSrc })
+        })
+
         return new Promise(resolve => {
             let shown = 0
             let timer = null
+            let textNode = document.createTextNode("")
+            this.text.append(textNode)
+
+            const appendToken = (token) => {
+                if (typeof token === "string") {
+                    textNode.textContent += token
+                } else {
+                    const wrap = document.createElement("span")
+                    wrap.className = "dialogue-item"
+                    const img = document.createElement("img")
+                    img.src = token.img
+                    img.className = "dialogue-item-icon"
+                    img.alt = ""
+                    wrap.append("(", img, ")")
+                    this.text.append(wrap)
+                    textNode = document.createTextNode("")
+                    this.text.append(textNode)
+                }
+            }
+
+            const buildAll = () => {
+                this.text.replaceChildren()
+                textNode = document.createTextNode("")
+                this.text.append(textNode)
+                for (const token of tokens) appendToken(token)
+            }
 
             const finish = () => {
                 clearTimeout(timer)
-                shown = text.length
-                this.text.textContent = text
+                shown = tokens.length
+                buildAll()
                 if (this.frames) this.sprite.src = this.frames.rest
                 this.node.classList.remove("speaking")
                 if (line.choices) return offer()
@@ -168,12 +217,15 @@ export class Dialogue {
                 }
             }
             const type = () => {
-                if (shown >= text.length) return finish()
-                const letter = text.charAt(shown++)
-                this.text.textContent += letter
+                if (shown >= tokens.length) return finish()
+                const token = tokens[shown++]
+                appendToken(token)
+                const letter = typeof token === "string" ? token : ""
                 // each letter in the speaker's voice, the spaces and marks silent
                 if (/[\p{L}\p{N}]/u.test(letter)) blip(this.voice)
-                timer = setTimeout(type, (letter === "." || letter === ",") ? line.speed * 6 : line.speed)
+                if (this.frames) this.sprite.src = letter === "." ? this.frames.rest : this.frames.talking
+                const delay = typeof token !== "string" ? 0 : (letter === "." || letter === ",") ? line.speed * 6 : line.speed
+                timer = setTimeout(type, delay)
             }
 
             this.tap = finish

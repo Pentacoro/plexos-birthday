@@ -5,13 +5,14 @@ const sprite = { talking: "/plexos/app/game/Fibonacci/img/Club_Talking.png", res
 
 export default {
     name: null,
+    team: "clubs",
     sprite,
     // how they sound as they talk: bouncy, all over the place
     voice: { type: "triangle", freq: 340, jitter: 0.3, gain: 0.12, length: 0.05 },
     // Before the party, the only thing said on any call (DRAFT lines, to be written)
     preview: [
         new Line(sprite, "Buenas noches, te comunicaste con la línea de redención del Clover Club."),
-        new Line(sprite, "Nuestras oficinas abren el 24 de octubre a las 10:00pm."),
+        new Line(sprite, "Nuestras oficinas abren el 24 de octubre a las 9:00pm."),
         new Line(sprite, "Ya tiene nuestro número; hablamos entonces."),
     ],
     // Every call opens with this
@@ -38,9 +39,8 @@ export default {
         new Line(sprite, "¡Gracias! Un momento..."),
         new Line(sprite, "¡Bingo! Le puedo confirmar que son números ganadores, y le corresponde una recompensa de..."),
         new Line(sprite, "..."),
-        new Line(sprite, "Siete pesos."),
+        new Line(sprite, "Siete pesos (ITEM)."),
         new Line(sprite, "Y según puedo ver ya los debería haber recibido; fueron enviados el 19 de octubre."),
-        new Line(sprite, "Hmmm, una vez que me dan un código que funciona..."),
         new Line(sprite, "¡En fin! Disfrute su recompensa. ¡Gracias por llamar a la línea de redención del Clover Club!"),
     ],
     // To the own team once the code is solved: two questions to pick from, each with its own

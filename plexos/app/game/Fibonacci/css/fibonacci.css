@@ -74,6 +74,25 @@
     line-height: clamp(36px, 6vh, 50px);
     text-align: center;
 }
+.slot-digits span[data-symbol] {
+    position: relative;
+}
+.slot-digits span[data-symbol]::before {
+    content: "";
+    position: absolute;
+    inset: clamp(3px, 0.5vh, 5px) 3px clamp(5px, 0.9vh, 8px);
+    background: center / contain no-repeat;
+    opacity: 0.45;
+    pointer-events: none;
+}
+.slot-digits span[data-symbol]:not(:empty)::before {
+    display: none;
+}
+.slot-digits span[data-symbol="filled"]::before { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12'><circle cx='8' cy='6' r='4.5' fill='white'/></svg>"); }
+.slot-digits span[data-symbol="half"]::before   { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12'><defs><clipPath id='h'><rect x='8' y='1' width='8' height='10'/></clipPath></defs><circle cx='8' cy='6' r='4' fill='none' stroke='white' stroke-width='1.5'/><circle cx='8' cy='6' r='4' fill='white' clip-path='url(%23h)'/></svg>"); }
+.slot-digits span[data-symbol="target"]::before { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12'><circle cx='8' cy='6' r='4' fill='none' stroke='white' stroke-width='1.5'/><circle cx='8' cy='6' r='1.6' fill='white'/></svg>"); }
+.slot-digits span[data-symbol="ring"]::before   { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12'><circle cx='8' cy='6' r='2.6' fill='none' stroke='white' stroke-width='2.8'/></svg>"); }
+.slot-digits span[data-symbol="quad"]::before   { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12'><defs><mask id='m'><circle cx='8' cy='6' r='4.5' fill='white'/><rect x='2' y='5.4' width='12' height='1.2' fill='black'/><rect x='7.4' y='1' width='1.2' height='10' fill='black'/></mask></defs><circle cx='8' cy='6' r='4.5' fill='white' mask='url(%23m)'/></svg>"); }
 /* nine digits in three groups need narrower slots to fit a phone */
 .mode-code .slot-digits {
     gap: clamp(4px, 0.7vh, 6px);

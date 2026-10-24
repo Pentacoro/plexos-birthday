@@ -16,6 +16,7 @@ export const equations = {
     "Pentacoro"        : { text: "{spades} × ({clubs} + {diamonds}) ÷ 2" , answer:  25 },
     "Alan"             : { text: "{spades} + {clubs} × {diamonds}"       , answer:  26 },
     "Alex"             : { text: "√[{clubs} + {spades} − {diamonds}] × 5", answer:  15 },
+    "Facu"             : { text: "({spades} + {clubs}) × {diamonds}"      , answer:  36 },
     "Prueba Corazones" : { text: "({spades} − {diamonds}) × {clubs}"     , answer:  14 },
     "Prueba Todo"      : { text: "{spades} × {clubs} + {diamonds}"       , answer:  38 },
     "Cata"             : { text: "2 × {hearts} + {spades} × {diamonds}"  , answer:  39 },

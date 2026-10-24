@@ -78,7 +78,8 @@ mem.submitStep = async (correct) => {
 // each letter's envelope in its file icon's color: the second step's in the team's, muted
 // toward slate so the secret one stays the vivid one; the "Incorrecto" plain white, without
 // stamp or seal. The final and secret ones dress themselves.
-const envelopes = ["#f2d27e", "color-mix(in srgb, var(--team-color) 55%, #5c5f6b)"]
+// letters 0 and 1: gold; letter 2: team color muted toward slate
+const envelopes = ["#f2d27e", "#f2d27e", "color-mix(in srgb, var(--team-color) 55%, #5c5f6b)"]
 mem.dressLetter = (step, wrong = false) => {
     const color = wrong ? "#f4f2ee" : envelopes[step]
     mem.stage.classList.toggle("plain", wrong)

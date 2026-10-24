@@ -15,19 +15,21 @@ const states = {
         if (steps("fibonacci") >= 1) return ["pending", "Número pendiente"]
         return ["pending", "Llamada pendiente"]
     },
-    // the letters that count, then won with the second answered; complete with the secret letter
+    // the letters that count, then won with the third answered; complete with the secret letter
     webdetective(steps, flag) {
         const received = flag("webdetective", "received") || []
         if (received.includes("secret")) return ["complete", "Completo"]
-        if (steps("webdetective") >= 2) return ["done", "Hecho"]
-        const count = ["0", "1", "final"].filter(key => received.includes(key)).length
-        return ["pending", `Cartas ${count}/3`]
+        if (steps("webdetective") >= 3) return ["done", "Hecho"]
+        const count = ["0", "1", "2", "final"].filter(key => received.includes(key)).length
+        return ["pending", `Cartas ${count}/4`]
     },
-    // the maze they are in; complete with every maze passed and every package picked up
+    // the maze they are in; complete with every maze passed, every package picked up and delivered
     labyrinth(steps, flag) {
         const passed = flag("labyrinth", "passed") || [], packages = flag("labyrinth", "packages") || []
+        const delivered = flag("labyrinth", "delivered") || []
         const every = Object.entries(mazes).flatMap(([name, maze]) => Object.keys(maze.packages || {}).map(team => name + ":" + team))
-        if (flag("labyrinth", "done") && Object.keys(mazes).every(name => passed.includes(name)) && every.every(key => packages.includes(key))) return ["complete", "Completo"]
+        const allTeams = ["spades", "hearts", "clubs", "diamonds"]
+        if (flag("labyrinth", "done") && Object.keys(mazes).every(name => passed.includes(name)) && every.every(key => packages.includes(key)) && allTeams.every(t => delivered.includes(t))) return ["complete", "Completo"]
         if (flag("labyrinth", "done")) return ["done", "Hecho"]
         const names = { first: "Laberinto 1", artifact: "Laberinto del Artefacto", second: "Laberinto 2", third: "Laberinto 3" }
         return ["pending", names[flag("labyrinth", "leg")?.maze || "first"]]

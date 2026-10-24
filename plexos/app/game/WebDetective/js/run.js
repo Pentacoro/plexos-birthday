@@ -19,12 +19,30 @@ async function settled() {
     }
 }
 
-// Picks up at the first letter not yet answered
+// Picks up at the first letter not yet answered. On the very first open the intro story comes
+// before the envelope drops in, not after.
 mem.machine.style.transform = "translateY(110%)"
 task.focus()
 mem.busy = true
 await settled()
+// loadFront hides the content (opacity 0) while scripts run and restores it once they all finish.
+// run.js blocks loadFront while awaiting the story, so the content would stay invisible; clear it now.
+task.node.style.opacity = ""
 mem.busy = false
 const solved = mem.party.stepsSolved(mem.id)
-if (solved >= mem.letters.length) mem.finish()
-else mem.startStep(solved)
+if (solved >= mem.letters.length) {
+    mem.finish()
+} else {
+    const introFresh = mem.tellStory()
+    if (introFresh) {
+        await new Promise(resolve => {
+            const svNow = task.node.querySelector(".story-viewer")
+            if (!svNow) return resolve()
+            const obs = new MutationObserver(() => {
+                if (!task.node.querySelector(".story-viewer")) { obs.disconnect(); resolve() }
+            })
+            obs.observe(task.node, { childList: true, subtree: true })
+        })
+    }
+    mem.startStep(solved)
+}

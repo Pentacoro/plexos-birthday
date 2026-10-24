@@ -10,7 +10,9 @@ import {numbers} from "../../plexos/app/game/Labyrinth/numbers.js"
 const maze = mazes.artifact
 export const CARD = { w: 400, h: 560 }
 const CELL = 80, GUIDE = 40, CUT = 6, BAND = 14, GAP = 4
-const frame = "#2a2a2e", floor = "#1e1e20", band = "#4a4a54", wall = "#b4b4c0", dot = "#e6e6e6", ring = "#6e6e7a", diamond = "#c94cff"
+// Inverted from the other teams' cards (dark floor, light walls), so this set is obvious beside
+// them. The package stays purple.
+const frame = "#d4d4d4", floor = "#e0e0e0", band = "#b2b2b2", wall = "#474747", dot = "#191919", ring = "#8d8d8d", diamond = "#c94cff"
 
 // the columns each card holds, and the ones of their own card the artifact covers
 const parts = {

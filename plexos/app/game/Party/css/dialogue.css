@@ -98,8 +98,22 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+.dialogue-item-icon {
+    width: 1.1em;
+    height: 1.1em;
+    vertical-align: middle;
+    display: inline;
+    object-fit: contain;
+}
+
 @keyframes dialogue-enter {
     from { transform: translateX(110%); }
+}
+.dialogue-sprite.leaving {
+    animation: dialogue-leave 0.4s cubic-bezier(0.7, 0, 1, 0.8) forwards;
+}
+@keyframes dialogue-leave {
+    to { transform: translateX(110%); }
 }
 @keyframes dialogue-bob {
     to { transform: translateY(-4px); }

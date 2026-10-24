@@ -5,13 +5,14 @@ const sprite = { talking: "/plexos/app/game/Fibonacci/img/Diamond_Talking.png", 
 
 export default {
     name: null,
+    team: "diamonds",
     sprite,
     // how they sound as they talk: crisp and clipped
     voice: { type: "sawtooth", freq: 270, jitter: 0.04, gain: 0.06, length: 0.04, filter: 2200 },
     // Before the party, the only thing said on any call (DRAFT lines, to be written)
     preview: [
         new Line(sprite, "Juguetería Rombic."),
-        new Line(sprite, "No enviamos repuestos hasta el sábado 24 de octubre a las 10:00pm."),
+        new Line(sprite, "No enviamos repuestos hasta el sábado 24 de octubre a las 9:00pm."),
     ],
     // Every call opens with this
     intro: [
@@ -36,7 +37,7 @@ export default {
     right: [
         new Line(sprite, "Un momento..."),
         new Line(sprite, "..."),
-        new Line(sprite, "Las 3 piezas de repuesto ya fueron enviadas. Llegan a las 11:00pm."),
+        new Line(sprite, "Las 3 piezas de repuesto (ITEM) ya fueron enviadas. Llegan a las 10:00pm."),
         new Line(sprite, "Gracias. Hasta luego."),
     ],
     // To the own team once the code is solved: two questions to pick from, each with its own

@@ -183,6 +183,7 @@ export default async function initialize() {
     plexos.Core.mem.booting = false
     ensureSystemApp()
 
+    window.plexos = plexos
     console.log(plexos)
     console.log(plexos.Core.file)
     console.log(ProxyFile.unwrapProxy(File.at("@/plexos/reg/applications.proxy")))

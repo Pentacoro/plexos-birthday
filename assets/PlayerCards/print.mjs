@@ -85,7 +85,16 @@ if (name) {
     if (!player) throw new Error(`no guest named ${name}`)
     fs.writeFileSync(path.join(here, "sample.svg"), svg(player, front))
     fs.writeFileSync(path.join(here, "sample-back.svg"), svg(player, back))
-    console.log(`sample.svg, sample-back.svg: ${player.name}`)
+    // combined A4 page with front and back side by side for single-card printing
+    const gap = 6, pw = 210, ph = 297, cx = (pw - 2 * W - gap) / 2, cy = (ph - H) / 2
+    const combined = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${pw} ${ph}" width="${pw}mm" height="${ph}mm">` +
+        `<svg x="${cx}" y="${cy}" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${front(player)}</svg>` +
+        `<svg x="${cx + W + gap}" y="${cy}" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${back(player)}</svg>` +
+        `</svg>`
+    const cardHtml = `<!DOCTYPE html>\n<html><head><meta charset="UTF-8"><title>Carta — ${esc(player.name)}</title>\n<style>@page { size: A4; margin: 0; } body { margin: 0; } svg { display: block; }</style>\n</head><body>${combined}</body></html>\n`
+    const outName = name.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
+    fs.writeFileSync(path.join(here, `${outName}-card.html`), cardHtml)
+    console.log(`sample.svg, sample-back.svg, ${outName}-card.html: ${player.name}`)
     process.exit()
 }
 

@@ -7,10 +7,14 @@ let mem  = task.mem
 // A number typed into one dash per digit on a number pad, checked once every dash is filled:
 // wrong shakes and clears, right turns green and clears the stage. Each stage that asks for a
 // number uses it.
-mem.codeEntry = (answer, solved) => {
+mem.codeEntry = (answer, solved, labels = []) => {
     const target = String(answer)
     const slots = mem.el("div", "slots")
-    const cells = [...target].map(() => slots.appendChild(mem.el("span")))
+    const cells = [...target].map((_, i) => {
+        const span = mem.el("span")
+        if (labels[i]) span.dataset.symbol = labels[i]
+        return slots.appendChild(span)
+    })
     let entry = solved ? target : ""
     const render = () => cells.forEach((cell, i) => cell.textContent = entry[i] || "")
     render()

@@ -149,12 +149,10 @@
     display: none;
 }
 
-/* The story button sits between the two, in the middle of the row (story.js) */
 .story-button {
     position: absolute;
     top: 0;
-    left: 50%;
-    transform: translateX(-50%);
+    right: 0;
     box-sizing: border-box;
     display: inline-flex;
     align-items: center;

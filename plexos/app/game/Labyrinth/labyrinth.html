@@ -12,13 +12,18 @@
     <div class="puzzle">
         <div class="badge-row"></div>
         <p class="maze-digit"></p>
+        <p class="maze-note-top"></p>
         <div class="board"><svg class="matrix"></svg></div>
         <p class="maze-note"></p>
-        <div class="pad">
-            <button type="button" class="move up" data-move="up" aria-label="Arriba"></button>
-            <button type="button" class="move left" data-move="left" aria-label="Izquierda"></button>
-            <button type="button" class="move right" data-move="right" aria-label="Derecha"></button>
-            <button type="button" class="move down" data-move="down" aria-label="Abajo"></button>
+        <div class="pad-row">
+            <div class="pkg-inventory"></div>
+            <div class="pad">
+                <button type="button" class="move up" data-move="up" aria-label="Arriba"></button>
+                <button type="button" class="move left" data-move="left" aria-label="Izquierda"></button>
+                <button type="button" class="move right" data-move="right" aria-label="Derecha"></button>
+                <button type="button" class="move down" data-move="down" aria-label="Abajo"></button>
+            </div>
+            <div class="pkg-delivered"></div>
         </div>
     </div>
 
@@ -27,6 +32,8 @@
     <script type="module" src="./js/matrix.js"></script>
     <script type="module" src="./js/walk.js"></script>
     <script type="module" src="./js/note.js"></script>
+    <script type="module" src="./js/drops.js"></script>
+    <script type="module" src="./js/indicator.js"></script>
     <script type="module" src="./js/abyss.js"></script>
     <script type="module" src="./js/events.js"></script>
     <script type="module" src="./js/run.js"></script>

@@ -44,7 +44,11 @@ function buildSlots(groups) {
         column.className = "slot-group"
         const digits = document.createElement("div")
         digits.className = "slot-digits"
-        for (let i = 0; i < group.length; i++) digits.append(document.createElement("span"))
+        for (let i = 0; i < group.length; i++) {
+            const span = document.createElement("span")
+            if (group.labels?.[i]) span.dataset.symbol = group.labels[i]
+            digits.append(span)
+        }
         column.append(digits)
         if (group.icon) column.append(group.icon)
         mem.slots.append(column)
@@ -77,7 +81,11 @@ mem.showCode = (team) => {
     mem.root.className = "puzzle mode-code"
     if (mem.codeParts[team].includes("artifact")) setCategory(mem.badge, "artifact", { photos: mem.artifactPhotos, place: mem.artifactPlace })
     else setCategory(mem.badge, "teams")
-    buildSlots(mem.codeParts[team].map(part => ({ length: 3, icon: part === "artifact" ? artifactIcon() : teamIcon(part) })))
+    buildSlots(mem.codeParts[team].map(part => ({
+        length: 3,
+        icon: part === "artifact" ? artifactIcon() : teamIcon(part),
+        labels: part === "artifact" ? mem.artifactSymbols : undefined,
+    })))
     mem.teamRow.replaceChildren()
     // the player's own symbol with their card's code beside it: the code is made of codes like it
     if (!mem.team) return

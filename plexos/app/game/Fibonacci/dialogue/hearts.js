@@ -5,13 +5,14 @@ const sprite = { talking: "/plexos/app/game/Fibonacci/img/Heart_Talking.png", re
 
 export default {
     name: null,
+    team: "hearts",
     sprite,
     // how they sound as they talk: soft and high, lifting
     voice: { type: "sine", freq: 560, jitter: 0.06, glide: 0.08, gain: 0.12, length: 0.06 },
     // Before the party, the only thing said on any call (DRAFT lines, to be written)
     preview: [
         new Line(sprite, "¡Buenas noches! Usted llamó a la Bombonería Dulcinea."),
-        new Line(sprite, "Actualmente, esta línea se encuentra reservada para el sábado 24 de octubre a partir de las 10:00pm."),
+        new Line(sprite, "Actualmente, esta línea se encuentra reservada para el sábado 24 de octubre a partir de las 9:00pm."),
         new Line(sprite, "Por favor, vuélvanos a llamar este sábado. ¡Gracias!"),
     ],
     // Every call opens with this
@@ -32,12 +33,12 @@ export default {
     ],
     // To the own team, every call until the code is solved
     ask: [
-        new Line(sprite, "¡Un gusto hablar con usted!"),
-        new Line(sprite, "Se lleva entonces una docena de bombones a su domicilio."),
+        new Line(sprite, "¡Un gusto conocerle!"),
+        new Line(sprite, "Se lleva entonces una docena (ITEM) de bombones a su domicilio."),
         new Line(sprite, "Tan solo confírmeme el número del pedido para enviárselo. Cuando esté listo, márquelo en el teclado."),
     ],
     right: [
-        new Line(sprite, "¡Excelente! Doce bombones camino a Boulogne Sur Mer. Llegan 11:30pm."),
+        new Line(sprite, "¡Excelente! Doce bombones camino a Boulogne Sur Mer. Llegan 10:30pm."),
         new Line(sprite, "Gracias por llamar a la Bombonería Dulcinea. ¡Que tengas una linda noche!"),
     ],
     // To the own team once the code is solved: two questions to pick from, each with its own

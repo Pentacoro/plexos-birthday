@@ -10,6 +10,7 @@ let mem  = task.mem
 // without the package. In diamonds' maze, standing on a cell with a digit (numbers.js) shows
 // the digit above the maze, where that shorter maze leaves room, and stepping off clears it.
 mem.note = mem.root.querySelector(".maze-note")
+mem.noteTop = mem.root.querySelector(".maze-note-top")
 mem.digit = mem.root.querySelector(".maze-digit")
 
 const hold = 1600, fade = 600
@@ -24,7 +25,9 @@ mem.placeNote = () => {
     const mazeTop = Math.min(...drawn.map(box => box.top))
     const mazeBottom = Math.max(...drawn.map(box => box.bottom))
     mem.note.style.top = (mazeBottom + mem.pad.getBoundingClientRect().top) / 2 - top + "px"
-    mem.digit.style.top = (mem.root.querySelector(".badge-row").getBoundingClientRect().bottom + mazeTop) / 2 - top + "px"
+    const aboveTop = (mem.root.querySelector(".badge-row").getBoundingClientRect().bottom + mazeTop) / 2 - top + "px"
+    mem.digit.style.top = aboveTop
+    mem.noteTop.style.top = aboveTop
 }
 new ResizeObserver(() => mem.placeNote()).observe(mem.root)
 
@@ -59,8 +62,34 @@ async function say(texts) {
     mem.note.textContent = ""
 }
 
-// Into a maze: its name the first time, then, past the first without their own package,
-// that they missed something
+mem.say = (texts) => say(texts)
+
+// Package and delivery messages show above the maze, in the same spot as the digit
+let sayingTop = 0
+async function sayTop(texts) {
+    const run = ++sayingTop
+    mem.noteTop.textContent = ""
+    await new Promise(resolve => setTimeout(resolve, 0))
+    while (storyOpen()) {
+        await new Promise(resolve => setTimeout(resolve, 200))
+        if (run !== sayingTop) return
+    }
+    for (const text of texts) {
+        mem.noteTop.textContent = t(text)
+        mem.noteTop.classList.remove("faded")
+        await new Promise(resolve => setTimeout(resolve, hold))
+        if (run !== sayingTop) return
+        mem.noteTop.classList.add("faded")
+        await new Promise(resolve => setTimeout(resolve, fade))
+        if (run !== sayingTop) return
+    }
+    mem.noteTop.textContent = ""
+}
+
+mem.sayTop = (texts) => sayTop(texts)
+
+// Into a maze: its name the first time (bottom), and if the second or third is reached
+// without the player's own package, that they missed something (top, above the maze)
 const entered = () => mem.party.flag(mem.id, "entered") || []
 mem.noteArrival = () => {
     mem.noteCell()
@@ -70,7 +99,8 @@ mem.noteArrival = () => {
         texts.push(mem.mazeNames[maze])
         mem.party.setFlag(mem.id, "entered", [...entered(), maze])
     }
-    if (["second", "third"].includes(maze) && !mem.carried() && !mem.revealed) texts.push("Te faltó algo...")
     if (texts.length) say(texts)
     else { saying++; mem.note.textContent = "" }
+    if (["second", "third"].includes(maze) && !mem.pickedOwn() && !mem.revealed) sayTop(["Te faltó algo..."])
+    else { sayingTop++; mem.noteTop.textContent = "" }
 }

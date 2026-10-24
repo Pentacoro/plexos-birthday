@@ -15,7 +15,7 @@ mem.stages = ["path", "stack", "call"]
 // Each stage's entry in the hint book. Placeholders: set them to the book's numbers.
 mem.hintEntries = [6, 7, 8]
 // Artifact 4, in the storage room: hearts needs it to read the code they are told on the phone
-mem.artifactPlace = "storage"
+mem.artifactPlace = "galpon"
 mem.artifactPhotos = [
     "/plexos/app/game/Sync/img/artifact-1.png",
     "/plexos/app/game/Sync/img/artifact-2.png",

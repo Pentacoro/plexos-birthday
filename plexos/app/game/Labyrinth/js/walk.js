@@ -19,8 +19,11 @@ function edgeOf([x, y], dir) {
 // Where an opening of the current maze leads, if anywhere
 mem.wayOut = (role) => mem.ways[mem.leg.maze + ":" + role]
 
-// Whether this team has its own package, picked up in any visit
-mem.carried = () => (mem.party.flag(mem.id, "packages") || []).some(key => key.endsWith(":" + mem.team))
+// Whether this team's own package was picked up (regardless of delivery)
+mem.pickedOwn = () => (mem.party.flag(mem.id, "packages") || []).some(key => key.endsWith(":" + mem.team))
+
+// Ready to exit: own package both picked up and delivered to its drop point
+mem.carried = () => mem.pickedOwn() && (mem.party.flag(mem.id, "delivered") || []).includes(mem.team)
 
 // A maze counts as passed once left by another opening than the one it was entered by. From
 // then on it shows its walls and the player's dot, and walls no longer send them back.
@@ -36,20 +39,23 @@ mem.hitWall = () => {
     mem.noteCell()
 }
 
-// Done completely: finished, every maze passed, every team's package picked up
+// Done completely: finished, every maze passed, every package picked up and delivered
 mem.complete = () => mem.revealed
     && ["first", "artifact", "second", "third"].every(name => mem.passed().includes(name))
     && Object.entries(mem.mazes).every(([name, maze]) => Object.keys(maze.packages || {}).every(team => (mem.party.flag(mem.id, "packages") || []).includes(name + ":" + team)))
+    && (mem.allDropTeams?.() || []).every(team => (mem.party.flag(mem.id, "delivered") || []).includes(team))
 
 mem.startLeg = (leg) => {
     mem.leg = leg
     const maze = mem.mazes[leg.maze]
     mem.at = [...maze.openings.find(o => o.role === leg.enter).cell]
     mem.picked = new Set()
+    mem.root.classList.toggle("inverted", leg.maze === "artifact")
     mem.setStageBadges()
     mem.drawMatrix()
     mem.noteArrival()
     mem.placeNote()
+    mem.updateIndicator?.()
     mem.tellStory()
 }
 
@@ -75,17 +81,23 @@ mem.move = (dir) => {
     mem.drawPlayer()
     mem.noteCell()
     mem.pickUp(leg.maze, maze)
+    mem.checkDelivery?.()
 }
 
-// Any team's package can be picked up, and each one is kept for a completionist tally. Only
-// this team's own package opens the way out at the end.
+// Any team's package can be picked up, each spawning a delivery point for a completionist
+// tally. Only this team's own package — picked up and delivered — opens the way out.
 mem.pickUp = (name, maze) => {
     for (const [team, [px, py]] of Object.entries(maze.packages || {})) {
         if (px !== mem.at[0] || py !== mem.at[1] || mem.picked.has(team)) continue
         mem.picked.add(team)
         mem.flash(mem.party.teams[team]?.color)
         const key = name + ":" + team, got = mem.party.flag(mem.id, "packages") || []
-        if (!got.includes(key)) mem.party.setFlag(mem.id, "packages", [...got, key])
+        if (!got.includes(key)) {
+            mem.party.setFlag(mem.id, "packages", [...got, key])
+            mem.spawnDrop?.(team)
+            mem.sayTop?.(["Paquete levantado"])
+            mem.updateIndicator?.()
+        }
     }
 }
 
@@ -100,6 +112,8 @@ mem.leaveMaze = async (role) => {
         mem.party.record("mazes", mem.mazeNames[mem.leg.maze], mem.leg.maze, { image: "/plexos/app/game/Party/img/maze-" + mem.leg.maze + ".svg" })
     }
     const next = way === "end" ? null : { maze: way.split(":")[0], enter: way.split(":")[1] }
+    // start the background transition at the same time as the matrix fade
+    mem.root.classList.toggle("inverted", next?.maze === "artifact")
     if (next) await mem.party.setFlag(mem.id, "leg", next)
     else {
         await mem.party.setFlag(mem.id, "done", true)
@@ -114,6 +128,7 @@ mem.leaveMaze = async (role) => {
 
 mem.goBack = async (leg) => {
     mem.busy = true
+    mem.root.classList.toggle("inverted", leg.maze === "artifact")
     await mem.party.setFlag(mem.id, "leg", leg)
     await mem.fadeTo(() => mem.startLeg(leg))
     mem.busy = false
@@ -138,6 +153,11 @@ mem.fadeTo = async (show) => {
 // color stands at the end, free to walk all of them again
 mem.finish = () => {
     mem.revealed = true
+    // one-pass: all packages delivered before exiting — open at "complete" with "done" beside it
+    if (mem.complete()) {
+        const seen = mem.party.flag("story", mem.id) || []
+        if (!seen.includes("done")) mem.party.setFlag("story", mem.id, [...seen, "done"])
+    }
     mem.startLeg({ maze: "third", enter: "exit" })
     if (mem.hint) mem.hint.hidden = true
     mem.root.classList.add("done")

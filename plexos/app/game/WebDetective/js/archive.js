@@ -42,7 +42,7 @@ mem.receive = (step, wrong) => {
         mem.party.setFlag(mem.id, "received", list)
         // each letter has its own envelope color
         const look = key === "wrong" ? "wrong" : mem.isQueen(step) ? "queen" : mem.isSecret(step) ? "secret-" + mem.team : mem.isFinal(step) ? "final"
-            : step === 1 ? "2-" + mem.team : String(step + 1)
+            : step === 2 ? "2-" + mem.team : "1"
         mem.party.record("letters", titleOf(key), key, { image: "/plexos/app/game/Party/img/letter-" + look + ".svg", detail: (key !== "wrong" && mem.answerOf(step)) || " " })
         if (mem.isFinal(step)) mem.party.setBadge("letters", 2)
         if (everyLetter().every(each => list.includes(each))) mem.party.setBadge("letters", 3)

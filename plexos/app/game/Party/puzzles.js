@@ -1,8 +1,8 @@
-// Every puzzle in unlock order. The first opens at 22:00 Buenos Aires time on the party night,
+// Every puzzle in unlock order. The first opens at 21:00 Buenos Aires time on the party night,
 // and each next one half an hour later. Moving firstUnlock moves the whole night with it.
 // Until then the game is its starting state: Inventario, Estado, and the phone as a preview.
 // The phone characters say these times too (Fibonacci/dialogue): keep them alike.
-export const firstUnlock = Date.parse("2026-10-24T22:00:00-03:00")
+export const firstUnlock = Date.parse("2026-10-24T21:00:00-03:00")
 export const unlockInterval = 30 * 60 * 1000
 
 // For development: true unlocks every puzzle now, for everyone

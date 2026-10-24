@@ -72,7 +72,7 @@ const english = {
     // hearts: Bombonería Dulcinea
     "¡Hola! Habla el contacto de Corazones.": "Hi! This is the Hearts contact.",
     "¡Llamaste antes de tiempo! Guardá este número y volvé a llamar el 24 a la noche.": "You called too early! Save this number and call again on the night of the 24th.",
-    "Actualmente, esta línea se encuentra reservada para el sábado 24 de octubre a partir de las 10:00pm.": "This line is currently reserved for Saturday, October 24th, from 10:00pm.",
+    "Actualmente, esta línea se encuentra reservada para el sábado 24 de octubre a partir de las 9:00pm.": "This line is currently reserved for Saturday, October 24th, from 9:00pm.",
     "¡Buenas noches! Habla con la Bombonería Dulcinea.": "Good evening! You've reached Dulcinea's Chocolate Shop.",
     "¿De dónde llama?": "Where are you calling from?",
     "Awww... Disculpame, corazón, acá no es. Tenés que llamar al número de tu localidad.": "Awww... Sorry, sweetheart, this isn't the place. You need to call your local number.",
@@ -99,7 +99,7 @@ const english = {
 
     // clubs: the Clover Club
     "Buenas noches, se comunicó con la línea de redención del Clover Club.": "Good evening, you've reached the Clover Club redemption line.",
-    "Nuestras oficinas abren el 24 de octubre a las 10:00pm.": "Our offices open on October 24th at 10:00pm.",
+    "Nuestras oficinas abren el 24 de octubre a las 9:00pm.": "Our offices open on October 24th at 9:00pm.",
     "Buenas noches. Gracias por llamar a la línea de redención de lotería del Clover Club.": "Good evening. Thank you for calling the Clover Club lottery redemption line.",
     "¿Me decís tu afiliación?": "Can you tell me your affiliation?",
     "Ah... Disculpá, no te puedo ayudar en este momento. Probá con la línea de tu club, o llamá mas tarde.": "Ah... Sorry, I can't help you right now. Try your own club's line, or call back later.",
@@ -130,14 +130,14 @@ const english = {
 
     // diamonds: Juguetería Rombic
     "Juguetería Rombic.": "Rombic Toy Store.",
-    "No enviamos repuestos hasta el sábado 24 de octubre a las 10:00pm.": "We don't ship spare parts until Saturday, October 24th, at 10:00pm.",
+    "No enviamos repuestos hasta el sábado 24 de octubre a las 9:00pm.": "We don't ship spare parts until Saturday, October 24th, at 9:00pm.",
     "¿Afiliación?": "Affiliation?",
     "Llame a su línea de afiliación.": "Call your affiliation's line.",
     "No vuelva a llamar.": "Don't call again.",
     "Tiene un pedido de repuestos para el 'Diamond Fidget Spinner Rubik's Cube 3x3x1'.": "You have an order of spare parts for the 'Diamond Fidget Spinner Rubik's Cube 3x3x1'.",
     "Necesito el código del pedido. Cuando esté listo, ingréselo por el teclado.": "I need the order code. When you're ready, enter it on the keypad.",
     "Un momento...": "One moment...",
-    "Las 3 piezas de repuesto ya fueron enviadas. Llegan a las 11:00pm.": "The 3 spare parts have been sent. They arrive at 11:00pm.",
+    "Las 3 piezas de repuesto ya fueron enviadas. Llegan a las 10:00pm.": "The 3 spare parts have been sent. They arrive at 10:00pm.",
     "Gracias. Hasta luego.": "Thanks. Goodbye.",
     "¿Sí?": "Yes?",
     "¿Eso es tu pelo?": "Is that your hair?",
@@ -158,6 +158,8 @@ const english = {
 
     // ---- Laberinto Yuxtapuesto
     "Te faltó algo...": "You missed something...",
+    "Paquete levantado": "Package picked up",
+    "Paquete entregado": "Package delivered",
     "Arriba": "Up",
     "Abajo": "Down",
     "Izquierda": "Left",

@@ -13,7 +13,27 @@
     overflow: hidden;
     user-select: none;
     -webkit-user-select: none;
+    --dot-fill: #e6e6e6;
+    transition: background 0.4s ease;
 }
+/* Diamonds' artifact maze matches the light card: inverted from the other three */
+.puzzle.inverted {
+    background: #e0e0e0;
+    color: #191919;
+    --dot-fill: #191919;
+}
+.puzzle.inverted .matrix .band-line { stroke: #b2b2b2; }
+.puzzle.inverted .matrix .band { fill: #b2b2b2; }
+.puzzle.inverted .matrix .notch { fill: #e0e0e0; }
+.puzzle.inverted .matrix .arrow path { fill: #474747; }
+.puzzle.inverted .matrix .dots circle { fill: #191919; }
+.puzzle.inverted .matrix .walls line { stroke: #474747; }
+.puzzle.inverted .maze-note,
+.puzzle.inverted .maze-note-top,
+.puzzle.inverted .maze-digit { color: #8d8d8d; }
+.puzzle.inverted .category-badge { background: #1b1b20; }
+.puzzle.inverted .move { background: #191919; color: #e0e0e0; }
+.puzzle.inverted .move.pressed { background: rgba(25, 25, 25, 0.6); }
 .badge-row {
     position: relative;
     align-self: stretch;
@@ -128,6 +148,7 @@
    diamonds' maze the digit the player stands on, above it. Their heights are kept even when
    empty, so nothing jumps. */
 .maze-note,
+.maze-note-top,
 .maze-digit {
     position: absolute;
     left: 16px;
@@ -144,10 +165,12 @@
     /* in a quiet gray, messages and digits alike */
     color: #8a8a96;
 }
-.maze-note {
+.maze-note,
+.maze-note-top {
     transition: opacity 0.6s ease;
 }
-.maze-note.faded {
+.maze-note.faded,
+.maze-note-top.faded {
     opacity: 0;
 }
 .maze-digit {
@@ -155,7 +178,28 @@
     font-weight: 700;
 }
 
-.done .pad {
+.pad-row {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.pkg-inventory,
+.pkg-delivered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 24px;
+}
+.pkg-circle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex: none;
+}
+.done .pad-row {
     order: 3;
 }
 
@@ -168,9 +212,9 @@
 }
 @keyframes labyrinth-back {
     0%, 55% { fill: #ff4a5a; }
-    100% { fill: #e6e6e6; }
+    100% { fill: var(--dot-fill); }
 }
 @keyframes labyrinth-flash {
     0%, 60% { fill: var(--flash); }
-    100% { fill: #e6e6e6; }
+    100% { fill: var(--dot-fill); }
 }

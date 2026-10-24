@@ -2,7 +2,7 @@ import {getTask} from "/plexos/lib/functions/dll.js"
 import File from "/plexos/lib/classes/filesystem/file.js"
 import Icon from "/plexos/lib/classes/interface/icon.js"
 import Task from "/plexos/lib/classes/system/task.js"
-import {puzzles, tools, onDesktop, toolOpen} from "./puzzles.js"
+import {puzzles, tools, onDesktop, toolOpen, allUnlocked} from "./puzzles.js"
 import {cardIcon} from "/plexos/app/game/Status/card.js"
 
 let task = getTask(/TASKID/)
@@ -81,8 +81,8 @@ async function checkUnlocks() {
         if (entry.testers && !mem.player?.tester) continue
         // an artifact comes to its own team with its puzzle, and to anyone with its step of the safe
         const ownTeam = !entry.team || entry.team === mem.player?.team || mem.player?.everything
-        const earned = ownTeam && (!entry.after || mem.stepsSolved(entry.after[0]) >= entry.after[1])
-        if (!earned && !(entry.safe && mem.stepsSolved("artifacts") >= entry.safe)) continue
+        const earned = allUnlocked() || (ownTeam && (!entry.after || mem.stepsSolved(entry.after[0]) >= entry.after[1]))
+        if (!earned && !(entry.safe && (allUnlocked() || mem.stepsSolved("artifacts") >= entry.safe))) continue
         await mem.spawnShortcut(entry)
     }
     await mem.wearCard()

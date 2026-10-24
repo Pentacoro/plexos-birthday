@@ -7,8 +7,8 @@ let mem  = task.mem
 startBackStack()
 mem.loadProgress()
 mem.applyTrainerTeam()
-await mem.checkUnlocks()
 await mem.ensureInventory()
+await mem.checkUnlocks()
 await mem.moveItemsOut()
 await mem.unlockEverything()
 // A short poll rather than one long timer, because phones pause timers while the screen is off
