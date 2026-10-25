@@ -132,6 +132,12 @@ function open(task, id, shown, start, closable) {
     const slides = shown.map(page => slide(task, id, page, () => carousel?.close()))
     const onShow = (index) => slides.forEach((each, i) => i === index ? each.typer.start() : each.typer.finish())
     carousel = openCarousel(slides, host, { start, closable, className: "story-viewer", onShow })
+    // non-intro slides that aren't the last one advance to the next instead of closing
+    slides.forEach((s, i) => {
+        if (i === slides.length - 1 || shown[i] === "intro") return
+        const btn = s.querySelector(".story-continue")
+        if (btn) btn.onclick = () => carousel.show(i + 1)
+    })
 }
 
 // Shows what is due, if anything, starting at the first not seen yet. Returns whether it did.

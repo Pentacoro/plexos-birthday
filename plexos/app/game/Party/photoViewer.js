@@ -95,7 +95,7 @@ export function openCarousel(slides, host, { start = 0, closable = true, classNa
     viewer.addEventListener("pointerup", release)
     viewer.addEventListener("pointercancel", release)
 
-    return { viewer, close }
+    return { viewer, close, show }
 }
 
 export function openPhotos(photos, host) {
