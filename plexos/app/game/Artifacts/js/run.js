@@ -3,13 +3,11 @@ import {getTask} from "/plexos/lib/functions/dll.js"
 let task = getTask(/TASKID/)
 let mem  = task.mem
 
-// one-time: players who won before the fix had "drawing" marked seen without actually seeing it
-if (mem.ownDone() && !mem.party.flag("story", "drawingRewound")) {
+// once the safe is done, the drawing slide is due — clear it from seen so tellStory shows it
+if (mem.ownDone() && !mem.party.flag("story", "drawingShown")) {
+    await mem.party.setFlag("story", "drawingShown", true)
     const seen = mem.party.flag("story", "artifacts") || []
-    if (seen.includes("drawing")) {
-        await mem.party.setFlag("story", "artifacts", seen.filter(p => p !== "drawing"))
-        await mem.party.setFlag("story", "drawingRewound", true)
-    }
+    await mem.party.setFlag("story", "artifacts", seen.filter(p => p !== "drawing"))
 }
 
 // Picks up at the first stage not yet solved; with the own route done, at the routes
