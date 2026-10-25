@@ -24,3 +24,10 @@ mem.deliverItem = () => {
     // beside Inventario's folders, with when it came, as they show when they last changed
     mem.record("items", item.name, team, { detail: mem.stamp(), image: "/plexos/app/game/Party/img/item-" + team + ".svg" })
 }
+
+// The drawing reward: delivered once the safe is finished (all 6 stages solved)
+mem.deliverDrawing = () => {
+    if (mem.stepsSolved("artifacts") < 6) return
+    const name = mem.player?.name || ""
+    mem.record("drawing", "Mi Dibujo", name, { image: "/plexos/app/game/Drawing/icon.svg" })
+}

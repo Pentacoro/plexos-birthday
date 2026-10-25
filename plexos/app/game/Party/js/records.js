@@ -18,6 +18,7 @@ mem.records = {
     // what a team's Fibonacci character sends, kept in Inventario itself, after its folders
     items:    { folder: "@/Inventario", exte: "item", notice: "Objeto Recibido" },
     codes:    { folder: "@/Inventario/Códigos", exte: "txt", notice: "Código Anotado", view: "details", showData: true },
+    drawing:  { folder: "@/Inventario", exte: "dibujo", notice: "Premio Desbloqueado" },
 }
 
 // Inventario sits at the root of the core, the one folder the player can see there (windows.js)
@@ -144,6 +145,7 @@ mem.inventoryRank = (file) => {
     }
     // in Inventario, items come after its folders
     if (exte === "item") return 200 + teamRank(data)
+    if (exte === "dibujo") return 500
     if (exte === "carta") return letterOrder.includes(data) ? letterOrder.indexOf(data) : 50
     if (exte === "maze") return mazeOrder.includes(data) ? mazeOrder.indexOf(data) : 50
     return codeRank(file.name) ?? 100

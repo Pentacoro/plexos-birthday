@@ -50,6 +50,10 @@ export default {
         } else if (exte === "maze") {
             const mem = await openApp("labyrinth", mem => mem.showMaze && mem.leg && !mem.busy)
             mem?.showMaze(file.data)
+        } else if (exte === "dibujo") {
+            const existing = plexos.Tasks.find(each => each.name === "Premio")
+            if (existing) { reopen(existing); return }
+            await runLauncher("/plexos/app/game/Drawing/drawing.ls")
         } else {
             await openApp(file.data, () => true)
         }

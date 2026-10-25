@@ -10,6 +10,7 @@ mem.applyTrainerTeam()
 await mem.ensureInventory()
 await mem.checkUnlocks()
 await mem.moveItemsOut()
+mem.deliverDrawing()
 await mem.unlockEverything()
 // A short poll rather than one long timer, because phones pause timers while the screen is off
 mem.unlockTimer = setInterval(mem.checkUnlocks, 10000)

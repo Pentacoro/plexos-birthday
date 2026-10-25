@@ -9,14 +9,7 @@ let mem  = task.mem
 mem.badgeRow = mem.root.querySelector(".badge-row")
 mem.badge = categoryBadge("teams")
 mem.badgeRow.append(mem.badge, storyButton(task, mem.id))
-mem.tellStory = () => {
-    if (mem.ownDone() && !mem.party.flag("story", "drawingShown")) {
-        mem.party.setFlag("story", "drawingShown", true)
-        const seen = mem.party.flag("story", "artifacts") || []
-        mem.party.setFlag("story", "artifacts", seen.filter(p => p !== "drawing"))
-    }
-    tellStory(task, mem.id)
-}
+mem.tellStory = () => tellStory(task, mem.id)
 mem.hint = null
 
 // Every stage needs the other teams; some need a team's artifact too, which waits where it was

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/plexos/app/game/Party/css/photos.css">
+    <style>
+        html, body { margin: 0; height: 100%; }
+        .drawing-slide { min-height: 100%; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+<script type="module">
+import {getTask} from "/plexos/lib/functions/dll.js"
+import Task from "/plexos/lib/classes/system/task.js"
+
+let task = getTask(/TASKID/)
+const name = Task.get("Party")?.mem?.player?.name || ""
+
+const wrap = document.createElement("div")
+wrap.className = "drawing-slide"
+
+const img = document.createElement("img")
+img.className = "drawing-img"
+img.src = `/assets/Dibujos/${name}.png`
+img.alt = ""
+img.draggable = false
+img.onerror = () => { img.hidden = true }
+
+img.addEventListener("pointerdown", e => {
+    if (img.hidden) return
+    e.stopPropagation()
+    const overlay = document.createElement("div")
+    overlay.className = "drawing-expand"
+    const big = document.createElement("img")
+    big.src = img.src
+    big.alt = ""
+    big.className = "drawing-expand-img"
+    const x = document.createElement("button")
+    x.type = "button"
+    x.className = "drawing-expand-close"
+    x.setAttribute("aria-label", "Cerrar")
+    x.textContent = "×"
+    x.addEventListener("pointerdown", ev => { ev.stopPropagation(); overlay.remove() })
+    overlay.append(big, x)
+    wrap.append(overlay)
+})
+
+const msg = document.createElement("div")
+msg.className = "drawing-msg"
+msg.textContent = `¡Gracias por jugar, ${name}!`
+
+wrap.append(img, msg)
+document.body.append(wrap)
+task.focus()
+</script>
+</body>
+</html>

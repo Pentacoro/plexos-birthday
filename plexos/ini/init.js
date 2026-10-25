@@ -151,6 +151,12 @@ const trainerEntry = {
     launcherScriptFilePath: "/plexos/app/game/Trainer/trainer.ls",
 }
 
+const drawingEntry = {
+    ...fibonacciEntry,
+    installationDirectory: "@/plexos/app/game/Drawing",
+    launcherScriptFilePath: "/plexos/app/game/Drawing/drawing.ls",
+}
+
 // A saved core keeps the app catalog it was made with. This brings an older one up to date before the session
 // ids are issued. Each step leaves a core that already has it untouched.
 function upgradeRegistry(registry) {
@@ -172,6 +178,7 @@ function upgradeRegistry(registry) {
     if (!("Status" in data.STANDALONE)) data.STANDALONE.Status = statusEntry
     if (!("Decoder" in data.STANDALONE)) data.STANDALONE.Decoder = decoderEntry
     if (!("Trainer" in data.STANDALONE)) data.STANDALONE.Trainer = trainerEntry
+    if (!("Drawing" in data.STANDALONE)) data.STANDALONE.Drawing = drawingEntry
 }
 
 export default async function initialize() {

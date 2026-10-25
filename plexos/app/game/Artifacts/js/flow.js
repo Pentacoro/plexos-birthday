@@ -35,5 +35,8 @@ mem.clearStage = async () => {
     await mem.solveRouteStep(mem.stage + 1)
     await new Promise(resolve => setTimeout(resolve, 1100))
     if (mem.stage < mem.stages.length - 1) mem.showStage(mem.stage + 1)
-    else mem.showRoutes()
+    else {
+        mem.party.deliverDrawing?.()
+        mem.showRoutes()
+    }
 }
