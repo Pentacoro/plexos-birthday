@@ -14,7 +14,7 @@ async function ensureSettingsFile() {
     plexos.Settings = JSON.parse(file.data)
     plexos.Settings.system.transfer ??= { pace: "slowest", override: "" }
     // what the party game keeps opens back in its puzzle
-    for (const exte of ["game", "contact", "carta", "maze", "item"]) plexos.Settings.apps[exte] ??= "/plexos/app/game/Party/open.ls"
+    for (const exte of ["game", "contact", "carta", "maze", "item", "dibujo"]) plexos.Settings.apps[exte] ??= "/plexos/app/game/Party/open.ls"
 }
 
 export async function saveSettings() {

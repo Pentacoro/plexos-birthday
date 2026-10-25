@@ -29,5 +29,5 @@ mem.deliverItem = () => {
 mem.deliverDrawing = () => {
     if (mem.stepsSolved("artifacts") < 6) return
     const name = mem.player?.name || ""
-    mem.record("drawing", "Mi Dibujo", name, { image: "/plexos/app/game/Drawing/icon.svg" })
+    mem.record("drawing", "Mi Dibujo", name, { detail: mem.stamp(), image: "/plexos/app/game/Drawing/icon.svg" })
 }
